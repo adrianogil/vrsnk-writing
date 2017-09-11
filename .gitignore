@@ -1,0 +1,8 @@
+.DS_Store
+.gitignore
+src/.DS_Store
+src/sbc-template.aux
+src/sbc-template.bbl
+src/sbc-template.blg
+src/sbc-template.log
+src/sbc-template.pdf
