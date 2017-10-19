@@ -10,7 +10,7 @@
      
 \sloppy
 
-\title{Instructions for Authors of SBC Conferences\\ Papers and Abstracts}
+\title{Uso do Filtro de Kalman em um jogo de Realidade Virtual com Visualização baseada em Shader}
 
 \author{Luciana P. Nedel\inst{1}, Rafael H. Bordini\inst{2}, Flávio Rech
   Wagner\inst{1}, Jomi F. Hübner\inst{3} }
@@ -52,19 +52,14 @@
 \end{resumo}
 
 
-\section{General Information}
+\section{Introdução}
 
-All full papers and posters (short papers) submitted to some SBC conference,
-including any supporting documents, should be written in English or in
-Portuguese. The format paper should be A4 with single column, 3.5 cm for upper
-margin, 2.5 cm for bottom margin and 3.0 cm for lateral margins, without
-headers or footers. The main font must be Times, 12 point nominal size, with 6
-points of space before each paragraph. Page numbers must be suppressed.
+A realidade virtual (VR, em inglês) tem angariado a atenção do mercado de jogos [referencia de jogos aqui] como forma de entretenimento cada vez mais plausível para o consumidor final à medida que novos dispositivos \textit{VR-Ready} e \textit{head mounted displays} (HMDs) são disponiblizados. Com a nova tecnologia, a qual promete imersão em mundos realistas, surgem desafios tecnológicos relacionados ao aproveitamento do poder computacional do dispositivo, tendo em vista cumprir a entrega  da experiência prometida. 
+Do ponto de vista do desenvolvimento, a Unity situa-se como peça de extrema relevância dadas a facilidade de aprendizado, a gratuidade e comunidade ativa. 
 
-Full papers must respect the page limits defined by the conference.
-Conferences that publish just abstracts ask for \textbf{one}-page texts.
+Normalmente, os jogos desenvolvidos na Unity são um conjunto de cenas, cada qual com seu próprio conjunto de objetos e lógica associados. As unidades gráfica e central de processamento têm papeis bem definidos, no entanto, devido à natureza de aplicação clássica, a maior parte do comportamento lógico e controle de objetos está associado à unidade central de processamento. À vista disso, propõe-se levar para a unidade gráfica (GPU) a representatividade dos objetos, atenuando o trabalho atribuído à CPU.
 
-\section{First Page} \label{sec:firstpage}
+\section{Trabalhos Relacionados} \label{sec:firstpage}
 
 The first page must display the paper title, the name and address of the
 authors, the abstract in English and ``resumo'' in Portuguese (``resumos'' are
@@ -81,40 +76,29 @@ The abstract and ``resumo'' (if is the case) must be in 12 point Times font,
 indented 0.8cm on both sides. The word \textbf{Abstract} and \textbf{Resumo},
 should be written in boldface and must precede the text.
 
-\section{CD-ROMs and Printed Proceedings}
+\section{Arquitetura baseada em Shader}
 
-In some conferences, the papers are published on CD-ROM while only the
-abstract is published in the printed Proceedings. In this case, authors are
-invited to prepare two final versions of the paper. One, complete, to be
-published on the CD and the other, containing only the first page, with
-abstract and ``resumo'' (for papers in Portuguese).
+Há essencialmente duas camadas respectivamente responsáveis pela renderização e gerenciamento lógico da aplicação. A primeira é um shader, código executado diretamente na unidade de processamento gráfico, incumbido de delinear (ou renderizar) todos os itens apresentados no dispositivo de saída, que incluem o objeto coletável circular bem como os quadriláteros que representam o personagem ou a \textit{snake}. O segundo passo é encarregado das tarefas mais inteligentes tais como a busca pelo objeto coletável e consequente movimentação. Faz-se necessário, portanto, explorar o funcionamento das etapas desenvolvidas, mencionadas acima. 
 
-\section{Sections and Paragraphs}
+Para a movimentação da serpente, basta que o objeto original, ou figurativamente, a cabeça, seja movimentado na direção pretendida. À medida que o número de partes do corpo da \textit{snake} é acrescido, estas também são movimentadas ao assumir a posição da parte imediatamente anterior. Durante a movimentação da cabeça, são traçados três vetores que apontam, nessa ordem, para cima, para baixo e para frente e, portanto, são responsáveis por orientar a serpente na decisão do menor caminho entre sua atual posição e o objeto coletável. Considerando a restrição de deslocamento na qual pode-se mover unicamente nas referidas direções, o cálculo por meio da distância de Manhattan se mostrou mais apropriado. É relevante explicitar que os vetores de direcionamento são mutáveis, tendo em vista as possíveis posições assumíveis em dado momento.  
 
-Section titles must be in boldface, 13pt, flush left. There should be an extra
-12 pt of space before each title. Section numbering is optional. The first
-paragraph of each section should not be indented, while the first lines of
-subsequent paragraphs should be indented by 1.27 cm.
+O \textit{shader}, por sua vez, determina a relação de domínio (ou pertencimento) de cada pixel, em outras palavras, verifica-se um a um a que elemento gráfico o pixel pertence, o que pode ser, no universo desta aplicação, o objeto coletável, ou uma parte da serpente ou ainda o próprio plano de fundo. Para tanto
+O diagrama abaixo ilustra o funcionamento da arquitetura. 
 
-\subsection{Subsections}
-
-The subsection titles must be in boldface, 12pt, flush left.
-
-\section{Figures and Captions}\label{sec:figs}
+\section{Uso do Controle VR com filtro de Kalman}
 
 
-Figure and table captions should be centered if less than one line
-(Figure~\ref{fig:exampleFig1}), otherwise justified and indented by 0.8cm on
-both margins, as shown in Figure~\ref{fig:exampleFig2}. The caption font must
-be Helvetica, 10 point, boldface, with 6 points of space before and after each
-caption.
+\section{Trabalhos Futuros}\label{sec:figs}
+Para trabalhos futuros, acredita-se haver dois passos fundamentais. Primeiramente, mover a camada lógica inteiramente para a unidade gráfica de processamento, o que permitiria o uso de dezenas de serpentes simultaneamente. Para tanto [...]
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=.5\textwidth]{fig1.jpg}
-\caption{A typical figure}
-\label{fig:exampleFig1}
-\end{figure}
+O segundo passo é fazer o efetivo uso do aprendizado de máquina na camada lógica, a fim de guiar a serpente de maneira mais inteligente para que além de perseguir o objeto coletável, seja capaz de desviar de outras possíveis \textit{snakes} que estejam no cenário.
+
+%\begin{figure}[ht]
+%\centering
+%\includegraphics[width=.5\textwidth]{fig1.jpg}
+%\caption{A typical figure}
+%\label{fig:exampleFig1}
+%\end{figure}
 
 \begin{figure}[ht]
 \centering
