@@ -3,6 +3,9 @@
 \usepackage{sbc-template}
 
 \usepackage{graphicx,url}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows, shapes.geometric}
 
 %\usepackage[brazil]{babel}   
 \usepackage[latin1]{inputenc}  
@@ -10,23 +13,14 @@
      
 \sloppy
 
-\title{Uso do Filtro de Kalman em um jogo de Realidade Virtual com Visualização baseada em Shader}
+\title{VRSnake: Aplicação do Filtro de Kalman em um Jogo de Realidade Virtual com Visualização Baseada em Shader}
 
-\author{Luciana P. Nedel\inst{1}, Rafael H. Bordini\inst{2}, Flávio Rech
-  Wagner\inst{1}, Jomi F. Hübner\inst{3} }
+\author{Thiago S. Figueira\inst{1}, Adriano M. Gil\inst{1} }
 
-
-\address{Instituto de Informática -- Universidade Federal do Rio Grande do Sul
-  (UFRGS)\\
-  Caixa Postal 15.064 -- 91.501-970 -- Porto Alegre -- RS -- Brazil
-\nextinstitute
-  Department of Computer Science -- University of Durham\\
-  Durham, U.K.
-\nextinstitute
-  Departamento de Sistemas e Computação\\
-  Universidade Regional de Blumenal (FURB) -- Blumenau, SC -- Brazil
-  \email{\{nedel,flavio\}@inf.ufrgs.br, R.Bordini@durham.ac.uk,
-  jomi@inf.furb.br}
+\address{Samsung Instituto de Desenvolvimento para a Informática da Amazônia
+  (SIDIA)\\
+  Manaus -- AM -- Brazil
+  \email{\{t.figueira,adriano.gil\}@samsung.com}
 }
 
 \begin{document} 
@@ -54,93 +48,60 @@
 
 \section{Introdução}
 
-A realidade virtual (VR, em inglês) tem angariado a atenção do mercado de jogos [referencia de jogos aqui] como forma de entretenimento cada vez mais plausível para o consumidor final à medida que novos dispositivos \textit{VR-Ready} e \textit{head mounted displays} (HMDs) são disponiblizados. Com a nova tecnologia, a qual promete imersão em mundos realistas, surgem desafios tecnológicos relacionados ao aproveitamento do poder computacional do dispositivo, tendo em vista cumprir a entrega  da experiência prometida. 
-Do ponto de vista do desenvolvimento, a Unity situa-se como peça de extrema relevância dadas a facilidade de aprendizado, a gratuidade e comunidade ativa. 
+A realidade virtual (VR, em inglês) tem angariado a atenção do mercado de jogos como forma de entretenimento cada vez mais plausível para o consumidor final à medida que novos \textit{head mounted displays} (HMDs) e dispositivos \textit{VR-Ready} são disponiblizados. Com a popularização da tecnologia, a qual promete imersão em mundos realistas, os desenvolvedores enfrentam desafios tecnológicos relacionados ao aproveitamento do poder computacional do dispositivo, tendo em vista cumprir a entrega da experiência prometida. 
+Pelas lentes do desenvolvimento, a \textit{Unity} situa-se como peça de extrema relevância dadas a sua facilidade de aprendizado, gratuidade do uso e interatividade entre a comunidade de criadores.
 
-Normalmente, os jogos desenvolvidos na Unity são um conjunto de cenas, cada qual com seu próprio conjunto de objetos e lógica associados. As unidades gráfica e central de processamento têm papeis bem definidos, no entanto, devido à natureza de aplicação clássica, a maior parte do comportamento lógico e controle de objetos está associado à unidade central de processamento. À vista disso, propõe-se levar para a unidade gráfica (GPU) a representatividade dos objetos, atenuando o trabalho atribuído à CPU.
+Normalmente, os jogos desenvolvidos na Unity são compostos por conjuntos de cenas, cada qual com seu próprio agrupamento de objetos e lógica associados. As unidades gráfica e central de processamento têm papeis bem definidos, no entanto, devido à natureza de aplicação clássica, a maior parte do comportamento lógico e de controle de objetos está associado à unidade central de processamento. Em outro aspecto, os controladores para dispositivos de realidade virtual, em especial o \textit{joystick}, são passíveis de ruídos devido à sua natureza sensorial, o que implica  em comportamentos indesejados como \textit{jittering} durante a leitura dos dados e, por conseguinte, impedimento do nível adequado de responsividade em um jogo. 
 
-\section{Trabalhos Relacionados} \label{sec:firstpage}
+Desse modo, propõe-se o desenvolvimento de um jogo cujas representações gráficas sejam inteiramente fundamentadas em código de GPU ao passo que as restrições lógicas concentrem-se na CPU. Em alusão à um clássico, o jogo Serpente (ou Snake, de 1979) será recriado para os dispositivos de realidade virtual da Samsung em uma aplicação Unity, diferencia-se, porém, na medida que o jogador controla o objeto coletável, posicionando-o com a finalidade de fazer a serpente falhar em seu objetivo. No que se refere ao controlador, intenta-se a aplicação do filtro de Kalman durante a leitura do posicionamento do cursor, a fim de melhorar o reconhecimento do sinal e  atenuar esta inconsistência.
 
-The first page must display the paper title, the name and address of the
-authors, the abstract in English and ``resumo'' in Portuguese (``resumos'' are
-required only for papers written in Portuguese). The title must be centered
-over the whole page, in 16 point boldface font and with 12 points of space
-before itself. Author names must be centered in 12 point font, bold, all of
-them disposed in the same line, separated by commas and with 12 points of
-space after the title. Addresses must be centered in 12 point font, also with
-12 points of space after the authors' names. E-mail addresses should be
-written using font Courier New, 10 point nominal size, with 6 points of space
-before and 6 points of space after.
+\section{Trabalhos Relacionados}
 
-The abstract and ``resumo'' (if is the case) must be in 12 point Times font,
-indented 0.8cm on both sides. The word \textbf{Abstract} and \textbf{Resumo},
-should be written in boldface and must precede the text.
-
-\section{Arquitetura baseada em Shader}
-
-Há essencialmente duas camadas respectivamente responsáveis pela renderização e gerenciamento lógico da aplicação. A primeira é um shader, código executado diretamente na unidade de processamento gráfico, incumbido de delinear (ou renderizar) todos os itens apresentados no dispositivo de saída, que incluem o objeto coletável circular bem como os quadriláteros que representam o personagem ou a \textit{snake}. O segundo passo é encarregado das tarefas mais inteligentes tais como a busca pelo objeto coletável e consequente movimentação. Faz-se necessário, portanto, explorar o funcionamento das etapas desenvolvidas, mencionadas acima. 
+\section{Arquitetura de Visualização Baseada em Shader}
+Há essencialmente duas camadas respectivamente responsáveis pela renderização e gerenciamento lógico da aplicação. A primeira é um shader, código executado diretamente na unidade de processamento gráfico, incumbido de delinear (ou renderizar) todos os itens apresentados no dispositivo de saída, que incluem o objeto coletável circular bem como os quadriláteros que representam o personagem ou a \textit{snake}. A segunda camada, executada na unidade central de processamento, é encarregada das tarefas mais inteligentes tais como a busca pelo objeto coletável e consequente movimentação. Faz-se necessário, portanto, explorar o funcionamento das etapas desenvolvidas, mencionadas acima. 
 
 Para a movimentação da serpente, basta que o objeto original, ou figurativamente, a cabeça, seja movimentado na direção pretendida. À medida que o número de partes do corpo da \textit{snake} é acrescido, estas também são movimentadas ao assumir a posição da parte imediatamente anterior. Durante a movimentação da cabeça, são traçados três vetores que apontam, nessa ordem, para cima, para baixo e para frente e, portanto, são responsáveis por orientar a serpente na decisão do menor caminho entre sua atual posição e o objeto coletável. Considerando a restrição de deslocamento na qual pode-se mover unicamente nas referidas direções, o cálculo por meio da distância de Manhattan se mostrou mais apropriado. É relevante explicitar que os vetores de direcionamento são mutáveis, tendo em vista as possíveis posições assumíveis em dado momento.  
 
-O \textit{shader}, por sua vez, determina a relação de domínio (ou pertencimento) de cada pixel, em outras palavras, verifica-se um a um a que elemento gráfico o pixel pertence, o que pode ser, no universo desta aplicação, o objeto coletável, ou uma parte da serpente ou ainda o próprio plano de fundo. Para tanto
+O \textit{shader}, por sua vez, determina a relação de domínio (ou pertencimento) de cada pixel, em outras palavras, verifica-se um a um a que elemento gráfico o pixel pertence, o que pode ser, no universo desta aplicação, o objeto coletável, ou uma parte da serpente ou ainda o próprio plano de fundo. Para determinar esta relação de atribuição, alguns cálculos básicos são necessários. A exemplo, um pixel é colorido com a cor do objeto coletável se sua distância até o centro do objeto for menor que o raio à medida que o mesmo pixel recebe a cor da serpente, caso esteja contido na área do quadrilátero, dados o tamanho do lado e centro. 
 O diagrama abaixo ilustra o funcionamento da arquitetura. 
 
-\section{Uso do Controle VR com filtro de Kalman}
-
-
-\section{Trabalhos Futuros}\label{sec:figs}
-Para trabalhos futuros, acredita-se haver dois passos fundamentais. Primeiramente, mover a camada lógica inteiramente para a unidade gráfica de processamento, o que permitiria o uso de dezenas de serpentes simultaneamente. Para tanto [...]
-
-O segundo passo é fazer o efetivo uso do aprendizado de máquina na camada lógica, a fim de guiar a serpente de maneira mais inteligente para que além de perseguir o objeto coletável, seja capaz de desviar de outras possíveis \textit{snakes} que estejam no cenário.
-
-%\begin{figure}[ht]
-%\centering
-%\includegraphics[width=.5\textwidth]{fig1.jpg}
-%\caption{A typical figure}
-%\label{fig:exampleFig1}
-%\end{figure}
-
-\begin{figure}[ht]
+\begin{figure}[H]
 \centering
-\includegraphics[width=.3\textwidth]{fig2.jpg}
-\caption{This figure is an example of a figure caption taking more than one
-  line and justified considering margins mentioned in Section~\ref{sec:figs}.}
-\label{fig:exampleFig2}
+\tikzstyle{arrow} = [draw, -latex]
+
+\begin{tikzpicture} [x=1.2cm, y=1cm, node distance=0,outer sep=0,inner sep=0]
+	\draw (0, 0) rectangle (12,4);
+	\draw[dashed] (6,0) -- (6,4);	
+	
+	\draw (0,3.5) rectangle (6,4) node[pos=.5] {\small Camada Lógica (CSharp)};
+	\draw (6, 3.5) rectangle (12, 4) node[pos=.5] {\small Camada de Visualização (Shader)};
+	
+	\draw (0.3, 2.7) rectangle (4, 3.2) node[pos=.5] (1A) {\small Gerenciamento de Colisão};
+	\draw (0.6, 1.9) rectangle (4.6, 2.4) node[pos=.5] (2A) {\small Movimentação da Serpente};
+	\draw (7, 1.9) rectangle (11, 2.4)node[pos=.5] (3A) {\small Renderização da Serpente};
+	
+	\draw (0.3, 1) rectangle (4.3, 1.5) node[pos=.5] (4A) {\small Aplicação do filtro de Kalman};
+	\draw (0.6, 0.2) rectangle (5.6, 0.7) node[pos=.5] (5A) {\small Cálculo da Geometria do Background};
+	\draw (7, 0.2) rectangle (11, 0.7) node[pos=.5] (6A) {\small Renderização do Background};	
+	
+	
+	\path [arrow] (1A) -- (2A);
+	\path [arrow] (2A) -- (3A);
+
+	\path [arrow] (4A) -- (5A);
+	\path [arrow] (5A) -- (6A);
+	
+\end{tikzpicture}
+\caption{Diagrama de arquitetura da aplicação}
 \end{figure}
 
-In tables, try to avoid the use of colored or shaded backgrounds, and avoid
-thick, doubled, or unnecessary framing lines. When reporting empirical data,
-do not use more decimal digits than warranted by their precision and
-reproducibility. Table caption must be placed before the table (see Table 1)
-and the font used must also be Helvetica, 10 point, boldface, with 6 points of
-space before and after each caption.
+\section{Uso do Controle VR com Filtro de Kalman}
+Para a interação humano-computador de dispositivos de realidade virtual (VR), existem essencialmente duas formas de interação com o cursor: o HDM (\textit{head-mounted display}), ou seja, um sensor lateral acoplado ao próprio dispositivo, e os controladores externos, como os controles ou \textit{joysticks}. Em sua condição de sensor, estes controladores estão sujeitos à interferência ruidosa durante a virtualização do evento representado no mundo real pelo movimento do usuário. Com a finalidade de melhorar a captura do sinal e traduzir de maneira mais fiel as intenções do jogador, o filtro de Kalman será aplicado às leituras do \textit{joystick} por meio de um componente de visualização de ruídos e aplicação do filtro desenvolvido por [].
 
-\begin{table}[ht]
-\centering
-\caption{Variables to be considered on the evaluation of interaction
-  techniques}
-\label{tab:exTable1}
-\includegraphics[width=.7\textwidth]{table.jpg}
-\end{table}
-
-\section{Images}
-
-All images and illustrations should be in black-and-white, or gray tones,
-excepting for the papers that will be electronically available (on CD-ROMs,
-internet, etc.). The image resolution on paper should be about 600 dpi for
-black-and-white images, and 150-300 dpi for grayscale images.  Do not include
-images with excessive resolution, as they may take hours to print, without any
-visible difference in the result. 
+\section{Trabalhos Futuros}\label{sec:figs}
+Em trabalhos futuros, dois passos são vistos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para a camada de visualização, na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número representativamente maior de serpentes. Em segundo lugar, aplicar aprendizagem de máquina nesta camada, objetivando-se um comportamento de busca e desvio de obstáculos (como outras serpentes e seu próprio corpo) mais inteligente, por conseguinte, desafiador.
 
 \section{References}
-
-Bibliographic references must be unambiguous and uniform.  We recommend giving
-the author names references in brackets, e.g. \cite{knuth:84},
-\cite{boulic:91}, and \cite{smith:99}.
-
-The references must be listed using 12 point font size, with 6 points of space
-before each reference. The first line of each reference should not be
-indented, while the subsequent should be indented by 0.5 cm.
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
