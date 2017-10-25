@@ -47,55 +47,100 @@
 
 \section{Introdução}
 
-A realidade virtual (VR, em inglês) tem angariado a atenção do mercado de jogos como forma de entretenimento cada vez mais plausível para o consumidor final à medida que novos \textit{head mounted displays} (HMDs) e dispositivos \textit{VR-Ready} são disponiblizados. Com a popularização da tecnologia, a qual promete imersão em mundos realistas, os desenvolvedores enfrentam desafios tecnológicos relacionados ao aproveitamento do poder computacional do dispositivo, tendo em vista cumprir a entrega da experiência prometida. 
-Neste cenário, a \textit{Unity} situa-se como peça de extrema relevância dadas a sua facilidade de aprendizado, gratuidade do uso e interatividade entre a comunidade de criadores.
+A realidade virtual (VR, em inglês) tem angariado a atenção do mercado de jogos como forma de entretenimento cada vez mais plausível para o consumidor final à medida que novos \textit{head mounted displays} (HMDs) e dispositivos \textit{VR-Ready}, munidos do poder computacional para a execução de aplicações VR, são disponiblizados. Neste contexto, a \textit{Unity} situa-se como peça de extrema relevância dadas a sua facilidade de aprendizado, gratuidade do uso e interatividade entre a comunidade de criadores.
 
-Normalmente, os jogos desenvolvidos na Unity são compostos por conjuntos de cenas, cada qual com seu próprio agrupamento de objetos e lógica associados. As unidades gráfica e central de processamento têm papeis bem definidos, no entanto, devido à natureza de aplicação clássica, a maior parte do comportamento lógico e de controle de objetos está associado à unidade central de processamento. Em outro aspecto, os controladores para dispositivos de realidade virtual, em especial o \textit{joystick}, são passíveis de ruídos devido à sua natureza sensorial, o que implica  em comportamentos indesejados como \textit{jittering} durante a leitura dos dados e, por conseguinte, impedimento do nível adequado de responsividade em um jogo. 
+%Com a popularização da tecnologia, a qual promete imersão em mundos realistas, os desenvolvedores enfrentam desafios tecnológicos relacionados ao aproveitamento do poder computacional do dispositivo, tendo em vista cumprir a entrega da experiência prometida. 
+%Neste cenário, 
 
-Desse modo, propõe-se o desenvolvimento de um jogo cujas representações gráficas sejam inteiramente fundamentadas em código de GPU ao passo que as restrições lógicas concentrem-se na CPU. Em alusão à um clássico, o jogo Serpente (ou Snake, de 1979) será recriado para os dispositivos de realidade virtual da Samsung em uma aplicação Unity, diferencia-se, porém, na medida que o jogador controla o objeto coletável, posicionando-o com a finalidade de fazer a serpente falhar em seu objetivo. No que se refere ao controlador, intenta-se a aplicação do filtro de Kalman durante a leitura do posicionamento do cursor, a fim de melhorar o reconhecimento do sinal e  atenuar esta inconsistência.
+Normalmente, os jogos e aplicações desenvolvidos na Unity são compostos por conjuntos de cenas, cada qual com seu próprio agrupamento de objetos e lógica associados. Desta maneira, a CPU é responsável por transmitir informações sobre elementos gráficos à GPU. Este processo acontece em dois estágios, primeiro os \textit{assets} gráficos como modelos e texturas são carregados na VRAM (\textit{video RAM}) e posteriormente a CPU diz à GPU o que fazer, à medida que descreve os diferentes objetos renderizados na tela, como onde eles estão e outras informações relevantes. Por sua vez, a GPU recolhe esta informação e a converte em imagem.  Desse modo, propõe-se o desenvolvimento de um jogo cujas representações gráficas sejam inteiramente fundamentadas em código de GPU ao passo que as restrições lógicas concentrem-se na CPU, de maneira a aliviar o trabalho desta última. Em alusão à um clássico, o jogo Serpente (ou Snake, de 1979) será recriado para os dispositivos de realidade virtual da Samsung em uma aplicação Unity, diferencia-se, porém, na medida que o jogador controla o objeto coletável, posicionando-o com a finalidade de fazer a serpente falhar em seu objetivo. 
+
+Neste outro aspecto, os controladores para dispositivos de realidade virtual, em especial o \textit{joystick}, são passíveis de ruídos devido à sua natureza sensorial, o que implica  em comportamentos indesejados como \textit{jittering} durante a leitura dos dados e, por conseguinte, impedimento do nível adequado de responsividade em um jogo. No que se refere ao controlador, intenta-se a aplicação do filtro de Kalman durante a leitura do posicionamento do cursor, a fim de melhorar o reconhecimento do sinal e  atenuar esta inconsistência.
+
+%As unidades gráfica e central de processamento têm papeis bem definidos, no entanto, devido à natureza de aplicação clássica, a maior parte do comportamento lógico e de controle de objetos está associado à unidade central de processamento. 
+ 
+ 
+
 
 \section{Trabalhos Relacionados}
 
 \section{Arquitetura de Visualização Baseada em Shader}
-Há essencialmente duas camadas respectivamente responsáveis pela visualização (ou renderização) e gerenciamento lógico da aplicação. A primeira envolve um shader, código executado diretamente na unidade de processamento gráfico (GPU), incumbido de delinear (ou renderizar) todos os itens apresentados no dispositivo de saída, que incluem plano de fundo, o objeto coletável circular bem como os quadriláteros que representam o personagem ou a \textit{snake}. A segunda camada, executada na unidade central de processamento (CPU), é encarregada das tarefas mais inteligentes tais como a procura pelo objeto coletável e movimentação. Faz-se necessário, portanto, explorar o funcionamento das etapas desenvolvidas, mencionadas acima. 
+Propõe-se uma arquitetura de duas camadas respectivamente responsáveis pelo gerenciamento lógico e visualização (ou renderização) da aplicação. A primeira, executada na unidade central de processamento (CPU - \textit{central processing unit}), fora desenvolvida em \textit{csharp} e encarregada das tarefas inteligentes tais como a procura pelo objeto coletável e movimentação. A segunda camada envolve um shader, código executado diretamente na unidade de processamento gráfico (GPU - \textit{graphics processing unit}), incumbido de delinear (ou renderizar) todos os itens apresentados no dispositivo de saída, que incluem plano de fundo, o objeto coletável circular bem como os quadriláteros que representam o personagem ou a \textit{snake}. 
 
-Para a movimentação da serpente, basta que o objeto original, ou figurativamente, a cabeça, seja movimentado na direção pretendida. À medida que o número de partes do corpo da \textit{snake} é acrescido, estas também são movimentadas ao assumir a posição da parte imediatamente anterior. Durante a movimentação da cabeça, são traçados três vetores que apontam, nessa ordem, para cima, para baixo e para frente e, portanto, são responsáveis por orientar a serpente na decisão do menor caminho entre sua atual posição e o objeto coletável. Considerando a restrição de deslocamento na qual pode-se mover unicamente nas referidas direções, o cálculo por meio da distância de Manhattan se mostrou mais apropriado. É relevante explicitar que os vetores de direcionamento são mutáveis, tendo em vista as possíveis posições assumíveis em dado momento.  
-
-O \textit{shader}, por sua vez, determina a relação de domínio (ou pertencimento) de cada pixel, em outras palavras, verifica-se um a um a que elemento gráfico o pixel pertence, o que pode ser, no universo desta aplicação, o objeto coletável, ou uma parte da serpente ou ainda o próprio plano de fundo. Para determinar esta relação de atribuição, alguns cálculos básicos são necessários. A exemplo, um pixel é colorido com a cor do objeto coletável se sua distância até o centro do objeto for menor que o raio à medida que o mesmo pixel recebe a cor da serpente, caso esteja contido na área do quadrilátero, dados o tamanho do lado e centro. 
-O diagrama abaixo ilustra o funcionamento da arquitetura. 
+Na primeira camada, a movimentação pode ser definida como um \textit{buffer} deslizante: à medida que o número de partes do corpo da \textit{snake} é acrescido, estas também são movimentadas ao assumir a posição da parte imediatamente anterior. Logo, a movimentação do primeiro quadrilátero, ou figurativamente, a cabeça, norteia todo o movimentar da \textit{snake}, pois é neste momento que são traçados três vetores que apontam, nessa ordem, para cima, para baixo e para frente e, portanto, são responsáveis por orientar a serpente na decisão do menor caminho entre sua atual posição e o objeto coletável. Considerando a restrição de deslocamento na qual pode-se mover unicamente nas referidas direções, o cálculo por meio da distância de Manhattan se mostrou mais apropriado e menos custoso. É relevante explicitar que os vetores de direcionamento são mutáveis, tendo em vista as possíveis posições assumíveis, conforme a figura \ref{fig:snakeHeadPositions}, abaixo.
 
 \begin{figure}[H]
 \centering
 \tikzstyle{arrow} = [draw, -latex]
 
 \begin{tikzpicture} [x=1.2cm, y=1cm, node distance=0,outer sep=0,inner sep=0]
-	\draw (0, 0) rectangle (12,4);
-	\draw[dashed] (6,0) -- (6,4);	
+	\draw (0, 0) rectangle (1, 1) node[pos=.5] {\small Head};
+	\draw (3, 0) rectangle (4, 1) node[pos=.5] {\small Head};
+	\draw (6, 0) rectangle (7, 1) node[pos=.5] {\small Head};
+	\draw (9, 0) rectangle (10, 1) node[pos=.5] {\small Head};
 	
-	\draw (0,3.5) rectangle (6,4) node[pos=.5] {\small Camada Lógica (CSharp)};
-	\draw (6, 3.5) rectangle (12, 4) node[pos=.5] {\small Camada de Visualização (Shader)};
+	\path [arrow] (0.5, 1) -- (0.5, 1.5);
+	\path [arrow] (1, 0.5) -- (1.5, 0.5);
+	\path [arrow] (0, 0.5) -- (-0.5, 0.5);
 	
-	\draw (0.3, 2.7) rectangle (4, 3.2) node[pos=.5] (1A) {\small Gerenciamento de Colisão};
-	\draw (0.6, 1.9) rectangle (4.6, 2.4) node[pos=.5] (2A) {\small Movimentação da Serpente};
-	\draw (7, 1.9) rectangle (11, 2.4)node[pos=.5] (3A) {\small Renderização da Serpente};
+	\path [arrow] (3.5, 0) -- (3.5, -0.5);
+	\path [arrow] (4, 0.5) -- (4.5, 0.5);
+	\path [arrow] (3, 0.5) -- (2.5, 0.5);
 	
-	\draw (0.3, 1) rectangle (4.3, 1.5) node[pos=.5] (4A) {\small Aplicação do filtro de Kalman};
-	\draw (0.4, 0.2) rectangle (5.8, 0.7) node[pos=.5] (5A) {\small Cálculo da Geometria do Plano de Fundo};
-	\draw (7, 0.2) rectangle (11.7, 0.7) node[pos=.5] (6A) {\small Renderização do Plano de Fundo};	
+	\path [arrow] (6.5, 1) -- (6.5, 1.5);
+	\path [arrow] (7, 0.5) -- (7.5, 0.5);
+	\path [arrow] (6.5, 0) -- (6.5, -0.5);
 	
+    \path [arrow] (9.5, 1) -- (9.5, 1.5);
+	\path [arrow] (9, 0.5) -- (8.5, 0.5);
+	\path [arrow] (9.5, 0) -- (9.5, -0.5);                                                                               
+	
+\end{tikzpicture}
+\caption{Possíveis direções de movimento da serpente}
+\label{fig:snakeHeadPositions}
+\end{figure}
+
+A inteligência de movimentação da \textit{snake} é, por sua vez, composta por uma funcão utilitária que avalia cada possível ação em determinado momento. Em essência, a serpente sempre está buscando alcançar o coletável, por isso avalia a menor distância nos eixos X e Y e, desde que não seja ela mesma um obstáculo neste menor caminho, ela assume esse curso e repete o processo. 
+
+Na segunda camada, o \textit{shader} determina a relação de domínio (ou pertencimento) de cada pixel durante a execução do jogo, em outras palavras, verifica-se um a um a que elemento gráfico o pixel pertence, o que pode ser, no universo desta aplicação, o objeto coletável, ou uma parte da serpente ou ainda o próprio plano de fundo. Para determinar esta relação de atribuição, alguns cálculos básicos são necessários: um pixel é colorido com a cor do objeto coletável se sua distância até o centro do objeto for menor que o raio, semelhantemente mantem-se um vetor de pontos equidistantes entre si, onde cada posição representa um quadrilátero que faz parte do corpo da \textit{snake} e o mesmo pixel pode receber a cor da serpente, caso esteja contido na área destes quadriláteros, dados seu tamanho do lado e centros, no entanto, uma vez que não atenda a nenhum caso anterior, o pixel simplesmente recebe a cor do plano de fundo. É ainda no \textit{shader} que outra particularidade do jogo é atendida: a serpente move-se de maneira circular. Para este efeito, deve-se compreender o mapeamento UV, que consiste em projetar uma imagem 2D em uma superfície 3D, da superfície do objeto, neste caso, uma esfera. Basta verificar as extremidades para a presença da \textit{snake} e redesenhá-la no lado apropriado. 
+
+O diagrama abaixo ilustra, de maneira geral, o funcionamento da arquitetura. 
+
+\begin{figure}[H]
+\centering
+\tikzstyle{arrow} = [draw, -latex]
+
+\begin{tikzpicture} [x=1.2cm, y=1cm, node distance=0,outer sep=0,inner sep=0]
+	\draw (0, 0) rectangle (12,5);
+	\draw[dashed] (6,0) -- (6,5);	
+	
+	\draw (0,4.5) rectangle (6,5) node[pos=.5] {\small Camada Lógica (CSharp)};
+	\draw (6, 4.5) rectangle (12, 5) node[pos=.5] {\small Camada de Visualização (Shader)};
+	
+	\draw (0.3, 3.7) rectangle (4, 4.2) node[pos=.5] (1A) {\small Gerenciamento de Colisão};
+	\draw (0.6, 2.9) rectangle (4.6, 3.4) node[pos=.5] (2A) {\small Movimentação da Serpente};
+	\draw (7, 2.9) rectangle (11, 3.4)node[pos=.5] (3A) {\small Renderização da Serpente};
+	
+	\draw (0.3, 2) rectangle (4.3, 2.5) node[pos=.5] (4A) {\small Aplicação do filtro de Kalman};
+	\draw (0.4, 1.2) rectangle (5.8, 1.7) node[pos=.5] (5A) {\small Cálculo da Geometria do Plano de Fundo};
+	\draw (7, 1.2) rectangle (11.7, 1.7) node[pos=.5] (6A) {\small Renderização do Plano de Fundo};	
+	
+	\draw (0.3, 0.2) rectangle (5.9, 0.7) node[pos=.5] (7A) {\small Inteligência de Movimentação da Serpente};
 	
 	\path [arrow] (1A) -- (2A);
 	\path [arrow] (2A) -- (3A);
 
 	\path [arrow] (4A) -- (5A);
 	\path [arrow] (5A) -- (6A);
-	
 \end{tikzpicture}
 \caption{Diagrama de arquitetura da aplicação}
+\label{fig:diagramaArquitetura}
 \end{figure}
 
 \section{Uso do Controle VR com Filtro de Kalman}
-Para a interação humano-computador de dispositivos de realidade virtual (VR), existem essencialmente duas formas de interação com o cursor: o HDM (\textit{head-mounted display}), ou seja, um sensor lateral acoplado ao próprio dispositivo, e os controladores externos, como os controles ou \textit{joysticks}. Em sua condição de sensor, estes controladores estão sujeitos à interferência ruidosa durante a virtualização do evento representado no mundo real pelo movimento do usuário. Com a finalidade de melhorar a captura do sinal e traduzir de maneira mais fiel as intenções do jogador, o filtro de Kalman será aplicado às leituras do \textit{joystick} por meio de um componente de visualização de ruídos e aplicação do filtro desenvolvido por [].
+Devido à natureza do jogo desenvolvido, o jogador necessita controlar o posicionamento do objeto coletável e para tanto existem essencialmente duas formas de interação com o cursor num dispositivo de realidade virtual: o HDM (\textit{head-mounted display}), ou seja, um sensor lateral acoplado ao próprio dispositivo, e os controladores externos, como os controles ou \textit{joysticks}. Em sua condição de sensor, estes controladores estão sujeitos à interferência ruidosa durante a virtualização do evento representado no mundo real pelo movimento do usuário. Com a finalidade de melhorar a captura do sinal e traduzir de maneira mais fiel as intenções do jogador, o filtro de Kalman será aplicado às leituras do \textit{joystick} por meio de um componente de visualização de ruídos e aplicação do filtro desenvolvido por [], conforme apontado na figura \ref{fig:diagramaArquitetura}.
+
+
+
 
 \section{Trabalhos Futuros}\label{sec:figs}
 Em trabalhos futuros, dois passos são percebidos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para a camada de visualização, na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número representativamente maior de serpentes. Em segundo lugar, aplicar aprendizagem de máquina nesta camada, objetivando-se um comportamento de busca e desvio de obstáculos (como outras serpentes e seu próprio corpo) mais inteligente, por conseguinte, desafiador.
