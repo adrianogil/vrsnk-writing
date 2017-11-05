@@ -52,7 +52,7 @@ A realidade virtual (VR, em inglês) tem angariado a atenção do consumidor final 
 % Contextualizar a Unity
 No desenvolvimento de aplicações VR, o motor e editor gráfico (\textit{engine}) \textit{Unity} situa-se como peça de extrema relevância dadas a sua facilidade de aprendizado e incomplexidade no processo de desenvolvimento. 
 
-Normalmente, os jogos e aplicações desenvolvidos na Unity são compostos por conjuntos de cenas, cada qual com seu próprio agrupamento de objetos e lógica associados. Desta maneira, a CPU é responsável por transmitir informações sobre elementos gráficos à GPU. Este processo acontece em dois estágios, primeiro os \textit{assets} gráficos como modelos e texturas são carregados na VRAM (\textit{video RAM}) e posteriormente a CPU diz à GPU o que fazer, à medida que descreve os diferentes objetos renderizados na tela, como onde eles estão e outras informações relevantes. Por sua vez, a GPU recolhe esta informação e a converte em imagem.  
+Normalmente, os jogos e aplicações desenvolvidos na Unity são compostos por conjuntos de cenas, cada qual com seu próprio agrupamento de objetos e lógica associados. Desta maneira, a CPU é responsável por transmitir informações sobre elementos gráficos à GPU. Este processo acontece em dois estágios, primeiro os \textit{assets} gráficos como modelos e texturas são carregados na VRAM (\textit{video RAM}) e posteriormente a CPU diz à GPU o que fazer, à medida que descreve os diferentes objetos renderizados na tela, como onde eles estão e outras informações relevantes. Por sua vez, a GPU recolhe esta informação e a converte em imagem \cite{akenine2008real}.
 
 % Resumo proposta
 Desse modo, propõe-se o desenvolvimento de um jogo cujas representações gráficas sejam inteiramente fundamentadas em código de GPU ao passo que as restrições lógicas concentrem-se na CPU, de maneira a aliviar o trabalho desta última. Em alusão à um clássico, o jogo Snake, de 1979, será recriado para os dispositivos de realidade virtual da Samsung em uma aplicação Unity, diferencia-se, porém, na medida que o jogador controla o objeto coletável, posicionando-o com a finalidade de fazer a serpente falhar em seu objetivo. Neste aspecto, intenta-se a aplicação do filtro de Kalman durante a leitura do posicionamento do cursor através do \textit{joystick}, a fim de melhorar o reconhecimento do sinal e atenuar a inconsistência apresentada. 
@@ -63,10 +63,20 @@ Analisa-se na seção \ref{sec:relatedworks} outros trabalhos que abordam sensores
 \section{Trabalhos Relacionados} \label{sec:relatedworks}
 
 % 1 - Games VR como um potencializador de imersão
+Jogos em realidade virtual são um grande potencializador de imersão, dada a sua capacidade de estimular a sensação de presença espacial e interatividade \cite{seibert2017control}.
+
 % 2 - Criar Jogos em VR é sobre como preencher o espaço em 3D. Exemplos.
+Aplicações VR se diferenciam de outras aplicações pela preocupação em preencher o conteúdo do espaço tridimensional de forma a fornecer um conteúdo para todos os pontos de vista possíveis. Como por exemplo, a aplicação descrita em \cite{zund2015unfolding}, utiliza visão computacional para geração de uma visão panorâmica de um jogo de console de 8-bits. Rodando em um Oculus Rift DK2, o jogador é posicionado no centro do mundo, e a medida que movimenta seu personagem, o mundo se desdobra ao seu redor, extendendo a visão do jogo nas quatro paredes do ambiente virtual.
+
 % 3 - Arquiteturas de visualização
+
 % 4 - Controles de VR auxiliam na sensação de presença e por consequência na imersão
+Controles VR, tal como o modelo ET-YO32 da Samsung exibido na figura \ref{fig:vrcontroller}, são definidos como sendo de mapeamento natural tangível realístico, que segundo classificação de \cite{skalski2011mapping} significa que o controle emula de forma realista a sensação do que está sendo feito dentro do ambiente virtual, ou seja, movimentar a réplica do controle físico no espaço 3D da aplicação VR.
+
 % 5 - Filtrar as entradas dos controles permite melhorar a experiência do usuário
+
+% 6 - Exemplos de filtragem de açoes dos controles (From ERIN17 paper. Refrasear)
+Alguns artigos trabalham com a filtragem de sensores baseados em acelerômetro: \cite{schlomer2008gesture} usa o modelo oculto de Markov para reconhecimento de gestos do usuários feitos em um \textit{Wiimote}, o controle do \textit{Wii}, a filtragem ocorre por meio de filtros simples para remover pontos que não são suficientemente significantes. \cite{shiratori2008accelerometer} utiliza múltiplos controles de \textit{Wii} para criar animações procedurais, as informações do acelerômetro são analisadas e aplica-se o filtro de Kalman para remover o ruído  gerado pelo movimento.
 
 \section{VRSnake} \label{sec:vrsnake}
 % Definição das regras do jogo
@@ -180,6 +190,13 @@ No que concerne a segunda camada, o \textit{shader} determina a relação de domín
 
 \section{Uso do Controle VR com Filtro de Kalman} \label{sec:gearvrcontroller}
 Devido à natureza do jogo desenvolvido, o jogador necessita controlar o posicionamento do objeto coletável e para tanto existem essencialmente duas formas de interação com o cursor num dispositivo de realidade virtual: o HDM (\textit{head-mounted display}), ou seja, um sensor lateral acoplado ao próprio dispositivo, e os controladores externos, como os controles ou \textit{joysticks}. Em sua condição de sensor, porém, estes controladores estão sujeitos à interferência ruidosa durante a virtualização do evento representado no mundo real pelo movimento do usuário. Com a finalidade de melhorar a captura do sinal e traduzir de maneira mais fiel as intenções do jogador, o filtro de Kalman será aplicado às leituras do \textit{joystick} por meio de um componente de visualização de ruídos e aplicação do filtro desenvolvido por [], conforme apontado na figura \ref{fig:diagramaArquitetura}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.4\textwidth]{images/gear_controller.jpg}
+\caption{Controle para Realidade Virtual da Samsung.}
+\label{fig:vrcontroller}
+\end{figure}
 
 Cabe rememorar o conceito estabelecido pelo filtro de Kalman: trata-se de um filtro ótimo capaz de determinar estados passados e futuros de um sistema dinâmico linear, a partir de um grupo de entradas ruidosas, desde que tal ruído seja gaussiano. Para a efetiva implementação no controle de realidade virtual, inicialmente captura-se a orientação angular do \textit{joystick}, traça-se um raio da posição virtual atual do controle até uma esfera unitária e o ponto resultante da interseção é o foco do usuário, em outras palavras, o objetivo apontado pelo cursor, esta posição é onde aplica-se efetivamente o filtro de Kalman. 
 
