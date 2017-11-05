@@ -62,7 +62,11 @@ Analisa-se na seção \ref{sec:relatedworks} outros trabalhos que abordam sensores
 
 \section{Trabalhos Relacionados} \label{sec:relatedworks}
 
-\section{Realidade Virtual em uma Esfera Invertida} \label{sec:invertedsphere}
+% 1 - Games VR como um potencializador de imersão
+% 2 - Criar Jogos em VR é sobre como preencher o espaço em 3D. Exemplos.
+% 3 - Arquiteturas de visualização
+% 4 - Controles de VR auxiliam na sensação de presença e por consequência na imersão
+% 5 - Filtrar as entradas dos controles permite melhorar a experiência do usuário
 
 \section{VRSnake} \label{sec:vrsnake}
 % Definição das regras do jogo
@@ -76,6 +80,45 @@ Além disso, o comportamento de busca da serpente deve garantir que não haja movi
 Propõe-se uma arquitetura de duas camadas respectivamente responsáveis pelo gerenciamento lógico e visualização (ou renderização) da aplicação. A primeira fora desenvolvida em \textit{csharp}, portanto executada na unidade central de processamento (CPU - \textit{central processing unit}), e encarregada das tarefas inteligentes tais como a procura pelo objeto coletável e movimentação. 
 
 A segunda camada envolve um shader, código executado diretamente na unidade de processamento gráfico (GPU - \textit{graphics processing unit}), incumbido de delinear (ou renderizar) todos os itens apresentados no dispositivo de saída, que incluem plano de fundo, o objeto coletável circular bem como os quadriláteros que representam o personagem ou a \textit{snake}. 
+
+O diagrama abaixo ilustra, de maneira geral, o funcionamento da arquitetura. 
+
+\begin{figure}[H]
+\centering
+\tikzstyle{arrow} = [draw, -latex]
+
+\begin{tikzpicture} [x=1.2cm, y=1cm, node distance=0,outer sep=0,inner sep=0]
+    \draw (0, 0) rectangle (12,5);
+    \draw[dashed] (6,0) -- (6,5);   
+    
+    \draw (0,4.5) rectangle (6,5) node[pos=.5] {\small Camada Lógica (CSharp)};
+    \draw (6, 4.5) rectangle (12, 5) node[pos=.5] {\small Camada de Visualização (Shader)};
+    
+    \draw (0.3, 3.7) rectangle (4, 4.2) node[pos=.5] (1A) {\small Gerenciamento de Colisão};
+    \draw (0.6, 2.9) rectangle (4.6, 3.4) node[pos=.5] (2A) {\small Movimentação da Serpente};
+    \draw (7, 2.9) rectangle (11, 3.4)node[pos=.5] (3A) {\small Renderização da Serpente};
+    
+    \draw (0.3, 2) rectangle (4.3, 2.5) node[pos=.5] (4A) {\small Aplicação do filtro de Kalman};
+    \draw (0.4, 1.2) rectangle (5.8, 1.7) node[pos=.5] (5A) {\small Cálculo da Geometria do Plano de Fundo};
+    \draw (7, 1.2) rectangle (11.7, 1.7) node[pos=.5] (6A) {\small Renderização do Plano de Fundo}; 
+    
+    \draw (0.3, 0.2) rectangle (5.9, 0.7) node[pos=.5] (7A) {\small Inteligência de Movimentação da Serpente};
+    
+    \path [arrow] (1A) -- (2A);
+    \path [arrow] (2A) -- (3A);
+
+    \path [arrow] (4A) -- (5A);
+    \path [arrow] (5A) -- (6A);
+\end{tikzpicture}
+\caption{Diagrama de arquitetura da aplicação}
+\label{fig:diagramaArquitetura}
+\end{figure}
+
+\section{Realidade Virtual em uma Esfera Invertida} \label{sec:invertedsphere}
+
+% 1 - O uso de uma esfera invertida para renderizar o conteúdo do jogo
+
+% 2 - Mapeamento de UV em uma esfera invertida
 
 \section{Snake como um Agente Utilitário} \label{sec:agent}
 A inteligência de movimentação da \textit{snake} é, por sua vez, composta por uma função utilitária que avalia cada possível ação em determinado momento. Em essência, a serpente sempre está buscando alcançar o coletável, por isso avalia a menor distância nos eixos X e Y e, desde que não seja ela mesma um obstáculo neste menor caminho, ela assume esse curso e repete o processo. A função abaixo ilustra esse procedimento:
@@ -134,39 +177,6 @@ ManhattanDistance = \left|x_{1} - x_{2}\right| + \left|y_{1} - y_{2}\right|
 No que concerne a segunda camada, o \textit{shader} determina a relação de domínio (ou pertencimento) de todo pixel durante a execução do jogo, em outras palavras, verifica-se a que elemento gráfico cada pixel pertence, o que pode ser, no universo desta aplicação, o objeto coletável, ou uma parte da serpente ou ainda o próprio plano de fundo. Para determinar esta relação de atribuição, alguns cálculos básicos são necessários: um pixel é colorido com a cor do objeto coletável se sua distância até o centro do objeto for menor que o raio, semelhantemente mantem-se um vetor de pontos equidistantes entre si, onde cada posição representa um quadrilátero que faz parte do corpo da \textit{snake} e o mesmo pixel pode receber a cor da serpente, caso esteja contido na área destes quadriláteros, dados seu tamanho do lado e centros, no entanto, uma vez que não atenda a nenhum caso anterior, o pixel simplesmente recebe a cor do plano de fundo. 
 
 É ainda no \textit{shader} que outra particularidade do jogo é atendida: a serpente move-se de maneira circular. Para este efeito, deve-se compreender o mapeamento UV, que consiste em projetar uma imagem 2D em uma superfície 3D, da superfície do objeto, neste caso, uma esfera. Basta verificar as extremidades para a presença da \textit{snake} e redesenhá-la no lado apropriado. 
-
-O diagrama abaixo ilustra, de maneira geral, o funcionamento da arquitetura. 
-
-\begin{figure}[H]
-\centering
-\tikzstyle{arrow} = [draw, -latex]
-
-\begin{tikzpicture} [x=1.2cm, y=1cm, node distance=0,outer sep=0,inner sep=0]
-	\draw (0, 0) rectangle (12,5);
-	\draw[dashed] (6,0) -- (6,5);	
-	
-	\draw (0,4.5) rectangle (6,5) node[pos=.5] {\small Camada Lógica (CSharp)};
-	\draw (6, 4.5) rectangle (12, 5) node[pos=.5] {\small Camada de Visualização (Shader)};
-	
-	\draw (0.3, 3.7) rectangle (4, 4.2) node[pos=.5] (1A) {\small Gerenciamento de Colisão};
-	\draw (0.6, 2.9) rectangle (4.6, 3.4) node[pos=.5] (2A) {\small Movimentação da Serpente};
-	\draw (7, 2.9) rectangle (11, 3.4)node[pos=.5] (3A) {\small Renderização da Serpente};
-	
-	\draw (0.3, 2) rectangle (4.3, 2.5) node[pos=.5] (4A) {\small Aplicação do filtro de Kalman};
-	\draw (0.4, 1.2) rectangle (5.8, 1.7) node[pos=.5] (5A) {\small Cálculo da Geometria do Plano de Fundo};
-	\draw (7, 1.2) rectangle (11.7, 1.7) node[pos=.5] (6A) {\small Renderização do Plano de Fundo};	
-	
-	\draw (0.3, 0.2) rectangle (5.9, 0.7) node[pos=.5] (7A) {\small Inteligência de Movimentação da Serpente};
-	
-	\path [arrow] (1A) -- (2A);
-	\path [arrow] (2A) -- (3A);
-
-	\path [arrow] (4A) -- (5A);
-	\path [arrow] (5A) -- (6A);
-\end{tikzpicture}
-\caption{Diagrama de arquitetura da aplicação}
-\label{fig:diagramaArquitetura}
-\end{figure}
 
 \section{Uso do Controle VR com Filtro de Kalman} \label{sec:gearvrcontroller}
 Devido à natureza do jogo desenvolvido, o jogador necessita controlar o posicionamento do objeto coletável e para tanto existem essencialmente duas formas de interação com o cursor num dispositivo de realidade virtual: o HDM (\textit{head-mounted display}), ou seja, um sensor lateral acoplado ao próprio dispositivo, e os controladores externos, como os controles ou \textit{joysticks}. Em sua condição de sensor, porém, estes controladores estão sujeitos à interferência ruidosa durante a virtualização do evento representado no mundo real pelo movimento do usuário. Com a finalidade de melhorar a captura do sinal e traduzir de maneira mais fiel as intenções do jogador, o filtro de Kalman será aplicado às leituras do \textit{joystick} por meio de um componente de visualização de ruídos e aplicação do filtro desenvolvido por [], conforme apontado na figura \ref{fig:diagramaArquitetura}.
