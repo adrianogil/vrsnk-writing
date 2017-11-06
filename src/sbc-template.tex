@@ -9,7 +9,7 @@
 \usepackage[brazil]{babel}
 \usepackage[latin1]{inputenc}  
 \graphicspath{ {images/} }
-     
+   
 \sloppy
 
 \title{VRSnake: Aplicação do Filtro de Kalman em um Jogo de Realidade Virtual com Visualização Baseada em Shader}
@@ -21,6 +21,9 @@
   Manaus -- AM -- Brazil
   \email{\{t.figueira,adriano.gil\}@samsung.com}
 }
+
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist 
 
 \begin{document} 
 
@@ -85,11 +88,10 @@ Como no jogo original, a serpente deve movimentar-se de maneira circular pelo ce
 
 Além disso, o comportamento de busca da serpente deve garantir que não haja movimentação em direção a seu próprio corpo, mas também a existência de um fator de randomização durante o movimento, tendo em vista garantir a imprevisibilidade deste ato.
 
-\begin{figure}[H]
+\begin{figure}[H] \label{fig:VRSnakePicture}
 \centering
 \includegraphics[scale=0.7]{VRSnakePicture}
 \caption{Snake buscando o objeto coletável após uma série de buscas bem sucedidas}
-\label{fig:VRSnakePicture}
 \end{figure}
 
 \section{Arquitetura de Visualização Baseada em Shader} \label{sec:architecture}
@@ -136,6 +138,33 @@ O diagrama abaixo ilustra, de maneira geral, o funcionamento da arquitetura. Fun
 
 % 2 - Mapeamento de UV em uma esfera invertida
 
+% 3 - Algoritmo do artigo
+
+\begin{figure} [H]
+
+\begin{tikzpicture}
+	\draw (0, 0) -- (16, 0) ;	                                                                      
+\end{tikzpicture}
+
+\begin{changemargin} {0cm} {0cm}
+\textit{M}: número de pilhas \\
+\textit{N}: número de partes \\
+$\forall m\ : 0 \leq m \leq M $ e $\forall n\ : 0 \leq n \leq N - 1$, calcula-se e  armazena-se o ponto espacial \textit{P (x, y, z)} tal que: \\
+$P_{x} \leftarrow \sin(\pi \ast m/M) \ast \cos(2\pi \ast n/N) $ \\
+$P_{y} \leftarrow \sin(\pi \ast m/M) \ast \sin(2\pi \ast n/N) $ \\
+$P_{z} \leftarrow \cos(\pi \ast m/M) $ \\
+Desenham-se segmentos de reta entre cada vértice
+\end{changemargin}
+
+\begin{changemargin} {0cm} {0cm}
+\begin{tikzpicture}
+	\draw (0, 2) -- (16, 2) ;	                                                                      
+\end{tikzpicture}
+\end{changemargin}
+
+\caption{Algoritmo do processo de geração de um mesh de esfera 3D}
+\end{figure}
+
 \section{Snake como um Agente Utilitário} \label{sec:agent}
 A inteligência de movimentação da \textit{snake} é, por sua vez, composta por uma função utilitária que avalia cada possível ação em determinado momento. Em essência, a serpente sempre está buscando alcançar o coletável, por isso avalia a menor distância nos eixos X e Y e, desde que não seja ela mesma um obstáculo neste menor caminho, ela assume esse curso e repete o processo. A função abaixo ilustra esse procedimento:
 
@@ -145,7 +174,7 @@ F(A) = R * (D + O)
 
 Onde R é um fator de randomização; D representa a distância de \textit{Manhattan} entre a posição atual e o objeto coletável; e O é um valor atribuído à existência ou não de obstáculos neste trajeto.
 
-Para cada direção plausível, apresentadas na figura \ref{fig:snakeHeadPositions}, abaixo, a função retorna um valor de utilidade que é ulteriormente comparado para determinar o caminho de maior probabilidade de sucesso.
+Para cada direção plausível apresentada na figura \ref{fig:snakeHeadPositions} abaixo, a função retorna um valor de utilidade que é ulteriormente comparado para determinar o caminho de maior probabilidade de sucesso.
 
 A movimentação, responsabilidade da primeira camada, pode ser definida como um \textit{buffer} deslizante: à medida que o número de partes do corpo da \textit{snake} é acrescido, estas também são movimentadas ao assumir a posição da parte imediatamente anterior. Logo, a movimentação do primeiro quadrilátero, ou figurativamente, a cabeça, norteia todo o movimentar da \textit{snake}, pois é neste momento que são traçados três vetores que apontam, nessa ordem, para cima, para baixo e para frente e, portanto, são responsáveis por orientar a serpente na decisão do menor caminho entre sua atual posição e o objeto coletável. É relevante explicitar que os vetores de direcionamento são volúveis tendo em vista as diferentes posições adotáveis, conforme a figura \ref{fig:snakeHeadPositions}, abaixo, onde a seta em vermelho indica a atual direção da serpente e as demais indicam possíveis direções de movimento.
 
@@ -176,7 +205,7 @@ A movimentação, responsabilidade da primeira camada, pode ser definida como um \
 	\path [arrow] (9.5, 0) -- (9.5, -0.5);                                                                               
 	
 \end{tikzpicture}
-\caption{Possíveis direções de movimento da serpente}
+\caption{Possíveis movimentos da serpente, as setas coloridas indicam a direção atual}
 \label{fig:snakeHeadPositions}
 \end{figure}
 
