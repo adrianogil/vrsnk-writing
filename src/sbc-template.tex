@@ -7,9 +7,9 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes, arrows, shapes.geometric}
 \usepackage[brazil]{babel}
-\usepackage[latin1]{inputenc}  
+\usepackage[latin1]{inputenc}
 \graphicspath{ {images/} }
-   
+
 \sloppy
 
 \title{VRSnake: Aplicação do Filtro de Kalman em um Jogo de Realidade Virtual com Visualização Baseada em Shader}
@@ -23,9 +23,9 @@
 }
 
 \def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
-\let\endchangemargin=\endlist 
+\let\endchangemargin=\endlist
 
-\begin{document} 
+\begin{document}
 
 \maketitle
 
@@ -36,8 +36,8 @@
   Portuguese (``resumo''). In both cases, abstracts should not have more than
   10 lines and must be in the first page of the paper.
 \end{abstract}
-     
-\begin{resumo} 
+
+\begin{resumo}
   Este meta-artigo descreve o estilo a ser usado na confecção de artigos e
   resumos de artigos para publicação nos anais das conferências organizadas
   pela SBC. É solicitada a escrita de resumo e abstract apenas para os artigos
@@ -55,10 +55,10 @@ Para o desenvolvimento de aplicações VR, o motor e editor gráfico \textit{Unity}
 Normalmente, estes jogos e aplicações desenvolvidos na \textit{Unity} são compostos por conjuntos de cenas, cada qual com seu próprio agrupamento de objetos e lógica associados. De maneira geral, a CPU (\textit{central processing unit}) é responsável por transmitir informações sobre elementos gráficos à GPU (\textit{graphics processing unit}) através do estágio de aplicação, onde os \textit{assets} gráficos como modelos 3D e texturas são carregados na VRAM (\textit{video RAM}), posteriormente, durante o estágio de geometria, os diferentes objetos que devem ser renderizados, seus respectivos posicionamentos e demais informes visuais relevantes são tratados pela GPU e convertidos em imagem, no estágio de rasterização \cite{akenine2008real}.
 
 % Contextualizar a Realidade Virtual e Controladores
-Em outro âmbito, os controles ou \textit{joysticks} são uma das formas de interação com dispositivos de realidade virtual, no entanto, são passíveis de ruídos devido à sua natureza sensorial, originando comportamentos indesejados como \textit{jittering} durante a leitura dos dados. 
+Em outro âmbito, os controles ou \textit{joysticks} são uma das formas de interação com dispositivos de realidade virtual, no entanto, são passíveis de ruídos devido à sua natureza sensorial, originando comportamentos indesejados como \textit{jittering} durante a leitura dos dados.
 
 % Resumo proposta
-Desse modo, propõe-se o desenvolvimento de um jogo cujas representações gráficas sejam inteiramente fundamentadas em código de GPU ao passo que as restrições lógicas concentrem-se na CPU, de maneira a atuar nos diferentes estágios da \textit{pipeline} gráfica acima apresentada. Em alusão à um clássico, o jogo Snake será recriado para os dispositivos de realidade virtual da Samsung em uma aplicação Unity, diferencia-se, porém, na medida que o jogador controla o objeto coletável, posicionando-o com o controlador tendo a finalidade de fazer a serpente falhar em seu objetivo. Neste aspecto, objetivando solucionar o primeiro desafio acima exposto intenta-se a aplicação do filtro de Kalman durante a leitura do posicionamento do cursor através deste \textit{joystick}, a fim de melhorar o reconhecimento do sinal e atenuar a inconsistência apresentada. 
+Desse modo, propõe-se o desenvolvimento de um jogo cujas representações gráficas sejam inteiramente fundamentadas em código de GPU ao passo que as restrições lógicas concentrem-se na CPU, de maneira a atuar nos diferentes estágios da \textit{pipeline} gráfica acima apresentada. Em alusão à um clássico, o jogo Snake será recriado para os dispositivos de realidade virtual da Samsung em uma aplicação Unity, diferencia-se, porém, na medida que o jogador controla o objeto coletável, posicionando-o com o controlador tendo a finalidade de fazer a serpente falhar em seu objetivo. Neste aspecto, objetivando solucionar o primeiro desafio acima exposto intenta-se a aplicação do filtro de Kalman durante a leitura do posicionamento do cursor através deste \textit{joystick}, a fim de melhorar o reconhecimento do sinal e atenuar a inconsistência apresentada.
 
 % * Estrutura do artigo
 Analisa-se na seção \ref{sec:relatedworks} outros trabalhos que abordam sensores, uso de filtros e jogos de realidade virtual. Um esclarecimento sobre as regras do jogo desenvolvido pode ser encontrado na seção \ref{sec:vrsnake}. A arquitetura proposta é detalhada na seção \ref{sec:architecture}. Apresenta-se como um jogo de realidade virtual pode ser renderizado em uma esfera invertida na seção \ref{sec:invertedsphere}. Em \ref{sec:agent}, comprende-se a movimentação da \textit{snake} e sua arquitetura de renderização. A seção \ref{sec:gearvrcontroller} explana como ocorre a aplicação do filtro de Kalman no controle para VR. Resultados são discutidos na seção \ref{sec:results}. Por fim, pautam-se as conclusões e perspectivas de trabalhos futuros na seção \ref{sec:conclusion}.
@@ -82,9 +82,9 @@ Certos trabalhos trazem a filtragem de sensores baseados no uso de acelerômetro,
 
 \section{VRSnake} \label{sec:vrsnake}
 % Definição das regras do jogo
-O \textit{VRSnake} traz para a realidade virtual o clássico jogo 2D \textit{Snake}, mas diferentemente do original, o jogador assume controle sobre o posicionamento dos objetos coletáveis ao invés de controlar diretamente a serpente. Algumas regras precisam ser observadas: em primeiro lugar, a serpente busca contínua e automaticamente o objeto coletável e cresce em uma unidade à medida que alcança este objeto. 
+O \textit{VRSnake} traz para a realidade virtual o clássico jogo 2D \textit{Snake}, mas diferentemente do original, o jogador assume controle sobre o posicionamento dos objetos coletáveis ao invés de controlar diretamente a serpente. Algumas regras precisam ser observadas: em primeiro lugar, a serpente busca contínua e automaticamente o objeto coletável e cresce em uma unidade à medida que alcança este objeto.
 
-Como no jogo original, a serpente deve movimentar-se de maneira circular pelo cenário, isto é, ao encontrar os limites do cenário de um lado, deve continuar do outro na mesma maneira. O jogador vence quando a \textit{snake} é derrotada, ou seja, quando ela atinge a si própria de alguma forma. 
+Como no jogo original, a serpente deve movimentar-se de maneira circular pelo cenário, isto é, ao encontrar os limites do cenário de um lado, deve continuar do outro na mesma maneira. O jogador vence quando a \textit{snake} é derrotada, ou seja, quando ela atinge a si própria de alguma forma.
 
 Além disso, o comportamento de busca da serpente deve garantir que não haja movimentação em direção a seu próprio corpo, mas também a existência de um fator de randomização durante o movimento, tendo em vista garantir pequena imprevisibilidade a este ato.
 
@@ -97,7 +97,7 @@ Além disso, o comportamento de busca da serpente deve garantir que não haja movi
 \section{Arquitetura de Visualização Baseada em Shader} \label{sec:architecture}
 Propõe-se uma arquitetura de duas camadas respectivamente responsáveis pelo gerenciamento lógico e visualização (ou renderização) da aplicação. A primeira fora desenvolvida em \textit{csharp}, portanto executada na unidade central de processamento (CPU, em inglês) e encarregada das tarefas inteligentes tais como a procura pelo objeto coletável e movimentação, além da aplicação do filtro de Kalman durante a leitura de dados do controle.
 
-A segunda camada envolve um \textit{shader}, código executado diretamente na unidade de processamento gráfico (GPU, em inglês), incumbido de renderizar todos os itens apresentados no dispositivo de saída, que incluem o plano de fundo, o objeto coletável circular bem como os quadriláteros que representam o personagem ou a \textit{snake}.  
+A segunda camada envolve um \textit{shader}, código executado diretamente na unidade de processamento gráfico (GPU, em inglês), incumbido de renderizar todos os itens apresentados no dispositivo de saída, que incluem o plano de fundo, o objeto coletável circular bem como os quadriláteros que representam o personagem ou a \textit{snake}.
 
 O diagrama abaixo ilustra, de maneira geral, o funcionamento da arquitetura. Fundamentalmente, a camada lógica gerencia a colisão e movimentação da \textit{snake}; seleciona o caminho mais promissor acrescido de um fator randômico; além de efetivamente aplicar o filtro de Kalman às entradas do controle. A camada de visualização, por outro lado, é responsável pela renderização de todos os elementos dispostos no dispositivo de saída, isto é, a CPU não tem responsabilidade sobre estes objetos.
 
@@ -107,21 +107,21 @@ O diagrama abaixo ilustra, de maneira geral, o funcionamento da arquitetura. Fun
 
 \begin{tikzpicture} [x=1.2cm, y=1cm, node distance=0,outer sep=0,inner sep=0]
     \draw (0, 0) rectangle (12,5);
-    \draw[dashed] (6,0) -- (6,5);   
-    
+    \draw[dashed] (6,0) -- (6,5);
+
     \draw (0,4.5) rectangle (6,5) node[pos=.5] {\small Camada Lógica (CSharp)};
     \draw (6, 4.5) rectangle (12, 5) node[pos=.5] {\small Camada de Visualização (Shader)};
-    
+
     \draw (0.3, 3.7) rectangle (4, 4.2) node[pos=.5] (1A) {\small Gerenciamento de Colisão};
     \draw (0.6, 2.9) rectangle (4.6, 3.4) node[pos=.5] (2A) {\small Movimentação da Serpente};
     \draw (7, 2.9) rectangle (11, 3.4)node[pos=.5] (3A) {\small Renderização da Serpente};
-    
+
     \draw (0.3, 2) rectangle (4.3, 2.5) node[pos=.5] (4A) {\small Aplicação do filtro de Kalman};
     \draw (0.4, 1.2) rectangle (5.8, 1.7) node[pos=.5] (5A) {\small Cálculo da Geometria do Plano de Fundo};
-    \draw (7, 1.2) rectangle (11.7, 1.7) node[pos=.5] (6A) {\small Renderização do Plano de Fundo}; 
-    
+    \draw (7, 1.2) rectangle (11.7, 1.7) node[pos=.5] (6A) {\small Renderização do Plano de Fundo};
+
     \draw (0.3, 0.2) rectangle (5.9, 0.7) node[pos=.5] (7A) {\small Inteligência de Movimentação da Serpente};
-    
+
     \path [arrow] (1A) -- (2A);
     \path [arrow] (2A) -- (3A);
 
@@ -139,21 +139,37 @@ As aplicações de realidade virtual são imersivas no sentido de reconstruir a vis
 
 Há essencialmente duas abordagens: a icosfera, uma esfera sem polos, cujos vértices são distribuídos uniformemente; e a esfera baseada em longitude/latiture.
 
-$R = 1 / N * 2 \pi $ 
+\begin{equation}
+R = \frac{2 \pi}{N}
+\end{equation}
 
-$\alpha_{i} = i * R$
+\begin{equation}
+\alpha_{i} = i * R
+\end{equation}
 
-$x_{i} = D * \sin(\alpha_{i})$
+\begin{equation}
+x_{i} = D * \sin(\alpha_{i})
+\end{equation}
 
-$z_{i} = D * \cos(\alpha_{i})$
+\begin{equation}
+z_{i} = D * \cos(\alpha_{i})
+\end{equation}
 
-$R_{latitude} = 1 / N_{latitude} * \pi$
+\begin{equation}
+R_{latitude} = \frac{\pi}{ N_{latitude}}
+\end{equation}
 
-$\alpha_{yi} = i * R_{latitude}$
+\begin{equation}
+\alpha_{yi} = i * R_{latitude}
+\end{equation}
 
-$y_{i} = radius * \cos(\alpha_{yi})$
+\begin{equation}
+y_{i} = radius * \cos(\alpha_{yi})
+\end{equation}
 
-$d_{yi} = 2 * \sin(\alpha_{yi})$
+\begin{equation}
+d_{yi} = 2 * \sin(\alpha_{yi})
+\end{equation}
 
 Para alcançar este efeito, utilizamos um \textit{mesh} de esfera gerado proceduralmente, definindo-se unicamente o raio.
 
@@ -166,7 +182,7 @@ Segue abaixo o pseudocódigo utilizado para a criação da esfera, segundo [adicion
 \begin{figure} [H]
 
 \begin{tikzpicture}
-	\draw (0, 0) -- (16, 0) ;	                                                                      
+	\draw (0, 0) -- (16, 0) ;
 \end{tikzpicture}
 
 \begin{changemargin} {0cm} {0cm}
@@ -181,7 +197,7 @@ Desenham-se segmentos de reta entre cada vértice
 
 \begin{changemargin} {0cm} {0cm}
 \begin{tikzpicture}
-	\draw (0, 2) -- (16, 2) ;	                                                                      
+	\draw (0, 2) -- (16, 2) ;
 \end{tikzpicture}
 \end{changemargin}
 
@@ -212,23 +228,23 @@ O corpo da serpente, por sua vez, move-se através de um buffer deslizante: cada 
 	\draw (3, 0) rectangle (4, 1) node[pos=.5] {\small Head};
 	\draw (6, 0) rectangle (7, 1) node[pos=.5] {\small Head};
 	\draw (9, 0) rectangle (10, 1) node[pos=.5] {\small Head};
-	
+
 	\path [arrow, red] (0.5, 1) -- (0.5, 1.5);
 	\path [arrow] (1, 0.5) -- (1.5, 0.5);
 	\path [arrow] (0, 0.5) -- (-0.5, 0.5);
-	
+
 	\path [arrow, red] (3.5, 0) -- (3.5, -0.5);
 	\path [arrow] (4, 0.5) -- (4.5, 0.5);
 	\path [arrow] (3, 0.5) -- (2.5, 0.5);
-	
+
 	\path [arrow] (6.5, 1) -- (6.5, 1.5);
 	\path [arrow, red] (7, 0.5) -- (7.5, 0.5);
 	\path [arrow] (6.5, 0) -- (6.5, -0.5);
-	
+
     \path [arrow] (9.5, 1) -- (9.5, 1.5);
 	\path [arrow, red] (9, 0.5) -- (8.5, 0.5);
-	\path [arrow] (9.5, 0) -- (9.5, -0.5);                                                                               
-	
+	\path [arrow] (9.5, 0) -- (9.5, -0.5);
+
 \end{tikzpicture}
 \caption{Possíveis movimentos da serpente, as setas coloridas indicam a direção atual}
 \label{fig:snakeHeadPositions}
@@ -239,16 +255,16 @@ Considerando ainda a restrição de deslocamento na qual a serpente pode-se mover 
 \begin{equation}
 EuclidianDistance = \sqrt{(x_{1} - x_{2})^2 + (y_{1} - y_{2})^2}
 \label{equation:euclidian}
-\end{equation} 
+\end{equation}
 
 \begin{equation}
 ManhattanDistance = \left|x_{1} - x_{2}\right| + \left|y_{1} - y_{2}\right|
 \label{equation:manhattan}
 \end{equation}
 
-No que concerne a segunda camada, o \textit{shader} de renderização determina a relação de domínio (ou pertencimento) de todo pixel durante a execução do jogo, em outras palavras, verifica-se a que elemento gráfico cada pixel pertence, o que pode ser, no universo deste jogo, o objeto coletável, uma parte da serpente ou ainda o próprio plano de fundo. Para determinar esta relação de atribuição, alguns cálculos básicos são necessários: um pixel é colorido com a cor do objeto coletável se sua distância até o centro do objeto (um pixel) for menor que um raio determinado, semelhantemente mantem-se um vetor de pontos equidistantes entre si, onde cada posição representa um quadrilátero que faz parte do corpo da \textit{snake}, o pixel em questão recebe a cor da serpente caso esteja contido na área delineada por estes quadriláteros, dados seus tamanhos de lado e centro, no entanto, uma vez que não atenda a nenhum caso anterior, o pixel simplesmente recebe a cor do plano de fundo. 
+No que concerne a segunda camada, o \textit{shader} de renderização determina a relação de domínio (ou pertencimento) de todo pixel durante a execução do jogo, em outras palavras, verifica-se a que elemento gráfico cada pixel pertence, o que pode ser, no universo deste jogo, o objeto coletável, uma parte da serpente ou ainda o próprio plano de fundo. Para determinar esta relação de atribuição, alguns cálculos básicos são necessários: um pixel é colorido com a cor do objeto coletável se sua distância até o centro do objeto (um pixel) for menor que um raio determinado, semelhantemente mantem-se um vetor de pontos equidistantes entre si, onde cada posição representa um quadrilátero que faz parte do corpo da \textit{snake}, o pixel em questão recebe a cor da serpente caso esteja contido na área delineada por estes quadriláteros, dados seus tamanhos de lado e centro, no entanto, uma vez que não atenda a nenhum caso anterior, o pixel simplesmente recebe a cor do plano de fundo.
 
-É ainda neste \textit{shader} que outra particularidade do jogo é atendida: a serpente move-se de maneira circular. Para este efeito, deve-se compreender o mapeamento UV, que consiste em projetar uma imagem 2D em uma superfície 3D, da superfície do objeto, neste caso, uma esfera. Basta verificar as extremidades para a presença da \textit{snake} e redesenhá-la no lado apropriado. 
+É ainda neste \textit{shader} que outra particularidade do jogo é atendida: a serpente move-se de maneira circular. Para este efeito, deve-se compreender o mapeamento UV, que consiste em projetar uma imagem 2D em uma superfície 3D, da superfície do objeto, neste caso, uma esfera. Basta verificar as extremidades para a presença da \textit{snake} e redesenhá-la no lado apropriado.
 
 \section{Uso do Controle VR com Filtro de Kalman} \label{sec:gearvrcontroller}
 Devido à natureza do jogo desenvolvido, o jogador necessita controlar o posicionamento do objeto coletável e para tanto existem essencialmente duas formas de interação num dispositivo de realidade virtual: o HDM (\textit{head-mounted display}), ou seja, através do sensor lateral acoplado ao próprio dispositivo; e os controladores externos, como os controles ou \textit{joysticks}. Em sua condição de sensor, porém, estes controladores estão sujeitos à interferência ruidosa durante a virtualização do evento representado no mundo real pelo movimento do usuário. Com a finalidade de melhorar a captura do sinal e traduzir de maneira mais fiel as intenções do jogador, o filtro de Kalman será aplicado às leituras do \textit{joystick} por meio de um componente de visualização de ruídos e aplicação do filtro, conforme apontado na figura \ref{fig:diagramaArquitetura}.
