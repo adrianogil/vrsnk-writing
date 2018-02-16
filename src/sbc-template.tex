@@ -135,9 +135,30 @@ O diagrama abaixo ilustra, de maneira geral, o funcionamento da arquitetura. Fun
 \section{Realidade Virtual em uma Esfera Invertida} \label{sec:invertedsphere}
 
 % 1 - O uso de uma esfera invertida para renderizar o conteúdo do jogo
-As aplicações de realidade virtual são imersivas no sentido de reconstruir a visão de mundo de seu utilizador através do universo virtual. Para alcançar este efeito, utilizamos um \textit{mesh} de esfera gerado proceduralmente, definindo-se unicamente o raio.
+As aplicações de realidade virtual são imersivas no sentido de reconstruir a visão de mundo de seu utilizador através do universo virtual, para tanto o conteúdo deve estar disponível em 360 graus. Tem-se então outro desafio: como transformar um jogo jogável sobre um plano em jogável sobre um ambiente virtual?
+
+Há essencialmente duas abordagens: a icosfera, uma esfera sem polos, cujos vértices são distribuídos uniformemente; e a esfera baseada em longitude/latiture.
+
+$R = 1 / N * 2 \pi $ 
+
+$\alpha_{i} = i * R$
+
+$x_{i} = D * \sin(\alpha_{i})$
+
+$z_{i} = D * \cos(\alpha_{i})$
+
+$R_{latitude} = 1 / N_{latitude} * \pi$
+
+$\alpha_{yi} = i * R_{latitude}$
+
+$y_{i} = radius * \cos(\alpha_{yi})$
+
+$d_{yi} = 2 * \sin(\alpha_{yi})$
+
+Para alcançar este efeito, utilizamos um \textit{mesh} de esfera gerado proceduralmente, definindo-se unicamente o raio.
 
 % 2 - Mapeamento de UV em uma esfera invertida
+
 
 % 3 - Algoritmo do artigo
 Segue abaixo o pseudocódigo utilizado para a criação da esfera, segundo [adicionar referencia aqui]
@@ -180,9 +201,7 @@ Para cada direção plausível apresentada na figura \ref{fig:snakeHeadPositions} a
 
 A movimentação, responsabilidade da primeira camada, é essencialmente gerenciada pelo primeiro quadrilátero, ou figurativamente, a cabeça. Em outras palavras, a cabeça norteia todo o movimentar da \textit{snake}, pois nela são traçados três vetores responsáveis por orientar a serpente na decisão do menor caminho entre sua atual posição e o objeto coletável. É relevante explicitar que estes vetores de direcionamento são volúveis tendo em vista as diferentes posições adotáveis, conforme a figura \ref{fig:snakeHeadPositions} abaixo, onde a seta em vermelho indica a atual orientação da serpente e as demais indicam possíveis direções de movimento.
 
-
-
-A movimentação, responsabilidade da primeira camada, pode ser definida como um \textit{buffer} deslizante: à medida que o número de partes do corpo da \textit{snake} é acrescido, estas também são movimentadas ao assumir a posição da parte imediatamente anterior. Logo, a movimentação do primeiro quadrilátero, ou figurativamente, a cabeça, norteia todo o movimentar da \textit{snake}, pois são traçados três vetores que inicialmente apontam para cima, para baixo e para frente, responsáveis, consequentemente, por orientar a serpente na decisão do menor caminho entre sua atual posição e o objeto coletável. É relevante explicitar que os vetores de direcionamento são volúveis tendo em vista as diferentes posições adotáveis, conforme a figura \ref{fig:snakeHeadPositions}, abaixo, onde a seta em vermelho indica a atual direção da serpente e as demais indicam possíveis direções de movimento, dada sua orientação atual.
+O corpo da serpente, por sua vez, move-se através de um buffer deslizante: cada parte do corpo assume a posição mais recente da parte imediatamente anterior, isso significa que a cabeça move-se e as demais partes seguem posteriormente.
 
 \begin{figure}[H]
 \centering
@@ -215,14 +234,16 @@ A movimentação, responsabilidade da primeira camada, pode ser definida como um \
 \label{fig:snakeHeadPositions}
 \end{figure}
 
-Considerando ainda a restrição de deslocamento na qual a serpente pode-se mover unicamente nas referidas direções, o cálculo por meio da distância de Manhattan se mostrou menos custoso, uma vez que a segunda equação representada abaixo não envolve operações quadráticas as quais, no escopo desta aplicação, podem ser chamadas inúmeras vezes por segundo.
+Considerando ainda a restrição de deslocamento na qual a serpente pode-se mover unicamente nas direções apontadas pela figura \ref{fig:snakeHeadPositions}, o cálculo por meio da distância de Manhattan se mostrou menos custoso, uma vez que sua equação representada abaixo não envolve operações quadráticas as quais, no escopo desta aplicação, podem ser chamadas inúmeras vezes por segundo.
 
 \begin{equation}
 EuclidianDistance = \sqrt{(x_{1} - x_{2})^2 + (y_{1} - y_{2})^2}
+\label{equation:euclidian}
 \end{equation} 
 
 \begin{equation}
 ManhattanDistance = \left|x_{1} - x_{2}\right| + \left|y_{1} - y_{2}\right|
+\label{equation:manhattan}
 \end{equation}
 
 No que concerne a segunda camada, o \textit{shader} determina a relação de domínio (ou pertencimento) de todo pixel durante a execução do jogo, em outras palavras, verifica-se a que elemento gráfico cada pixel pertence, o que pode ser, no universo deste jogo, o objeto coletável, ou uma parte da serpente ou ainda o próprio plano de fundo. Para determinar esta relação de atribuição, alguns cálculos básicos são necessários: um pixel é colorido com a cor do objeto coletável se sua distância até o centro do objeto (um pixel) for menor que um raio determinado, semelhantemente mantem-se um vetor de pontos equidistantes entre si, onde cada posição representa um quadrilátero que faz parte do corpo da \textit{snake}, o pixel em questão recebe a cor da serpente caso esteja contido na área delineada por estes quadriláteros, dados seus tamanhos de lado e centro, no entanto, uma vez que não atenda a nenhum caso anterior, o pixel simplesmente recebe a cor do plano de fundo. 
