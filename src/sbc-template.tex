@@ -94,7 +94,6 @@ O diagrama abaixo ilustra, de maneira geral, o funcionamento da arquitetura. Fun
 \begin{figure}[H]
 \centering
 \tikzstyle{arrow} = [draw, -latex]
-
 \begin{tikzpicture} [x=1.2cm, y=1cm, node distance=0,outer sep=0,inner sep=0]
     \draw (0, 0) rectangle (12,5);
     \draw[dashed] (6,0) -- (6,5);
@@ -124,63 +123,9 @@ O diagrama abaixo ilustra, de maneira geral, o funcionamento da arquitetura. Fun
 
 \section{Realidade Virtual em uma Esfera Invertida} \label{sec:invertedsphere}
 % 1 - O uso de uma esfera invertida para renderizar o conteúdo do jogo
-As aplicações de realidade virtual são imersivas no sentido de reconstruir a visão de mundo de seu utilizador através do universo virtual, para tanto o conteúdo deve estar disponível em 360 graus. Tem-se então outro desafio: como transformar um jogo de duas dimensões em um jogo de realidade virtual?
-
-Há essencialmente duas abordagens: a icosfera, uma esfera sem polos, cujos vértices são distribuídos uniformemente; e a esfera baseada em longitude/latitude. Fizemos uso da segunda abordagem, gerando um \textit{mesh} de esfera proceduralmente, definindo-se unicamente o raio.
-
-\begin{equation}
-R = \frac{2 \pi}{N}
-\label{equation1}
-\end{equation}
-
-\begin{equation}
-\alpha_{i} = i * R
-\label{equation2}
-\end{equation}
-
-\begin{equation}
-x_{i} = D * \sin(\alpha_{i})
-\label{equation3}
-\end{equation}
-
-\begin{equation}
-y_{i} = D * \cos(\alpha_{i})
-\label{equation4}
-\end{equation}
-
-\begin{equation}
-R_{latitude} = \frac{\pi}{ N_{latitude}}
-\label{equation5}
-\end{equation}
-
-\begin{equation}
-\alpha_{yi} = i * R_{latitude}
-\label{equation6}
-\end{equation}
-
-\begin{equation}
-y_{i} = radius * \cos(\alpha_{yi})
-\label{equation7}
-\end{equation}
-
-\begin{equation}
-d_{yi} = 2 * \sin(\alpha_{yi})
-\label{equation8}
-\end{equation}
-
-Em \ref{equation1}, R é o .... N representa o total longitudinal. Em \ref{equation2}, I representa o ângulo latitudinal atual. Em \ref{equation3} e \ref{equation4}, X e Y são eixos no plano.
-
-No entanto ....
-
-
-% 2 - Mapeamento de UV em uma esfera invertida
-
-
-% 3 - Algoritmo do artigo
-Segue abaixo o pseudocódigo utilizado para a criação da esfera, segundo [adicionar referencia aqui]
+As aplicações de realidade virtual são imersivas no sentido de reconstruir a visão de mundo de seu utilizador através do universo virtual. Tem-se então o desafio de exibir conteúdo bidimensional em 360 graus. Há essencialmente duas abordagens: a icosfera, uma esfera sem polos, cujos vértices são distribuídos uniformemente; e a esfera baseada em longitude/latitude. Fizemos uso da segunda abordagem  devido à possível analogia dos seus vértices com coordenadas de UV, então geramos um \textit{mesh} de esfera proceduralmente, definindo-se unicamente o raio, segundo o pseudocódigo abaixo:
 
 \begin{figure} [H]
-
 \begin{tikzpicture}
 	\draw (0, 0) -- (16, 0) ;
 \end{tikzpicture}
@@ -203,6 +148,51 @@ Desenham-se segmentos de reta entre cada vértice
 
 \caption{Algoritmo do processo de geração de um mesh de esfera 3D}
 \end{figure}
+
+% 2 - Mapeamento de UV em uma esfera invertida
+Para identificar as coordenadas de UV correspondentes tanto em duas dimensões quanto em realidade virtual, os cálculos abaixo se fazem necessários. 
+
+\begin{equation}
+R = \frac{2 \pi}{N}
+\label{equation1}
+\end{equation}
+
+\begin{equation}
+\alpha_{i} = i * R
+\label{equation2}
+\end{equation}
+
+\begin{equation}
+x_{i} = D * \sin(\alpha_{i})
+\label{equation3}
+\end{equation}
+
+\begin{equation}
+y_{i} = D * \cos(\alpha_{i})
+\label{equation4}
+\end{equation}
+
+Em \ref{equation1}, R é o tamanho angular dado um valor de N, que representa o total longitudinal. Em \ref{equation2}, I representa o ângulo latitudinal atual. Em \ref{equation3} e \ref{equation4}, X e Y são eixos no plano. Contudo, o raio D é variável ao longo da secção longitudinal, portanto precisa-se unicamente de metade da esfera para identificar a variação da distância ao longo da altura, conforme representam as equações abaixo em função da latitude.
+
+\begin{equation}
+R_{latitude} = \frac{\pi}{ N_{latitude}}
+\label{equation5}
+\end{equation}
+
+\begin{equation}
+\alpha_{yi} = i * R_{latitude}
+\label{equation6}
+\end{equation}
+
+\begin{equation}
+y_{i} = radius * \cos(\alpha_{yi})
+\label{equation7}
+\end{equation}
+
+\begin{equation}
+d_{yi} = 2 * \sin(\alpha_{yi})
+\label{equation8}
+\end{equation}
 
 \section{Snake como um Agente Utilitário} \label{sec:agent}
 A inteligência de movimentação da \textit{snake} é, por sua vez, composta por uma função utilitária que avalia cada possível ação em determinado momento. Em essência, a serpente sempre está buscando alcançar o coletável, por isso avalia o curso de menor distância no eixos X e Y e desde que não exista a possibilidade de atingir a si própria, assume este caminho e repete o processo. A função abaixo ilustra esse procedimento:
