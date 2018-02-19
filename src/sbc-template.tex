@@ -125,7 +125,7 @@ O diagrama abaixo ilustra, de maneira geral, o funcionamento da arquitetura. Fun
 
 % 1 - O uso de uma esfera invertida para renderizar o conteúdo do jogo
 % Imersão -> Preenchimento/Renderização de conteúdo ao redor do usuário
-A ilusão em um mundo virtual e consequente sensação de imersão requerem material visual disponível em todos os ângulos possíveis, uma vez que o gearVR possibilita completa liberdade de rotação, ou seja, 3 graus de liberdade (3DoF - \textit{3 Degrees of Freedom}). Tendo em vista que proposta deste artigo contempla um jogo essencialmente 2D, tal como o \textit{Snake} original, tem-se o desafio de exibir conteúdo bidimensional em um cenário 3D de forma que tudo aconteça ao redor do usuário.
+A ilusão em um mundo virtual e consequente sensação de imersão requerem material visual disponível em todos os ângulos possíveis, uma vez que o gearVR possibilita completa liberdade de rotação, ou seja, 3 graus de liberdade (3DoF - \textit{3 Degrees of Freedom}). Tendo em vista que a proposta deste artigo contempla um jogo essencialmente 2D, tal como o \textit{Snake} original, tem-se o desafio de exibir conteúdo bidimensional em um cenário 3D de forma que tudo aconteça ao redor do usuário.
 
 Uma esfera invertida, ou seja, uma esfera que tenha apenas seu lado interno renderizado, possibilita preencher completamente todo o campo de visão possível, além de ser a solução padrão adotada na exibição de imagens equiretangulares em 360 graus. A geração procedural de uma esfera pode seguir uma das duas abordagens abaixo:
 \begin{enumerate}
@@ -141,12 +141,12 @@ Para este trabalho, preferiu-se a segunda abordagem devido a possibilidade de us
 \end{tikzpicture}
 
 \begin{changemargin} {0cm} {0cm}
-\textit{M}: número de pilhas \\
-\textit{N}: número de partes \\
+\textit{M}: número de valores de latitude \\
+\textit{N}: número de valores de longitude \\
 $\forall m\ : 0 \leq m \leq M $ e $\forall n\ : 0 \leq n \leq N - 1$, calcula-se e  armazena-se o ponto espacial \textit{P (x, y, z)} tal que: \\
 $P_{x} \leftarrow \sin(\pi \ast m/M) \ast \cos(2\pi \ast n/N) $ \\
-$P_{y} \leftarrow \sin(\pi \ast m/M) \ast \sin(2\pi \ast n/N) $ \\
-$P_{z} \leftarrow \cos(\pi \ast m/M) $ \\
+$P_{z} \leftarrow \sin(\pi \ast m/M) \ast \sin(2\pi \ast n/N) $ \\
+$P_{y} \leftarrow \cos(\pi \ast m/M) $ \\
 Desenham-se segmentos de reta entre cada vértice
 \end{changemargin}
 
