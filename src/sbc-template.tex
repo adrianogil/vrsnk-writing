@@ -125,15 +125,15 @@ O diagrama abaixo ilustra, de maneira geral, o funcionamento da arquitetura. Fun
 
 % 1 - O uso de uma esfera invertida para renderizar o conteúdo do jogo
 % Imersão -> Preenchimento/Renderização de conteúdo ao redor do usuário
-A ilusão de um mundo virtual e consequentemente a sensação de imersão, requer que haja conteúdo visual para todos os ângulos possíveis, dado que o gearVR possibilita completa liberdade de rotação, ou seja 3 graus de liberdade (3DoF - \textit{3 Degrees of Freedom}). Como o nosso jogo proposto é essencialmente em 2D, tal como o Snake original, temos então o desafio de exibir conteúdo bidimensional em um cenário 3D, de forma que o conteúdo aconteça ao redor do usuário.
+A ilusão em um mundo virtual e consequente sensação de imersão requerem material visual disponível em todos os ângulos possíveis, uma vez que o gearVR possibilita completa liberdade de rotação, ou seja, 3 graus de liberdade (3DoF - \textit{3 Degrees of Freedom}). Tendo em vista que proposta deste artigo contempla um jogo essencialmente 2D, tal como o \textit{Snake} original, tem-se o desafio de exibir conteúdo bidimensional em um cenário 3D de forma que tudo aconteça ao redor do usuário.
 
-Uma esfera invertida, ou seja, uma esfera que tenha apenas seu lado interno sendo renderizado, possibilita preencher completamente todo o campo de visão possível do usuário, além de ser uma solução adotada na exibição de imagens equiretangulares em 360. A geração procedural de uma esfera pode seguir uma das duas abordagens abaixo:
+Uma esfera invertida, ou seja, uma esfera que tenha apenas seu lado interno renderizado, possibilita preencher completamente todo o campo de visão possível, além de ser a solução padrão adotada na exibição de imagens equiretangulares em 360 graus. A geração procedural de uma esfera pode seguir uma das duas abordagens abaixo:
 \begin{enumerate}
   \begin{item} uma icosfera, i.e. uma esfera cujos vértices são distribuídos uniformemente; \end{item}
   \begin{item} geração de vertíces baseada em coordenadas de longitude/latitude. \end{item}
 \end{enumerate}
 
-Neste trabalho, fizemos uso da segunda abordagem devido a possibilidade de usar a longitude/latitude como forma de mapear as coordenadas de UV. Então geramos proceduralmente um \textit{mesh} de esfera de raio unitário segundo o pseudocódigo abaixo:
+Para este trabalho, preferiu-se a segunda abordagem devido a possibilidade de usar a longitude/latitude como forma de mapear as coordenadas de UV. Então gerou-se proceduralmente um \textit{mesh} de esfera de raio unitário segundo o pseudocódigo abaixo:
 
 \begin{figure} [H]
 \begin{tikzpicture}
@@ -160,7 +160,7 @@ Desenham-se segmentos de reta entre cada vértice
 \end{figure}
 
 % 2 - Mapeamento de UV em uma esfera invertida
-Para calcular as posições dos vertíces da esfera, dada uma quantidade de valores de latitudes $N_{latitude}$ e uma quantidade de valores de longitude $N_{longitude}$, definimos um valor $R_{longitude}$ como o tamanho angular de um longitude de uma secção transversal da esfera, tal como visto na equação \ref{equation1}.
+Para calcular as posições dos vértices da esfera, dada uma quantidade de valores de latitude $N_{latitude}$ e uma quantidade de valores de longitude $N_{longitude}$, define-se um valor $R_{longitude}$ como o tamanho angular de longitude de uma secção transversal da esfera, tal como visto na equação \ref{equation1}.
 
 \begin{equation}
 R_{longitude} = \frac{2 \pi}{N_{longitude}}
@@ -174,7 +174,7 @@ O tamanho angular total de uma quantidade de $i$ de valores de longitude pode se
 \label{equation2}
 \end{equation}
 
-Nas equações \ref{equation3} e \ref{equation4} são definidas as posições X e Z de pontos da esfera pertencentes a uma secção transversal da esfera onde possui um raio $D$.
+Nas equações \ref{equation3} e \ref{equation4} definem-se as posições X e Z de pontos da esfera pertencentes a uma secção transversal da esfera que possui raio $D$.
 
 \begin{equation}
 x_{i} = D * \sin(\alpha_{i})
@@ -186,14 +186,14 @@ z_{i} = D * \cos(\alpha_{i})
 \label{equation4}
 \end{equation}
 
-Em um corte longitudinal, é possível perceber que a o raio $D$ da secção transversal é variável ao longo da altura da esfera. Estabelecemos assim, um valor $R$ como sendo o tamanho angular de uma latitude da esfera, tal como visto na equação \ref{equation5}.
+Em um corte longitudinal, é possível perceber que o raio $D$ da secção transversal é variável ao longo da altura da esfera. Determina-se então um valor $R$ como o tamanho angular de um valor de latitude da esfera, tal como visto na equação \ref{equation5}.
 
 \begin{equation}
 R_{latitude} = \frac{\pi}{ N_{latitude}}
 \label{equation5}
 \end{equation}
 
-O tamanho angular total de uma quantidade de $i$ de valores de latitude pode ser dada pela equação \ref{equation6}.
+O tamanho angular total de uma quantidade de $i$ de valores de latitude pode ser dado pela equação \ref{equation6}.
 
 \begin{equation}
 \alpha_{latitude} = i * R_{latitude}
@@ -212,7 +212,7 @@ d_{yi} = 2 * \sin(\alpha_{yi})
 \label{equation8}
 \end{equation}
 
-Aplicando a equação \ref{equation8} nas equações \ref{equation3} e \ref{equation4} obtemos as posições X e Z dos vertices da esfera em função de suas coordenadas de longitude e latitude.
+Aplicando-se a equação \ref{equation8} nas equações \ref{equation3} e \ref{equation4} obtém-se as posições X e Z dos vértices da esfera em função de suas coordenadas de longitude e latitude.
 
 \begin{equation}
 x_{longitude} = 2 * \sin(\alpha_{latitude}) * \sin(\alpha_{longitude})
