@@ -200,28 +200,28 @@ O tamanho angular total de uma quantidade de $i$ de valores de latitude pode ser
 \label{equation6}
 \end{equation}
 
-A posição Y dos pontos da esfera pode ser dada pela equação \ref{equation7}.
+A posição Y dos pontos da esfera, considerando raio unitário, pode ser dada pela equação \ref{equation7}.
 \begin{equation}
-y_{i} = radius * \cos(\alpha_{latitude})
+y_{i} = \cos(\alpha_{latitude})
 \label{equation7}
 \end{equation}
 
-O raio $d_{yi}$ obtido em uma secção transversal na latitude $i$ é definido na equação \ref{equation8} como:
+O raio $D_{yi}$ obtido em uma secção transversal na latitude $i$ é definido na equação \ref{equation8} como:
 \begin{equation}
-d_{yi} = 2 * \sin(\alpha_{yi})
+D_{yi} = 2 * \sin(\alpha_{yi})
 \label{equation8}
 \end{equation}
 
 Aplicando-se a equação \ref{equation8} nas equações \ref{equation3} e \ref{equation4} obtém-se as posições X e Z dos vértices da esfera em função de suas coordenadas de longitude e latitude.
 
 \begin{equation}
-x_{longitude} = 2 * \sin(\alpha_{latitude}) * \sin(\alpha_{longitude})
-\label{equation4}
+x_{i} = 2 * \sin(\alpha_{latitude}) * \sin(\alpha_{longitude})
+\label{equation9}
 \end{equation}
 
 \begin{equation}
-z_{longitude} = 2 * \sin(\alpha_{latitude}) * \cos(\alpha_{longitude})
-\label{equation4}
+z_{i} = 2 * \sin(\alpha_{latitude}) * \cos(\alpha_{longitude})
+\label{equation10}
 \end{equation}
 
 
@@ -230,6 +230,7 @@ A inteligência de movimentação da \textit{snake} é, por sua vez, composta por um
 
 \begin{equation}
 F(A) = R * (D + O)
+\label{equation11}
 \end{equation}
 
 Onde R é um fator de randomização; D representa a distância de \textit{Manhattan} entre a posição atual e o objeto coletável; e O é um valor atribuído à existência ou não de obstáculos neste trajeto.
