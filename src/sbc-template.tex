@@ -37,7 +37,6 @@
  Para o desenvolvimento de aplicações de realidade virtual, este artigo propõe uma arquitetura que faz uso de todas as etapas da \textit{pipeline} gráfica apresentada pelo motor gráfico \textit{Unity Engine}. Ao mesmo tempo, abordar-se uma forma de aprimorar o reconhecimento de sinais do controle de realidade virtual \textit{Gear VR Controller} através da filtragem de ruídos por meio do filtro de Kalman.
 \end{resumo}
 
-
 \section{Introdução} \label{sec:introduction}
 % Contextualizar a Unity
 Para o desenvolvimento de aplicações VR, o motor e editor gráfico \textit{Unity} situa-se como peça de extrema relevância dadas a sua facilidade de aprendizado e incomplexidade no processo de desenvolvimento, além da possibilidade de criação de jogos e aplicações para consoles, plataformas móveis e dispositivos de realidade virtual e aumentada.
@@ -80,7 +79,7 @@ Além disso, o comportamento de busca da serpente deve garantir que não haja movi
 
 \begin{figure}[H] \label{fig:VRSnakePicture}
 \centering
-\includegraphics[scale=0.7]{VRSnakePicture}
+\includegraphics{VRSnakePicture}
 \caption{Snake buscando o objeto coletável após uma série de buscas bem sucedidas}
 \end{figure}
 
@@ -327,7 +326,7 @@ Desenvolveu-se uma réplica em realidade virtual do jogo \textit{Snake} no ambien
 \caption{Snake buscando o objeto coletável após uma série de buscas bem sucedidas}
 \end{figure}
 
-Aplicou-se também o filtro de Kalman durante a leitura de dados do controle do dispositivo, a fim de minimizar as inconsistências de leitura. Conforme os gráficos abaixo, pode-se perceber que o filtro foi capaz efetivamente aplicado, mas também é possível visualizar os ruídos.
+Aplicou-se também o filtro de Kalman durante a leitura de dados do controle do dispositivo, a fim de minimizar as inconsistências de leitura. Conforme os gráficos abaixo, pode-se perceber que o filtro foi capaz efetivamente aplicado, mas também é possível visualizar o impacto das informações ruidosas sobre a aplicação.
 [Adicionar imagem aqui]
 
 \section{Conclusão}\label{sec:conclusion}
