@@ -122,7 +122,6 @@ O diagrama abaixo ilustra, de maneira geral, o funcionamento da arquitetura. Fun
 \end{figure}
 
 \section{Realidade Virtual em uma Esfera Invertida} \label{sec:invertedsphere}
-
 % 1 - O uso de uma esfera invertida para renderizar o conteúdo do jogo
 % Imersão -> Preenchimento/Renderização de conteúdo ao redor do usuário
 A ilusão em um mundo virtual e consequente sensação de imersão requerem material visual disponível em todos os ângulos possíveis, uma vez que o gearVR possibilita completa liberdade de rotação, ou seja, 3 graus de liberdade (3DoF - \textit{3 Degrees of Freedom}). Tendo em vista que a proposta deste artigo contempla um jogo essencialmente 2D, tal como o \textit{Snake} original, tem-se o desafio de exibir conteúdo bidimensional em um cenário 3D de forma que tudo aconteça ao redor do usuário.
@@ -320,10 +319,15 @@ Cabe rememorar o conceito estabelecido pelo filtro de Kalman: trata-se de um fil
 \end{figure}
 
 \section{Resultados} \label{sec:results}
-Há dois importantes marcos atingidos: em primeiro lugar, a réplica do jogo \textit{Snake} no ambiente de desenvolvimento \textit{Unity} com o efetivo uso das camadas de aplicação, geometria e rasterização. A imagem abaixo ilustra a utilização da CPU através da ferramenta de avaliação de performance da Unity, o \textit{profiler} sob estresse:
-[Adicionar imagem aqui]
+Desenvolveu-se uma réplica em realidade virtual do jogo \textit{Snake} no ambiente de desenvolvimento \textit{Unity} com o efetivo uso das camadas de aplicação, geometria e rasterização. Neste jogo, posiciona-se o objeto coletável ao passo que a serpente busca-o a todo instante.  A imagem abaixo ilustra a taxa de quadros no \textit{GearVR} através da ferramenta de avaliação de performance da Unity, o \textit{profiler}:
 
-Em segundo lugar, a aplicação do filtro de Kalman durante a leitura de dados do controle do dispositivo, a fim de minimizar as inconsistências de leitura. Conforme os gráficos abaixo, pode-se perceber que o filtro foi capaz efetivamente aplicado, mas também é possível visualizar os ruídos.
+\begin{figure}[H] \label{fig:VRPerformance}
+\centering
+\includegraphics[scale=0.5]{VRPerformance}
+\caption{Snake buscando o objeto coletável após uma série de buscas bem sucedidas}
+\end{figure}
+
+Aplicou-se também o filtro de Kalman durante a leitura de dados do controle do dispositivo, a fim de minimizar as inconsistências de leitura. Conforme os gráficos abaixo, pode-se perceber que o filtro foi capaz efetivamente aplicado, mas também é possível visualizar os ruídos.
 [Adicionar imagem aqui]
 
 \section{Conclusão}\label{sec:conclusion}
