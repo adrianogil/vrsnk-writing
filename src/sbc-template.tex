@@ -318,13 +318,14 @@ Cabe rememorar o conceito estabelecido pelo filtro de Kalman: trata-se de um fil
 \end{figure}
 
 \section{Resultados} \label{sec:results}
-Desenvolveu-se uma réplica em realidade virtual do jogo \textit{Snake} no ambiente de desenvolvimento \textit{Unity} com o efetivo uso das camadas de aplicação, geometria e rasterização. Neste jogo, posiciona-se o objeto coletável ao passo que a serpente busca-o a todo instante.  A imagem abaixo ilustra a taxa de quadros no \textit{GearVR} através da ferramenta de avaliação de performance da Unity, o \textit{profiler}:
+Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvolvimento \textit{Unity} com o efetivo uso das camadas da pipeline gráfica. Gerou-se uma aplicação \textit{Android} testada no \textit{GearVR} do \textit{Samsung Galaxy S8} com o controle de modelo ET-YO32, conforme apresentado na figura \ref{fig:vrcontroller}. A imagem \ref{fig:VRPerformance} abaixo ilustra a taxa de quadros no \textit{GearVR} através da ferramenta de avaliação de performance da Unity, o \textit{profiler}:
 
 \begin{figure}[H] \label{fig:VRPerformance}
 \centering
 \includegraphics[scale=0.5]{VRPerformance}
-\caption{Snake buscando o objeto coletável após uma série de buscas bem sucedidas}
+\caption{Performance consoante o profiler da Unity}
 \end{figure}
+
 
 Aplicou-se também o filtro de Kalman durante a leitura de dados do controle do dispositivo, a fim de minimizar as inconsistências de leitura. Conforme os gráficos abaixo, pode-se perceber que o filtro foi capaz efetivamente aplicado, mas também é possível visualizar o impacto das informações ruidosas sobre a aplicação.
 [Adicionar imagem aqui]
