@@ -318,16 +318,18 @@ Cabe rememorar o conceito estabelecido pelo filtro de Kalman: trata-se de um fil
 \end{figure}
 
 \section{Resultados} \label{sec:results}
-Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvolvimento \textit{Unity} com o efetivo uso das camadas da pipeline gráfica. Gerou-se uma aplicação \textit{Android} testada no \textit{GearVR} do \textit{Samsung Galaxy S8} com o controle de modelo ET-YO32, conforme apresentado na figura \ref{fig:vrcontroller}. A imagem \ref{fig:VRPerformance} abaixo ilustra a taxa de quadros no \textit{GearVR} através da ferramenta de avaliação de performance da Unity, o \textit{profiler}:
+Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvolvimento \textit{Unity}. Gerou-se uma aplicação \textit{android} testada no \textit{Samsung Galaxy S8} através do \textit{GearVR} com o controle de modelo ET-YO32, conforme apresentado na figura \ref{fig:vrcontroller}. A figura \ref{fig:VRPerformanceChart} abaixo ilustra a taxa de quadros no \textit{GearVR} através da ferramenta de avaliação de performance da \textit{Oculus}, o \textit{OVR Metrics Tool}:
 
-\begin{figure}[H] \label{fig:VRPerformance}
+\begin{figure}[H] \label{fig:VRPerformanceChart}
 \centering
 \includegraphics[scale=0.5]{VRPerformance}
-\caption{Performance consoante o profiler da Unity}
+\caption{Quadros-por-segundo conforme o OVR Metrics Tool executado durante o funcionamento da aplicação }
 \end{figure}
 
+A aplicação apresentou taxa média de 43.96 \textit{qps} (quadros-por-segundo), com mínima de 16 \textit{qps} e máxima de 60 \textit{qps}. Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{qps} e isto se deve principalmente ao \textit{garbage collector} e à ferramentas de depuração, conforme apontado pela ferramenta de performance da \textit{Unity}, o \textit{profiler}. 
+%Falar sobre o filtro como potencializador de lentidão
 
-Aplicou-se também o filtro de Kalman durante a leitura de dados do controle do dispositivo, a fim de minimizar as inconsistências de leitura. Conforme os gráficos abaixo, pode-se perceber que o filtro foi capaz efetivamente aplicado, mas também é possível visualizar o impacto das informações ruidosas sobre a aplicação.
+Aplicou-se também o filtro de Kalman durante a leitura de dados do controle do dispositivo, a fim de minimizar as inconsistências de leitura. Conforme os gráficos abaixo, pode-se perceber que o filtro foi efetivamente aplicado, mas também é possível visualizar o impacto das informações ruidosas sobre a aplicação.
 [Adicionar imagem aqui]
 
 \section{Conclusão}\label{sec:conclusion}
@@ -337,7 +339,7 @@ Apresentou-se neste artigo uma implementação do filtro de Kalman para estabiliza
 Através dos resultados obtidos, verificou-se que a solução desenvolvida em \textit{Unity} para a aplicação do filtro foi efetivamente capaz de filtrar as posições ruidosas geradas pelo controlador e garantir um nível de controle mais estável em aplicações de realidade virtual. Da mesma maneira, o objetivo inicial de aliviar o trabalho de renderização atribuído à CPU, por meio da distribuição da aplicação para outras camadas da \textit{pipeline} gráfica, foi alcançado ao passo que a GPU tornou-se a única responsável por gerenciar a renderização dos objetos do jogo.
 
 % Trabalhos Futuros
-Em trabalhos futuros, dois passos são percebidos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para a camada de visualização, na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número representativamente maior de serpentes. Em segundo lugar, aplicar aprendizagem de máquina nesta camada, objetivando-se um comportamento de busca e desvio de obstáculos (como outras serpentes e seu próprio corpo) mais inteligente, por conseguinte, desafiador.
+Em trabalhos futuros, três passos são percebidos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para a camada de visualização, na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número representativamente maior de serpentes. Em segundo lugar, aplicar aprendizagem de máquina nesta camada, objetivando-se um comportamento de busca e desvio de obstáculos (como outras serpentes e seu próprio corpo) mais inteligente, por conseguinte, desafiador. Por último, otimizar e melhorar a performance, objetivando os 60 \textit{qps}.
 
 \section{References}
 
