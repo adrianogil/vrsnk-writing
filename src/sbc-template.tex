@@ -5,6 +5,9 @@
 \usepackage{graphicx,url}
 \usepackage{float}
 \usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{csquotes}
+\usepackage{amssymb}
 \usetikzlibrary{shapes, arrows, shapes.geometric}
 \usepackage[brazil]{babel}
 \usepackage[latin1]{inputenc}
@@ -50,7 +53,7 @@ Em outro âmbito, os controles ou \textit{joysticks} são uma das formas de intera
 Desse modo, propõe-se o desenvolvimento de um jogo cujas representações gráficas sejam inteiramente fundamentadas em código de GPU ao passo que as restrições lógicas concentrem-se na CPU, de maneira a atuar nos diferentes estágios da \textit{pipeline} gráfica acima apresentada. Em alusão à um clássico, o jogo Snake será recriado para os dispositivos de realidade virtual da Samsung em uma aplicação Unity, diferencia-se, porém, na medida que o jogador controla o objeto coletável, posicionando-o com o controlador tendo a finalidade de fazer a serpente falhar em seu objetivo. Neste aspecto, objetivando solucionar o primeiro desafio acima exposto intenta-se a aplicação do filtro de Kalman durante a leitura do posicionamento do cursor através deste \textit{joystick}, a fim de melhorar o reconhecimento do sinal e atenuar a inconsistência apresentada.
 
 % * Estrutura do artigo
-Analisa-se na seção \ref{sec:relatedworks} outros trabalhos que abordam sensores, uso de filtros e jogos de realidade virtual. Um esclarecimento sobre as regras do jogo desenvolvido pode ser encontrado na seção \ref{sec:vrsnake}. A arquitetura proposta é detalhada na seção \ref{sec:architecture}. Apresenta-se como um jogo de realidade virtual pode ser renderizado em uma esfera invertida na seção \ref{sec:invertedsphere}. Em \ref{sec:agent}, comprende-se a movimentação da \textit{snake} e sua arquitetura de renderização. A seção \ref{sec:gearvrcontroller} explana como ocorre a aplicação do filtro de Kalman no controle para VR. Resultados são discutidos na seção \ref{sec:results}. Por fim, pautam-se as conclusões e perspectivas de trabalhos futuros na seção \ref{sec:conclusion}.
+Analisa-se na seção \ref{sec:relatedworks} outros trabalhos que abordam sensores, uso de filtros e jogos de realidade virtual. A seção \ref{sec:kalmanfilter} revisa o conceito do filtro de Kalman. Um esclarecimento sobre as regras do jogo desenvolvido pode ser encontrado na seção \ref{sec:vrsnake}. A arquitetura proposta é detalhada na seção \ref{sec:architecture}. Apresenta-se como um jogo de realidade virtual pode ser renderizado em uma esfera invertida na seção \ref{sec:invertedsphere}. Em \ref{sec:agent}, comprende-se a movimentação da \textit{snake} e sua arquitetura de renderização. A seção \ref{sec:gearvrcontroller} explana como ocorre a aplicação do filtro de Kalman no controle para VR. Resultados são discutidos na seção \ref{sec:results}. Por fim, pautam-se as conclusões e perspectivas de trabalhos futuros na seção \ref{sec:conclusion}.
 
 \section{Trabalhos Relacionados} \label{sec:relatedworks}
 % 1 - Games VR como um potencializador de imersão
@@ -68,6 +71,51 @@ Controles VR, tal como o modelo ET-YO32 da Samsung exibido na figura \ref{fig:vr
 
 % 6 - Exemplos de filtragem de açoes dos controles (From ERIN17 paper. Refrasear)
 Certos trabalhos trazem a filtragem de sensores baseados no uso de acelerômetro, a exemplo: \cite{schlomer2008gesture} usa o modelo oculto de Markov para reconhecimento de gestos em um controle do \textit{Nintendo Wii}, a filtragem ocorre por meio de filtros simples para remover pontos que não são suficientemente expressivos. \cite{shiratori2008accelerometer}, por outro lado, utiliza múltiplos controles de \textit{Nintendo Wii} para gerar animações proceduralmente, o ruído é atenuado através do uso do filtro de Kalman.
+
+\section{Filtro de Kalman} \label{sec:kalmanfilter}
+Apresentado no ano de 1960 pelo criador de mesmo nome, o filtro de Kalman é um poderoso conjunto de operações as quais permitem estimar, a partir de dados ruidosos ou de pouca confiabilidade, um estado passado, presente ou futuro \cite{WelchBishop}, desde que estes sejam ruídos gaussianos. É retratado, por conseguinte, como um filtro recursivo ótimo.
+
+O termo \textit{filtro} descreve um algoritmo de processamento de dados capaz de encontrar a melhor estimativa, com erros minimizados, sem a necessidade de guardar todas as medições anteriores e reprocessá-las a cada vez que uma nova informação é recebida, pois utiliza-se somente a informação mais recente.
+
+O filtro de Kalman pode ser descrito como uma função de probabilidade que descreve flutuações randômicas em um espaço contínuo. Essencialmente, o filtro de Kalman soluciona o problema de tentar estimar o estado $x \in \mathbb{R}^{n}$ pela equação de diferença estocástica linear:
+
+\begin{equation}
+x_k = Ax_{k-1} + B\mu_k + w_{k-1}
+\end{equation}
+
+com a medida $y \in \mathbb{R}^{m}$
+
+\begin{equation}
+y_k = Hx_k + v_k
+\end{equation}
+
+A primeira equação representa que cada $x_k$ é a combinação linear do valor anterior somado ao controle de sinal $_k$ e um ruído de processo. A segunda equação mostra que qualquer valor medido é a combinação linear do valor do sinal $x_k$ a uma medida de ruído da medição.
+
+O filtro aplica ainda dois conjuntos de equações, organizados em dois passos: termos de predição e termos de correção, ambos de natureza recursiva, isto é, há um passo de previsão e um de correção das medidas obtidas. Abaixo seguem os conjuntos de equações, bem como esclarecimentos a respeito das mesmos, consoante \cite{WelchBishop} e \cite{LAARAIEDH}.
+
+Termos de predição podem ser dados por:
+\begin{equation}
+\hat{x}^{-}_k = A\hat{x}_{k-1} +  B\mu_k
+\end{equation}
+
+\begin{equation}
+P^{-}_k = AP_{k-1}A^{t} +  Q
+\end{equation}
+
+Termos de correção podem ser dados por:
+\begin{equation}
+K_k = P^{-}_k H^{T} (H P^{-}_k H^{T} + R)^{-1}
+\end{equation}
+
+\begin{equation}
+\hat{x}_k = \hat{x}^{-}_k + K_k (z_k - H\hat{x}^{-}_k)
+\end{equation}
+
+\begin{equation}
+P_k = (I - K_kH)  P^{-}_k
+\end{equation}
+
+$x^{-}_k$ é a estimativa antes do passo de correção, à medida que $P^{-}_k$ é a covariância anterior ao mesmo passo. É ainda neste passo de correção que se encontra o $\hat{x}_k$, que é a estimativa de x no momento k, também encontra-se $P_k$, necessário para a estimativa futura k + 1 juntamente com $\hat{x}_k$. O ganho de Kalman $K_k$ descreve o quanto a equação precisa se ajustar no momento k. Vale ainda dizer que os valores do passo de correção são chamados de \textit{a posteriori} enquanto os valores de predição são \textit{a priori}.
 
 \section{VRSnake} \label{sec:vrsnake}
 % Definição das regras do jogo
@@ -329,8 +377,41 @@ Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvo
 A aplicação apresentou taxa média de 43.96 \textit{qps} (quadros-por-segundo), com mínima de 16 \textit{qps} e máxima de 60 \textit{qps}. Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{qps} e isto se deve principalmente ao \textit{garbage collector} e à ferramentas de depuração, conforme apontado pela ferramenta de performance da \textit{Unity}, o \textit{profiler}. 
 %Falar sobre o filtro como potencializador de lentidão
 
-Aplicou-se também o filtro de Kalman durante a leitura de dados do controle do dispositivo, a fim de minimizar as inconsistências de leitura. Conforme os gráficos abaixo, pode-se perceber que o filtro foi efetivamente aplicado, mas também é possível visualizar o impacto das informações ruidosas sobre a aplicação.
-[Adicionar imagem aqui]
+Aplicou-se também o filtro de Kalman durante a leitura de dados do controle do dispositivo, a fim de minimizar as inconsistências de leitura. Conforme os gráficos abaixo, pode-se perceber que o filtro foi efetivamente aplicado, mas também é possível visualizar o impacto das informações ruidosas sobre a aplicação. Para fins de teste, foi gerada uma esfera invertida e um código em \textit{shader} para exibir \textit{grids} na superfície da esfera gerando um ambiente branco de cor sólida e sem efeitos de iluminação.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.5\textwidth]{image_01.png}
+\caption{Filtragem do cursor de VR. Amostras ruidosas em vermelho e valor filtrado em azul.}
+\label{fig:filter01}
+\end{figure}
+
+Durante a execução da aplicação, percebeu-se que quando a movimentação do cursor é mais veloz que a taxa de atualização, i.e., o \textit{update}, os pontos de ruído não são visualizados de maneira contínua, provocando o efeito visto na figura \ref{fig:filter02}, onde as partículas concentram-se em apenas alguns pontos amostrados pelo \textit{framerate} da aplicação \textit{Unity}, gerando regiões ruidosas espaçadas entre si.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.5\textwidth]{image_02.png}
+\caption{Filtragem do cursor de VR. Amostras ruidosas em vermelho e valor filtrado em azul.}
+\label{fig:filter02}
+\end{figure}
+
+Na figura \ref{fig:filter01} e \ref{fig:filter02} verifica-se que a linha azul forma-se de maneira estável ao longo do caminho percorrido pelo cursor, enquanto os pontos vermelhos se espalham ao redor desse caminho, indicando que a amplitude máxima de instabilidade é cerca de duas vezes maior que o tamanho do cursor, ou seja, facilmente perceptível pelo usuário e que impossibilitaria a realização de movimentos precisos e estáveis, em outras palavras, a exatidão e responsividade esperadas do controlador não são satisfatórias.
+
+A figura \ref{fig:chart_noise} mostra o gráfico da velocidade do curso ao longo da execução da aplicação. Ao comparar com o gráfico da figura \ref{fig:chart_filtered} gerado na mesma execução mas com o cursor filtrado, observamos que este último possui uma curva mais suave, indicando que o filtro de Kalman foi capaz de filtrar o ruído e assim suavizando o posicionamento capturado pelo controle.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.8\textwidth]{/chart_noise.png}
+\caption{Gráfico da velocidade do curso ao longo de uma execução da aplicação}
+\label{fig:chart_noise}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.8\textwidth]{chart_filtered.png}
+\caption{Gráfico da velocidade filtrada do curso ao longo de uma execução da aplicação}
+\label{fig:chart_filtered}
+\end{figure}
 
 \section{Conclusão}\label{sec:conclusion}
 % Resumo do artigo
