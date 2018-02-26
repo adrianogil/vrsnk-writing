@@ -60,17 +60,15 @@ Analisa-se na seção \ref{sec:relatedworks} outros trabalhos que abordam sensores
 Jogos em realidade virtual são um grande potencializador de imersão, dada a sua capacidade de estimular a sensação de presença espacial e interatividade \cite{seibert2017control}.
 
 % 2 - Criar Jogos em VR é sobre como preencher o espaço em 3D. Exemplos.
-Aplicações VR se diferenciam de outras aplicações pela preocupação em preencher o espaço tridimensional de forma a fornecer conteúdo para todos os pontos de vista possíveis. Por exemplo, a aplicação descrita em \cite{zund2015unfolding} utiliza visão computacional para geração de uma visão panorâmica de um jogo de console em 8-bits. Rodando em um Oculus Rift DK2, o jogador é posicionado no centro do mundo e a medida que movimenta seu personagem, o mundo se desdobra ao seu redor, extendendo a visão do jogo nas quatro paredes do ambiente virtual.
+Aplicações VR diferenciam-se de outras aplicações pela preocupação em preencher o espaço tridimensional de forma a fornecer conteúdo para todos os pontos de vista possíveis. Por exemplo, a aplicação descrita em \cite{zund2015unfolding} utiliza visão computacional para geração de uma visão panorâmica de um jogo de console em 8-bits. Rodando em um Oculus Rift DK2, o jogador é posicionado no centro do mundo e a medida que movimenta seu personagem, o mundo se desdobra ao seu redor, extendendo a visão do jogo nas quatro paredes do ambiente virtual.
 
-% 3 - Arquiteturas de visualização
-
-% 4 - Controles de VR auxiliam na sensação de presença e por consequência na imersão
+% 3 - Controles de VR auxiliam na sensação de presença e por consequência na imersão
 Controles VR, tal como o modelo ET-YO32 da Samsung exibido na figura \ref{fig:vrcontroller}, são definidos como sendo de mapeamento natural tangível realístico e segundo a classificação de \cite{skalski2011mapping}, emulam de forma realista sua contrapartida no ambiente virtual, ou seja, movimenta-se a réplica do controle físico no espaço 3D da aplicação VR da mesma forma que se faz no mundo real.
 
-% 5 - Filtrar as entradas dos controles permite melhorar a experiência do usuário
-
-% 6 - Exemplos de filtragem de açoes dos controles (From ERIN17 paper. Refrasear)
+% 4 - Exemplos de filtragem de açoes dos controles (From ERIN17 paper. Refrasear)
 Certos trabalhos trazem a filtragem de sensores baseados no uso de acelerômetro, a exemplo: \cite{schlomer2008gesture} usa o modelo oculto de Markov para reconhecimento de gestos em um controle do \textit{Nintendo Wii}, a filtragem ocorre por meio de filtros simples para remover pontos que não são suficientemente expressivos. \cite{shiratori2008accelerometer}, por outro lado, utiliza múltiplos controles de \textit{Nintendo Wii} para gerar animações proceduralmente, o ruído é atenuado através do uso do filtro de Kalman.
+
+A arquitetura proposta não é utilizada em larga escala, mas recentemente o jogo \textit{Jelly in the Sky} foi disponibilizado para aquisição na plataforma de jogos para computador \textit{Steam}. O desenvolvedor descreveu o trabalho gerado bem como desafios na rede online \textit{Reddit}.
 
 \section{Filtro de Kalman} \label{sec:kalmanfilter}
 Apresentado no ano de 1960 pelo criador de mesmo nome, o filtro de Kalman é um poderoso conjunto de operações as quais permitem estimar, a partir de dados ruidosos ou de pouca confiabilidade, um estado passado, presente ou futuro \cite{WelchBishop}, desde que estes sejam ruídos gaussianos. É retratado, por conseguinte, como um filtro recursivo ótimo.
