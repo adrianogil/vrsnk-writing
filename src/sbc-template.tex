@@ -12,7 +12,7 @@
 
 \sloppy
 
-\title{VRSnake: Aplicação do Filtro de Kalman em um Jogo de Realidade Virtual com Visualização Baseada em Shader}
+\title{VRSnake: Jogo de Realidade Virtual com Visualização Baseada em Shaders}
 
 \author{Thiago S. Figueira\inst{1}, Adriano M. Gil\inst{1} }
 
@@ -34,7 +34,7 @@
 \end{abstract}
 
 \begin{resumo}
- Para o desenvolvimento de aplicações de realidade virtual, este artigo propõe uma arquitetura que faz uso de todas as etapas da \textit{pipeline} gráfica apresentada pelo motor gráfico \textit{Unity Engine}. Ao mesmo tempo, abordar-se uma forma de aprimorar o reconhecimento de sinais do controle de realidade virtual \textit{Gear VR Controller} através da filtragem de ruídos por meio do filtro de Kalman.
+ Para o desenvolvimento de aplicações de realidade virtual, este artigo propõe uma arquitetura que faz uso de todas as etapas da \textit{pipeline} gráfica apresentada pelo motor gráfico \textit{Unity Engine}. Ao mesmo tempo, abordar-se a implementação do filtro de Kalman como forma de aprimorar o reconhecimento de sinais do controle de realidade virtual \textit{Gear VR Controller}.
 \end{resumo}
 
 \section{Introdução} \label{sec:introduction}
@@ -50,30 +50,22 @@ Em outro âmbito, os controles ou \textit{joysticks} são uma das formas de intera
 Neste trabalho, propomos o desenvolvimento de um jogo cujas representações gráficas sejam inteiramente fundamentadas em código de GPU ao passo que as restrições lógicas concentrem-se na CPU, de maneira a atuar nos diferentes estágios da \textit{pipeline} gráfica acima apresentada. Em alusão à um clássico, o jogo Snake será recriado para os dispositivos de realidade virtual da Samsung em uma aplicação Unity, diferencia-se, porém, na medida que o jogador controla o objeto coletável, posicionando-o com o controlador tendo a finalidade de fazer a serpente falhar em seu objetivo. Tendo em vista solucionar o primeiro desafio acima exposto intenta-se a aplicação do filtro de Kalman durante a leitura do posicionamento do cursor através deste \textit{joystick}, a fim de melhorar o reconhecimento do sinal e atenuar a inconsistência apresentada.
 
 % * Estrutura do artigo
-Analisa-se na seção \ref{sec:relatedworks} outros trabalhos que abordam sensores, uso de filtros e jogos de realidade virtual. Um esclarecimento sobre as regras do jogo desenvolvido pode ser encontrado na seção \ref{sec:vrsnake}. A arquitetura proposta é detalhada na seção \ref{sec:architecture}. Apresenta-se como um jogo de realidade virtual pode ser renderizado em uma esfera invertida na seção \ref{sec:invertedsphere}. Em \ref{sec:agent}, comprende-se a movimentação da \textit{snake} e sua arquitetura de renderização. A seção \ref{sec:gearvrcontroller} explana como ocorre a aplicação do filtro de Kalman no controle para VR. Resultados são discutidos na seção \ref{sec:results}. Por fim, pautam-se as conclusões e perspectivas de trabalhos futuros na seção \ref{sec:conclusion}.
+Analisamos na seção \ref{sec:relatedworks} outros trabalhos que abordam sensores, uso de filtros e jogos de realidade virtual. Um esclarecimento sobre as regras do jogo desenvolvido pode ser encontrado na seção \ref{sec:vrsnake}. A arquitetura proposta é detalhada na seção \ref{sec:architecture}. Apresenta-se como um jogo de realidade virtual pode ser renderizado em uma esfera invertida na seção \ref{sec:invertedsphere}. Em \ref{sec:agent}, comprende-se a movimentação da \textit{snake} e sua arquitetura de renderização. A seção \ref{sec:gearvrcontroller} explana como ocorre a aplicação do filtro de Kalman no controle para VR. Resultados são discutidos na seção \ref{sec:results}. Por fim, pautam-se as conclusões e perspectivas de trabalhos futuros na seção \ref{sec:conclusion}.
 
 \section{Trabalhos Relacionados} \label{sec:relatedworks}
-% 1 - Games VR como um potencializador de imersão
-Jogos em realidade virtual são um grande potencializador de imersão, dada a sua capacidade de estimular a sensação de presença espacial e interatividade \cite{seibert2017control}.
+O jogo bidimensional \textit{Jelly in the Sky}, recentemente disponibilizado para aquisição na plataforma de jogos para computador \textit{Steam}, utiliza uma estrutura baseada em \textit{shader} similar à arquitetura apresentada aqui. No entanto, aplicações em realidade virtual diferenciam-se de outras aplicações devido à preocupação em preencher o espaço tridimensional de forma a fornecer conteúdo para todos os pontos de vista possíveis. Por exemplo, a aplicação descrita em \cite{zund2015unfolding} utiliza visão computacional para geração de uma visão panorâmica de um jogo de console em 8-bits. Rodando em um Oculus Rift DK2, o jogador é posicionado no centro do mundo e à medida que movimenta seu personagem, o mundo se desdobra ao seu redor, extendendo a visão de jogo para as quatro paredes do ambiente virtual. 
 
-% 2 - Criar Jogos em VR é sobre como preencher o espaço em 3D. Exemplos.
-Aplicações VR se diferenciam de outras aplicações pela preocupação em preencher o espaço tridimensional de forma a fornecer conteúdo para todos os pontos de vista possíveis. Por exemplo, a aplicação descrita em \cite{zund2015unfolding} utiliza visão computacional para geração de uma visão panorâmica de um jogo de console em 8-bits. Rodando em um Oculus Rift DK2, o jogador é posicionado no centro do mundo e a medida que movimenta seu personagem, o mundo se desdobra ao seu redor, extendendo a visão do jogo nas quatro paredes do ambiente virtual.
+% 3 - Controles de VR auxiliam na sensação de presença e por consequência na imersão
+Jogos VR são um grande potencializador de imersão, dada a sua capacidade de estimular a sensação de presença espacial e interatividade \cite{seibert2017control} através, por exemplo, dos controles VR, tal qual o modelo ET-YO32 da Samsung exibido na figura \ref{fig:vrcontroller}, que são classificados como de mapeamento natural tangível realístico e consoante a definição proposta por \cite{skalski2011mapping}, emulam de forma realista sua contrapartida no ambiente virtual, ou seja, movimenta-se a réplica do controle físico no espaço 3D da aplicação VR da mesma forma que se faz no mundo real.
 
-% 3 - Arquiteturas de visualização
-
-% 4 - Controles de VR auxiliam na sensação de presença e por consequência na imersão
-Controles VR, tal como o modelo ET-YO32 da Samsung exibido na figura \ref{fig:vrcontroller}, são definidos como sendo de mapeamento natural tangível realístico e segundo a classificação de \cite{skalski2011mapping}, emulam de forma realista sua contrapartida no ambiente virtual, ou seja, movimenta-se a réplica do controle físico no espaço 3D da aplicação VR da mesma forma que se faz no mundo real.
-
-% 5 - Filtrar as entradas dos controles permite melhorar a experiência do usuário
-
-% 6 - Exemplos de filtragem de açoes dos controles (From ERIN17 paper. Refrasear)
+% 4 - Exemplos de filtragem de açoes dos controles (From ERIN17 paper. Refrasear)
 Certos trabalhos trazem a filtragem de sensores baseados no uso de acelerômetro, a exemplo: \cite{schlomer2008gesture} usa o modelo oculto de Markov para reconhecimento de gestos em um controle do \textit{Nintendo Wii}, a filtragem ocorre por meio de filtros simples para remover pontos que não são suficientemente expressivos. \cite{shiratori2008accelerometer}, por outro lado, utiliza múltiplos controles de \textit{Nintendo Wii} para gerar animações proceduralmente, o ruído é atenuado através do uso do filtro de Kalman.
-
-Há ainda o jogo \textit{Jelly in the Sky}, recentemente disponibilizado para aquisição na plataforma de jogos para computador \textit{Steam}, que utiliza uma estrutura baseada em \textit{shader} similar à arquitetura apresentada aqui.
 
 \section{VRSnake} \label{sec:vrsnake}
 % Definição das regras do jogo
-O \textit{VRSnake} traz para a realidade virtual o clássico jogo 2D \textit{Snake}, mas diferentemente do original, o jogador assume controle sobre o posicionamento dos objetos coletáveis ao invés de controlar diretamente a serpente. Algumas regras precisam ser observadas: em primeiro lugar, a serpente busca contínua e automaticamente o objeto coletável e cresce em uma unidade à medida que alcança este objeto.
+O \textit{VRSnake} traz para a realidade virtual o clássico jogo 2D \textit{Snake}, mas diferentemente do original, o jogador assume controle sobre o posicionamento dos objetos coletáveis ao invés de controlar diretamente a serpente. Propomos então as seguintes regras: 
+
+A serpente busca contínua e automaticamente o objeto coletável e cresce em uma unidade à medida que alcança este objeto.
 
 Como no jogo original, a serpente deve movimentar-se de maneira circular pelo cenário, isto é, ao encontrar os limites do cenário de um lado, deve continuar do outro na mesma maneira. O jogador vence quando a \textit{snake} é derrotada, ou seja, quando ela atinge a si própria de alguma forma.
 
@@ -284,7 +276,7 @@ ManhattanDistance = \left|x_{1} - x_{2}\right| + \left|y_{1} - y_{2}\right|
 \label{equation:manhattan}
 \end{equation}
 
-No que concerne a segunda camada, o \textit{shader} de renderização analisa durante a execução do jogo cada pixel para determinar a que elemento este pertence, o que pode ser o objeto coletável, uma parte da serpente ou ainda o plano de fundo. Para determinar esta relação de atribuição, alguns cálculos básicos são necessários: um pixel é colorido com a cor do objeto coletável se sua distância até o centro do objeto (um pixel) for menor que um raio determinado, semelhantemente mantem-se um vetor de pontos equidistantes entre si, onde cada posição representa um quadrilátero que faz parte do corpo da \textit{snake}, o pixel em questão recebe a cor da serpente caso esteja contido na área delineada por estes quadriláteros, dados seus tamanhos de lado e centro, no entanto, uma vez que não atenda a nenhum caso anterior, o pixel simplesmente recebe a cor do plano de fundo.
+No que concerne a segunda camada, o \textit{shader} de renderização analisa durante a execução do jogo cada pixel para determinar a que elemento este pertence: o objeto coletável, a serpente ou o plano de fundo. Para determinar esta relação de atribuição, alguns cálculos básicos são necessários: um pixel é colorido com a cor do objeto coletável se sua distância até o centro do objeto (um pixel) for menor que um raio determinado, semelhantemente mantem-se um vetor de pontos equidistantes entre si, onde cada posição representa um quadrilátero que faz parte do corpo da \textit{snake}, o pixel em questão recebe a cor da serpente caso esteja contido na área delineada por estes quadriláteros, dados seus tamanhos de lado e centro, no entanto, uma vez que não atenda a nenhum caso anterior, o pixel simplesmente recebe a cor do plano de fundo.
 
 Para que a serpente mova-se de forma circular deve-se compreender o mapeamento UV (projeção de uma imagem 2D em uma superfície 3D) da superfície do objeto, neste caso, uma esfera. Basta verificar as extremidades para a presença da \textit{snake} e redesenhá-la no lado apropriado.
 
@@ -328,20 +320,16 @@ Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvo
 \caption{Quadros-por-segundo conforme o OVR Metrics Tool executado durante o funcionamento da aplicação }
 \end{figure}
 
-A aplicação apresentou taxa média de 43.96 \textit{qps} (quadros-por-segundo), com mínima de 16 \textit{qps} e máxima de 60 \textit{qps}. Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{qps} e isto se deve principalmente ao \textit{garbage collector} e à ferramentas de depuração, conforme apontado pela ferramenta de performance da \textit{Unity}, o \textit{profiler}. 
-%Falar sobre o filtro como potencializador de lentidão
-
-Aplicou-se também o filtro de Kalman durante a leitura de dados do controle do dispositivo, a fim de minimizar as inconsistências de leitura. Conforme os gráficos abaixo, pode-se perceber que o filtro foi efetivamente aplicado, mas também é possível visualizar o impacto das informações ruidosas sobre a aplicação.
-[Adicionar imagem aqui]
+A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-second}, quadros-por-segundo), com mínima de 16 \textit{fps} e máxima de 60 \textit{fps}. Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{fps} e isto se deve principalmente ao \textit{garbage collector} e à implementação do filtro de Kalman que, apesar de minimizar as inconsistências de leitura, ocasionou pequenos atrasos de processamento.
 
 \section{Conclusão}\label{sec:conclusion}
 % Resumo do artigo
-Apresentou-se neste artigo uma implementação do filtro de Kalman para estabilização do controle de realidade virtual da Oculus, o \textit{Gear VR Controller}. Concomitantemente, descreveu-se a visualização das entradas ruidosas fornecidas pelo controle e o efeito resultante após a aplicação do filtro. A fim de estimular a reutilização da implementações feitas, foram gerados componentes para rápida configuração e aplicação. Apresentou-se também a implementação do jogo \textit{VRSnake} para realidade virtual, construído sobre uma arquitetura que alivia a carga de trabalho atribuída à CPU, à medida que atribui à GPU o controle total sobre a renderização dos elementos dispostos no dispositivo de saída.
+Apresentou-se a implementação de um jogo criado segundo a arquitetura de renderização baseada em \textit{shaders} que distribui passos usualmente restritos à camada de aplicação para as demais camadas da \textit{pipeline} gráfica. 
 
-Através dos resultados obtidos, verificou-se que a solução desenvolvida em \textit{Unity} para a aplicação do filtro foi efetivamente capaz de filtrar as posições ruidosas geradas pelo controlador e garantir um nível de controle mais estável em aplicações de realidade virtual. Da mesma maneira, o objetivo inicial de aliviar o trabalho de renderização atribuído à CPU, por meio da distribuição da aplicação para outras camadas da \textit{pipeline} gráfica, foi alcançado ao passo que a GPU tornou-se a única responsável por gerenciar a renderização dos objetos do jogo.
+A fim de melhorar a experiência de uso do jogo com o controle, aplicou-se o filtro de Kalman com a intenção de aperfeiçoar a instabilidade presente nas leituras de movimento.
 
 % Trabalhos Futuros
-Em trabalhos futuros, três passos são percebidos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para a camada de visualização, na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número representativamente maior de serpentes. Em segundo lugar, aplicar aprendizagem de máquina nesta camada, objetivando-se um comportamento de busca e desvio de obstáculos (como outras serpentes e seu próprio corpo) mais inteligente, por conseguinte, desafiador. Por último, otimizar e melhorar a performance, objetivando os 60 \textit{qps}.
+Em trabalhos futuros, três passos são percebidos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para a camada de visualização, na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número representativamente maior de serpentes. Em segundo lugar, aplicar aprendizagem de máquina nesta camada, objetivando-se um comportamento de busca e desvio de obstáculos (como outras serpentes e seu próprio corpo) mais inteligente, por conseguinte, desafiador. Por último, otimizar e melhorar a performance, objetivando os 60 \textit{fps}.
 
 \section{References}
 
