@@ -65,7 +65,7 @@ Jogos VR são um grande potencializador de imersão, dada a sua capacidade de esti
 Certos trabalhos trazem a filtragem de sensores baseados no uso de acelerômetro, a exemplo: \cite{schlomer2008gesture} usa o modelo oculto de Markov para reconhecimento de gestos em um controle do \textit{Nintendo Wii}, a filtragem ocorre por meio de filtros simples para remover pontos que não são suficientemente expressivos. \cite{shiratori2008accelerometer}, por outro lado, utiliza múltiplos controles de \textit{Nintendo Wii} para gerar animações proceduralmente, o ruído é atenuado através do uso do filtro de Kalman.
 
 \section{Filtro de Kalman} \label{sec:kalmanfilter}
-Apresentado no ano de 1960 pelo criador de mesmo nome, o filtro de Kalman é um poderoso conjunto de operações as quais permitem estimar, a partir de dados ruidosos ou de pouca confiabilidade, um estado passado, presente ou futuro \cite{WelchBishop}, desde que estes sejam ruídos gaussianos. É retratado, por conseguinte, como um filtro recursivo ótimo.
+Cabe rememorar o conceito estabelecido pelo filtro escolhido: o filtro de Kalman é um poderoso conjunto de operações as quais permitem estimar, a partir de dados ruidosos ou de pouca confiabilidade, um estado passado, presente ou futuro \cite{WelchBishop}, desde que estes sejam ruídos gaussianos. É retratado, por conseguinte, como um filtro recursivo ótimo.
 
 O termo \textit{filtro} descreve um algoritmo de processamento de dados capaz de encontrar a melhor estimativa, com erros minimizados, sem a necessidade de guardar todas as medições anteriores e reprocessá-las a cada vez que uma nova informação é recebida, pois utiliza-se somente a informação mais recente.
 
@@ -264,7 +264,6 @@ z_{i} = 2 * \sin(\alpha_{latitude}) * \cos(\alpha_{longitude})
 \label{equation10}
 \end{equation}
 
-
 \section{Snake como um Agente Utilitário} \label{sec:agent}
 A inteligência de movimentação da \textit{snake} é, por sua vez, composta por uma função utilitária de avaliação de estados que analisa cada possível ação em determinado momento. Em essência, a serpente sempre está buscando alcançar o coletável, por isso avalia o curso de menor distância no eixos X e Y e desde que não exista a possibilidade de atingir a si própria, assume este caminho e repete o processo. A função abaixo ilustra esse procedimento:
 
@@ -338,7 +337,7 @@ Devido à natureza do jogo desenvolvido, o jogador necessita controlar o posicion
 \label{fig:vrcontroller}
 \end{figure}
 
-Cabe rememorar o conceito estabelecido pelo filtro de Kalman: trata-se de um filtro ótimo capaz de determinar estados passados e futuros de um sistema dinâmico linear, a partir de um grupo de entradas ruidosas, desde que tal ruído seja gaussiano. Para a efetiva implementação no controle de realidade virtual, inicialmente captura-se a orientação angular do \textit{joystick}, traça-se um raio da posição virtual atual do controle até uma esfera unitária e o ponto resultante da interseção é o foco do usuário, em outras palavras, o objetivo apontado pelo cursor, esta posição é onde aplica-se efetivamente o filtro de Kalman. O diagrama abaixo ilustra este processo.
+Para a efetiva implementação do filtro de Kalman na leitura do controle de realidade virtual seguem-se os seguintes passos: inicialmente captura-se a orientação angular do \textit{joystick}, traça-se um raio da posição virtual atual do controle até uma esfera unitária e o ponto resultante da interseção é o foco do usuário, em outras palavras, o objetivo apontado pelo cursor, esta posição é onde aplica-se efetivamente o filtro de Kalman. O diagrama abaixo ilustra este processo.
 
 \begin{figure}[H]
 \centering
@@ -370,7 +369,7 @@ Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvo
 
 A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-second}, quadros-por-segundo), com mínima de 16 \textit{fps} e máxima de 60 \textit{fps}. Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{fps} e isto se deve principalmente ao \textit{garbage collector} e à implementação do filtro de Kalman que, apesar de minimizar as inconsistências de leitura, ocasionou pequenos atrasos de processamento.
 
-Aplicou-se também o filtro de Kalman durante a leitura de dados do controle do dispositivo, a fim de minimizar as inconsistências de leitura. Conforme os gráficos abaixo, pode-se perceber que o filtro foi efetivamente aplicado, mas também é possível visualizar o impacto das informações ruidosas sobre a aplicação. Para fins de teste, foi gerada uma esfera invertida e um código em \textit{shader} para exibir \textit{grids} na superfície da esfera gerando um ambiente branco de cor sólida e sem efeitos de iluminação.
+Conforme os gráficos abaixo, pode-se perceber que o filtro foi efetivamente aplicado, mas também é possível visualizar o impacto das informações ruidosas sobre a aplicação. Para fins de teste, foi gerada uma esfera invertida e um código em \textit{shader} para exibir \textit{grids} na superfície da esfera gerando um ambiente branco de cor sólida e sem efeitos de iluminação.
 
 \begin{figure}[ht]
 \centering
