@@ -49,8 +49,6 @@
 % The testflow support page is at:
 % http://www.michaelshell.org/tex/testflow/
 
-
-
 \documentclass[conference]{IEEEtran}
 % Some Computer Society conferences also require the compsoc mode option,
 % but others use the standard conference format.
@@ -59,8 +57,12 @@
 % manually specify the path to it like:
 % \documentclass[conference]{../sty/IEEEtran}
 
+% \usepackage[brazil]{babel}
+% \usepackage[latin1]{inputenc}
 
-
+\usepackage[brazilian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 
 
 % Some very useful LaTeX packages include:
@@ -320,28 +322,26 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{Bare Demo of IEEEtran.cls\\ for IEEE Conferences}
+\title{Ferramenta de Qualidade de Imagens 360 Integrada ao Editor Unity}
 
 
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-\author{\IEEEauthorblockN{Michael Shell}
-\IEEEauthorblockA{School of Electrical and\\Computer Engineering\\
-Georgia Institute of Technology\\
-Atlanta, Georgia 30332--0250\\
-Email: http://www.michaelshell.org/contact.html}
-\and
-\IEEEauthorblockN{Homer Simpson}
-\IEEEauthorblockA{Twentieth Century Fox\\
-Springfield, USA\\
-Email: homer@thesimpsons.com}
-\and
-\IEEEauthorblockN{James Kirk\\ and Montgomery Scott}
-\IEEEauthorblockA{Starfleet Academy\\
-San Francisco, California 96678--2391\\
-Telephone: (800) 555--1212\\
-Fax: (888) 555--1212}}
+% \author{Adriano M. Gil\inst{1}, Eliamara Silva\inst{1}, Thiago S. Figueira\inst{1}}
+
+% \address{Samsung Instituto de Desenvolvimento para a Informática da Amazônia
+%   (SIDIA)\\
+%   Manaus -- AM -- Brazil
+%   \email{\{adriano.gil,eliamara.s,t.figueira\}@samsung.com}
+% }
+
+\author{\IEEEauthorblockN{Adriano M. Gil\IEEEauthorrefmark{1}
+Eliamara Silva\IEEEauthorrefmark{1},
+Thiago S. Figueira\IEEEauthorrefmark{1}}
+\IEEEauthorblockA{\IEEEauthorrefmark{1}Samsung Instituto de Desenvolvimento para a Informática da Amazônia\\
+SIDIA,\\
+Manaus -- AM -- Brazil}}
 
 % conference papers do not typically use \thanks and this command
 % is locked out in conference mode. If really needed, such as for
