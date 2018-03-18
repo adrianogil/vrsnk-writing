@@ -1,10 +1,42 @@
 %\documentclass[a4paper]{ltxdoc}
-\documentclass[12pt]{article}
+%\documentclass[12pt]{article}
 %\documentclass{abntex2}
 %\usepackage{sbc-template}
-\usepackage{abntex2cite}
 
-\usepackage{graphicx,url}
+
+\documentclass[
+	% -- opções da classe memoir --
+	article,			% indica que é um artigo acadêmico
+	11pt,				% tamanho da fonte
+	oneside,			% para impressão apenas no recto. Oposto a twoside
+	a4paper,			% tamanho do papel. 
+	% -- opções da classe abntex2 --
+	%chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
+	%section=TITLE,		% títulos de seções convertidos em letras maiúsculas
+	%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
+	%subsubsection=TITLE % títulos de subsubseções convertidos em letras maiúsculas
+	% -- opções do pacote babel --
+	english,			% idioma adicional para hifenização
+	brazil,				% o último idioma é o principal do documento
+	sumario=tradicional
+	]{abntex2}
+
+% ---
+% Pacotes fundamentais 
+% ---
+\usepackage{lmodern}			% Usa a fonte Latin Modern
+\usepackage[T1]{fontenc}		% Selecao de codigos de fonte.
+\usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
+\usepackage{indentfirst}		% Indenta o primeiro parágrafo de cada seção.
+\usepackage{nomencl} 			% Lista de simbolos
+\usepackage{color}				% Controle das cores
+\usepackage{graphicx}			% Inclusão de gráficos
+\usepackage{microtype} 			% para melhorias de justificação
+% ---
+
+\usepackage[alf]{abntex2cite}	% Citações padrão ABNT
+
+\usepackage{url}
 \usepackage{float}
 \usepackage{tikz}
 \usepackage{amsmath}
@@ -12,36 +44,35 @@
 \usepackage{amssymb}
 \usetikzlibrary{shapes, arrows, shapes.geometric}
 \usepackage[brazil]{babel}
-\usepackage[latin1]{inputenc}
+%\usepackage[latin1]{inputenc}
 \graphicspath{ {images/} }
 
-\sloppy
+%\sloppy
 
 \title{VRSnake: Aplicação do Filtro de Kalman em um Jogo de Realidade Virtual com Visualização Baseada em Shader}
 
-\author{Thiago S. Figueira}
-\author{Adriano M. Gil}
+\author{Thiago S. Figueira }%\inst{1}, Adriano M. Gil\inst{1}}
 
-\address{Samsung Instituto de Desenvolvimento para a Informática da Amazônia
-  (SIDIA)\\
-  Manaus -- AM -- Brazil
-  \email{\{t.figueira,adriano.gil\}@samsung.com}
-}
+%\address{Samsung Instituto de Desenvolvimento para a Informática da Amazônia
+%  (SIDIA)\\
+%  Manaus -- AM -- Brazil
+%  \email{\{t.figueira,adriano.gil\}@samsung.com}
+%}
 
 \def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
 \let\endchangemargin=\endlist
 
 \begin{document}
-\frenchspacing 
+
 \maketitle
 
 \begin{abstract}
 Aplicações de realidade virtual são caracterizadas pela alta sensibilidade à atrasos na sincronização entre os movimentos do usuário e a respectiva renderização do mundo virtual. Uma forma de acelerar a execução da camada lógica é transportar sua implementação para GPU.  Este artigo propõe uma arquitetura de visualização baseada em um shader parametrizado pelo variavéis de estados e movimentações dos elementos de jogo. Como exemplo dessa abordagem, implementamos uma versão do clássico jogo Snake onde todos os elementos visuais são definidos e desenhados via shader em um único \textit{Mesh}. Ao mesmo tempo, abordar-se a implementação do filtro de Kalman como forma de aprimorar o reconhecimento de sinais do controle de realidade virtual \textit{Gear VR Controller}.
 \end{abstract}
 
-\begin{resumo}
+\begin{resumoumacoluna}
  Aplicações de realidade virtual são caracterizadas pela alta sensibilidade à atrasos na sincronização entre os movimentos do usuário e a respectiva renderização do mundo virtual. Uma forma de acelerar a execução da camada lógica é transportar sua implementação para GPU.  Este artigo propõe uma arquitetura de visualização baseada em um shader parametrizado pelo variavéis de estados e movimentações dos elementos de jogo. Como exemplo dessa abordagem, implementamos uma versão do clássico jogo Snake onde todos os elementos visuais são definidos e desenhados via shader em um único \textit{Mesh}. Ao mesmo tempo, abordar-se a implementação do filtro de Kalman como forma de aprimorar o reconhecimento de sinais do controle de realidade virtual \textit{Gear VR Controller}.
-\end{resumo}
+\end{resumoumacoluna}
 
 \section{Introdução} \label{sec:introduction}
 % Contextualizar a Unity
