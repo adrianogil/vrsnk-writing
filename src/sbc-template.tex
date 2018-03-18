@@ -1,6 +1,8 @@
+%\documentclass[a4paper]{ltxdoc}
 \documentclass[12pt]{article}
-
-\usepackage{sbc-template}
+%\documentclass{abntex2}
+%\usepackage{sbc-template}
+\usepackage{abntex2cite}
 
 \usepackage{graphicx,url}
 \usepackage{float}
@@ -17,7 +19,8 @@
 
 \title{VRSnake: Aplicação do Filtro de Kalman em um Jogo de Realidade Virtual com Visualização Baseada em Shader}
 
-\author{Thiago S. Figueira\inst{1}, Adriano M. Gil\inst{1} }
+\author{Thiago S. Figueira}
+\author{Adriano M. Gil}
 
 \address{Samsung Instituto de Desenvolvimento para a Informática da Amazônia
   (SIDIA)\\
@@ -29,11 +32,11 @@
 \let\endchangemargin=\endlist
 
 \begin{document}
-
+\frenchspacing 
 \maketitle
 
 \begin{abstract}
-  Aplicações de realidade virtual são caracterizadas pela alta sensibilidade à atrasos na sincronização entre os movimentos do usuário e a respectiva renderização do mundo virtual. Uma forma de acelerar a execução da camada lógica é transportar sua implementação para GPU.  Este artigo propõe uma arquitetura de visualização baseada em um shader parametrizado pelo variavéis de estados e movimentações dos elementos de jogo. Como exemplo dessa abordagem, implementamos uma versão do clássico jogo Snake onde todos os elementos visuais são definidos e desenhados via shader em um único \textit{Mesh}. Ao mesmo tempo, abordar-se a implementação do filtro de Kalman como forma de aprimorar o reconhecimento de sinais do controle de realidade virtual \textit{Gear VR Controller}.
+Aplicações de realidade virtual são caracterizadas pela alta sensibilidade à atrasos na sincronização entre os movimentos do usuário e a respectiva renderização do mundo virtual. Uma forma de acelerar a execução da camada lógica é transportar sua implementação para GPU.  Este artigo propõe uma arquitetura de visualização baseada em um shader parametrizado pelo variavéis de estados e movimentações dos elementos de jogo. Como exemplo dessa abordagem, implementamos uma versão do clássico jogo Snake onde todos os elementos visuais são definidos e desenhados via shader em um único \textit{Mesh}. Ao mesmo tempo, abordar-se a implementação do filtro de Kalman como forma de aprimorar o reconhecimento de sinais do controle de realidade virtual \textit{Gear VR Controller}.
 \end{abstract}
 
 \begin{resumo}
