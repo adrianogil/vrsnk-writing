@@ -26,7 +26,7 @@
 % ---
 \usepackage{lmodern}			% Usa a fonte Latin Modern
 \usepackage[T1]{fontenc}		% Selecao de codigos de fonte.
-\usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
+%\usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
 \usepackage{indentfirst}		% Indenta o primeiro parágrafo de cada seção.
 \usepackage{nomencl} 			% Lista de simbolos
 \usepackage{color}				% Controle das cores
@@ -44,7 +44,7 @@
 \usepackage{amssymb}
 \usetikzlibrary{shapes, arrows, shapes.geometric}
 \usepackage[brazil]{babel}
-%\usepackage[latin1]{inputenc}
+\usepackage[latin1]{inputenc}
 \graphicspath{ {images/} }
 
 %\sloppy
@@ -63,12 +63,10 @@
 \let\endchangemargin=\endlist
 
 \begin{document}
-
 \maketitle
-
-\begin{abstract}
-Aplicações de realidade virtual são caracterizadas pela alta sensibilidade à atrasos na sincronização entre os movimentos do usuário e a respectiva renderização do mundo virtual. Uma forma de acelerar a execução da camada lógica é transportar sua implementação para GPU.  Este artigo propõe uma arquitetura de visualização baseada em um shader parametrizado pelo variavéis de estados e movimentações dos elementos de jogo. Como exemplo dessa abordagem, implementamos uma versão do clássico jogo Snake onde todos os elementos visuais são definidos e desenhados via shader em um único \textit{Mesh}. Ao mesmo tempo, abordar-se a implementação do filtro de Kalman como forma de aprimorar o reconhecimento de sinais do controle de realidade virtual \textit{Gear VR Controller}.
-\end{abstract}
+%\begin{abstract}
+%Aplicações de realidade virtual são caracterizadas pela alta sensibilidade à atrasos na sincronização entre os movimentos do usuário e a respectiva renderização do mundo virtual. Uma forma de acelerar a execução da camada lógica é transportar sua implementação para GPU.  Este artigo propõe uma arquitetura de visualização baseada em um shader parametrizado pelo variavéis de estados e movimentações dos elementos de jogo. Como exemplo dessa abordagem, implementamos uma versão do clássico jogo Snake onde todos os elementos visuais são definidos e desenhados via shader em um único \textit{Mesh}. Ao mesmo tempo, abordar-se a implementação do filtro de Kalman como forma de aprimorar o reconhecimento de sinais do controle de realidade virtual \textit{Gear VR Controller}.
+%\end{abstract}
 
 \begin{resumoumacoluna}
  Aplicações de realidade virtual são caracterizadas pela alta sensibilidade à atrasos na sincronização entre os movimentos do usuário e a respectiva renderização do mundo virtual. Uma forma de acelerar a execução da camada lógica é transportar sua implementação para GPU.  Este artigo propõe uma arquitetura de visualização baseada em um shader parametrizado pelo variavéis de estados e movimentações dos elementos de jogo. Como exemplo dessa abordagem, implementamos uma versão do clássico jogo Snake onde todos os elementos visuais são definidos e desenhados via shader em um único \textit{Mesh}. Ao mesmo tempo, abordar-se a implementação do filtro de Kalman como forma de aprimorar o reconhecimento de sinais do controle de realidade virtual \textit{Gear VR Controller}.
@@ -448,8 +446,7 @@ Através dos resultados obtidos, verificou-se que a solução desenvolvida em \text
 % Trabalhos Futuros
 Em trabalhos futuros, três passos são percebidos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para a camada de visualização, na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número representativamente maior de serpentes. Em segundo lugar, aplicar aprendizagem de máquina nesta camada, objetivando-se um comportamento de busca e desvio de obstáculos (como outras serpentes e seu próprio corpo) mais inteligente, por conseguinte, desafiador. Por último, otimizar e melhorar a performance, objetivando os 60 \textit{fps}.
 
-\section{References}
-
+%\section{References}
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
 
