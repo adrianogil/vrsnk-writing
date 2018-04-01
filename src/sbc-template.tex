@@ -77,7 +77,7 @@ Para o desenvolvimento de aplicações VR, o motor e editor gráfico \textit{Unity}
 Normalmente, estes jogos e aplicações desenvolvidos na \textit{Unity} são compostos por conjuntos de cenas, cada qual com seu próprio agrupamento de objetos e lógica associados. De maneira geral, a CPU (\textit{central processing unit}) é responsável por transmitir informações sobre elementos gráficos à GPU (\textit{graphics processing unit}) através do estágio de aplicação, onde os \textit{assets} gráficos como modelos 3D e texturas são carregados na VRAM (\textit{video RAM}), posteriormente, durante o estágio de geometria, os diferentes objetos que devem ser renderizados, seus respectivos posicionamentos e demais informes visuais relevantes são tratados pela GPU e convertidos em imagem, no estágio de rasterização \cite{akenine2008real}.
 
 % Contextualizar a Realidade Virtual e Controladores
-Em outro âmbito, os controles ou \textit{joysticks} são uma das formas de interação com dispositivos de realidade virtual, no entanto, são passíveis de ruídos devido à presença de sensores baseados em magnetômetros, originando comportamentos indesejados como \textit{jittering} durante a leitura dos dados.
+Em outro âmbito, os controles ou \textit{joysticks} são uma das formas de interação com dispositivos de realidade virtual, no entanto, são passíveis de ruídos devido à presença de sensores baseados em magnetômetros, originando comportamentos indesejados como \textit{jittering} durante a leitura dos dados. 
 
 % Resumo proposta
 Neste trabalho, propomos o desenvolvimento de um jogo cujas representações gráficas sejam inteiramente fundamentadas em código de GPU ao passo que as restrições lógicas concentrem-se na CPU, de maneira a atuar nos diferentes estágios da \textit{pipeline} gráfica acima apresentada. Em alusão à um clássico, o jogo \textit{Snake} será recriado para os dispositivos de realidade virtual da Samsung em uma aplicação Unity, no entanto, diferencia-se do original à medida que o jogador posiciona o objeto coletável através do controlador tendo a finalidade de fazer a serpente persegui-lo. Neste aspecto, objetivando solucionar o primeiro desafio acima exposto intenta-se a aplicação do filtro de Kalman durante a leitura do posicionamento do cursor através deste \textit{joystick}, a fim de melhorar o reconhecimento do sinal e atenuar a inconsistência apresentada.
@@ -86,13 +86,15 @@ Neste trabalho, propomos o desenvolvimento de um jogo cujas representações gráfi
 Analisa-se na seção \ref{sec:relatedworks} outros trabalhos que abordam sensores, uso de filtros e jogos de realidade virtual. A seção \ref{sec:kalmanfilter} revisa o conceito do filtro de Kalman. Um esclarecimento sobre as regras do jogo desenvolvido pode ser encontrado na seção \ref{sec:vrsnake}. A arquitetura proposta é detalhada na seção \ref{sec:architecture}. Apresenta-se como um jogo de realidade virtual pode ser renderizado em uma esfera invertida na seção \ref{sec:invertedsphere}. Em \ref{sec:agent}, comprende-se a movimentação da \textit{snake} e sua arquitetura de renderização. A seção \ref{sec:gearvrcontroller} explana como ocorre a aplicação do filtro de Kalman no controle para VR. Resultados são discutidos na seção \ref{sec:results}. Por fim, pautam-se as conclusões e perspectivas de trabalhos futuros na seção \ref{sec:conclusion}.
 
 \section{Trabalhos Relacionados} \label{sec:relatedworks}
-O jogo bidimensional \textit{Jelly in the Sky}, recentemente disponibilizado para aquisição na plataforma de jogos para computador \textit{Steam}, utiliza uma estrutura baseada em \textit{shader} similar à arquitetura apresentada aqui. Contudo, aplicações em realidade virtual diferem de outras aplicações devido à necessidade de preencher o espaço tridimensional de forma a fornecer conteúdo para 3 graus de liberdade(3DoF - \textit{3 Degrees of Freedom}) possibilitados durante a construção deste trabalho. Por exemplo, a aplicação descrita em \cite{zund2015unfolding} utiliza visão computacional para geração de uma visão panorâmica de um jogo de console em 8-bits. Rodando em um Oculus Rift DK2, o jogador é posicionado no centro do mundo e à medida que movimenta seu personagem, o mundo se desdobra ao seu redor, extendendo a visão de jogo para as quatro paredes do ambiente virtual.
+O jogo bidimensional \textit{Jelly in the Sky}, recentemente disponibilizado para aquisição na plataforma de jogos para computador \textit{Steam}, utiliza uma estrutura baseada em \textit{shader} similar à arquitetura apresentada aqui. \cite{GPGPUWars} defendem um trabalho onde a GPU executa todo o processamento do jogo criado.
+
+ Contudo, aplicações em realidade virtual diferem de outras aplicações devido à necessidade de preencher o espaço tridimensional de forma a fornecer conteúdo para 3 graus de liberdade(3DoF - \textit{3 Degrees of Freedom}) possibilitados durante a construção deste trabalho. Por exemplo, a aplicação descrita em \cite{zund2015unfolding} utiliza visão computacional para geração de uma visão panorâmica de um jogo de console em 8-bits. Rodando em um Oculus Rift DK2, o jogador é posicionado no centro do mundo e à medida que movimenta seu personagem, o mundo se desdobra ao seu redor, extendendo a visão de jogo para as quatro paredes do ambiente virtual.
 
 % 3 - Controles de VR auxiliam na sensação de presença e por consequência na imersão
 Jogos VR são um grande potencializador de imersão, dada a sua capacidade de estimular a sensação de presença espacial e interatividade \cite{seibert2017control} através, por exemplo, dos controles VR, tal qual o modelo ET-YO32 da Samsung exibido na figura \ref{fig:vrcontroller}, que são classificados como de mapeamento natural tangível realístico e consoante a definição proposta por \cite{skalski2011mapping}, emulam de forma realista sua contrapartida no ambiente virtual, ou seja, movimenta-se a réplica do controle físico no espaço 3D da aplicação VR da mesma forma que se faz no mundo real.
 
 % 4 - Exemplos de filtragem de açoes dos controles (From ERIN17 paper. Refrasear)
-Certos trabalhos trazem a filtragem de sensores baseados no uso de acelerômetro, a exemplo: \cite{schlomer2008gesture} usa o modelo oculto de Markov para reconhecimento de gestos em um controle do \textit{Nintendo Wii}, a filtragem ocorre por meio de filtros simples para remover pontos que não são suficientemente expressivos. \cite{shiratori2008accelerometer}, por outro lado, utiliza múltiplos controles de \textit{Nintendo Wii} para gerar animações proceduralmente, o ruído é atenuado através do uso do filtro de Kalman.
+Certos trabalhos trazem a filtragem de sensores baseados no uso de acelerômetro, a exemplo: \cite{schlomer2008gesture} usa o modelo oculto de Markov para reconhecimento de gestos em um controle do \textit{Nintendo Wii}, a filtragem ocorre por meio de filtros simples para remover pontos que não são suficientemente expressivos. \cite{shiratori2008accelerometer}, por outro lado, utilizam múltiplos controles de \textit{Nintendo Wii} para gerar animações proceduralmente, o ruído é atenuado através do uso do filtro de Kalman.
 
 \section{Filtro de Kalman} \label{sec:kalmanfilter}
 Cabe rememorar o conceito estabelecido pelo filtro escolhido: o filtro de Kalman é um poderoso conjunto de operações as quais permitem estimar, a partir de dados ruidosos ou de pouca confiabilidade, um estado passado, presente ou futuro \cite{WelchBishop}, desde que estes sejam ruídos gaussianos. É retratado, por conseguinte, como um filtro recursivo ótimo.
@@ -342,7 +344,7 @@ O corpo da serpente, por sua vez, move-se através de um \textit{buffer} deslizan
 \label{fig:snakeHeadPositions}
 \end{figure}
 
-Considerando ainda a restrição de deslocamento na qual a serpente pode-se mover unicamente nas direções apontadas pela figura \ref{fig:snakeHeadPositions}, a equação Euclidiana mostrada na equação \ref{equation:euclidian}, usualmente utilizada para cálculo de distância, envolve operações quadráticas as quais podem ser chamadas inúmeras vezes por segundo devido ao escopo desta aplicação, desta maneira o cálculo por meio da distância de Manhattan, equação \ref{equation:manhattan}, se mostrou menos custoso.
+A distância entre dois pontos em um espaço vetorial é dada pela magnitude da diferença de um vetor pelo outro, equação também conhecida como distância euclidiana, entretanto, considerando a restrição de deslocamento na qual a serpente pode-se mover unicamente nas direções apontadas pela figura \ref{fig:snakeHeadPositions}, a distância euclidiana, mostrada na equação \ref{equation:euclidian}, não é vantajosa, pois envolve operações quadráticas as quais podem ser chamadas inúmeras vezes por segundo devido ao escopo desta aplicação, desta maneira o cálculo por meio da distância de Manhattan, equação \ref{equation:manhattan}, se mostra menos custoso.
 
 \begin{equation}
 DistanciaEuclidiana = \sqrt{(x_{1} - x_{2})^2 + (y_{1} - y_{2})^2}
@@ -368,7 +370,7 @@ Devido à natureza do jogo desenvolvido, o jogador necessita controlar o posicion
 \label{fig:vrcontroller}
 \end{figure}
 
-Para a efetiva implementação do filtro de Kalman na leitura do controle de realidade virtual seguem-se os seguintes passos: inicialmente captura-se a orientação angular do \textit{joystick}, traça-se um raio da posição virtual atual do controle até uma esfera unitária e o ponto resultante da interseção é o foco do usuário, em outras palavras, o objetivo apontado pelo cursor, esta posição é onde aplica-se o filtro de Kalman. O diagrama abaixo ilustra este processo.
+Para a efetiva implementação do filtro de Kalman na leitura do controle de realidade virtual seguem-se os seguintes passos: inicialmente captura-se a orientação angular do \textit{joystick}, traça-se um raio da posição virtual atual do controle até uma esfera unitária e o ponto resultante da interseção é o foco do usuário, em outras palavras, o objetivo apontado pelo cursor, esta posição é onde aplica-se o filtro de Kalman, proveniente da implementação encontrada na aplicação de \cite{KalmanComponent}. O diagrama abaixo ilustra este processo. 
 
 \begin{figure}[H]
 \centering
@@ -438,7 +440,7 @@ A figura \ref{fig:chart_noise} mostra o gráfico da velocidade do curso ao longo 
 
 \section{Conclusão}\label{sec:conclusion}
 % Resumo do artigo
-Apresentou-se neste artigo a implementação do filtro de Kalman para estabilização do controle de realidade virtual da Oculus, o \textit{Gear VR Controller}. Concomitantemente, descreveu-se a visualização das entradas ruidosas fornecidas pelo controle e o efeito resultante após a aplicação do filtro. A fim de estimular a reutilização da implementações feitas, foram gerados componentes para rápida configuração e aplicação. Apresentou-se também a implementação do jogo \textit{VRSnake} criado segundo a arquitetura de renderização baseada em \textit{shaders}.
+Apresentou-se neste artigo a implementação do filtro de Kalman para estabilização do controle de realidade virtual da Oculus, o \textit{Gear VR Controller}. Concomitantemente, descreveu-se a visualização das entradas ruidosas fornecidas pelo controle e o efeito resultante após a aplicação do filtro. Apresentou-se também a implementação do jogo \textit{VRSnake} criado segundo a arquitetura de renderização baseada em \textit{shaders}.
 
 Através dos resultados obtidos, verificou-se que a solução desenvolvida em \textit{Unity} para a aplicação do filtro foi efetivamente capaz de filtrar as posições ruidosas geradas pelo controlador e garantir um nível de controle mais estável em aplicações de realidade virtual. Da mesma maneira, o objetivo inicial de aliviar o trabalho de renderização atribuído à CPU foi alcançado por meio da distribuição de passos usualmente restritos à camada de aplicação para demais camadas da \textit{pipeline} gráfica.
 
@@ -446,6 +448,20 @@ Através dos resultados obtidos, verificou-se que a solução desenvolvida em \text
 Em trabalhos futuros, três passos são percebidos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para a camada de visualização, na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número representativamente maior de serpentes. Em segundo lugar, aplicar aprendizagem de máquina nesta camada, objetivando-se um comportamento de busca e desvio de obstáculos (como outras serpentes e seu próprio corpo) mais inteligente, por conseguinte, desafiador. Por último, otimizar e melhorar a performance, objetivando os 60 \textit{fps}.
 
 \newpage
-\bibliographystyle{abnt-alf}
 \bibliography{sbc-template}
+\nocite{boulic:91}
+\nocite{7500674}
+\nocite{choset2005principles}
+\nocite{knuth:84}
+\nocite{quaternionhamilton1844ii}
+\nocite{smith:99}
+\nocite{gearvrinputdocs}
+\nocite{gearvrstore}
+\nocite{guyer2008computer}
+\nocite{Maybeck79}
+\nocite{FILTERS07}
+\nocite{GrewalAndrews}
+\nocite{demkowiczkalman}
+\nocite{choset2005principles}
+
 \end{document}
