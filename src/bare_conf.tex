@@ -64,6 +64,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
+% \usepackage{tikz}
+% \usetikzlibrary{shapes, arrows, shapes.geometric}
+
 
 % Some very useful LaTeX packages include:
 % (uncomment the ones you want to load)
@@ -322,7 +325,7 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{Ferramenta de Qualidade de Imagens 360 Integrada ao Editor Unity}
+\title{MR.Snake: Implementação baseada em Shaders de um Jogo de Realidade Mista}
 
 
 % author names and affiliations
@@ -336,9 +339,8 @@
 %   \email{\{adriano.gil,eliamara.s,t.figueira\}@samsung.com}
 % }
 
-\author{\IEEEauthorblockN{Adriano M. Gil\IEEEauthorrefmark{1}
-Eliamara Silva\IEEEauthorrefmark{1},
-Thiago S. Figueira\IEEEauthorrefmark{1}}
+\author{\IEEEauthorblockN{Thiago S. Figueira\IEEEauthorrefmark{1},
+Adriano M. Gil\IEEEauthorrefmark{1}}
 \IEEEauthorblockA{\IEEEauthorrefmark{1}Samsung Instituto de Desenvolvimento para a Informática da Amazônia\\
 SIDIA,\\
 Manaus -- AM -- Brazil}}
@@ -400,7 +402,7 @@ The abstract goes here.
 
 
 
-\section{Introduction}
+\section{Introdução}
 % no \IEEEPARstart
 This demo file is intended to serve as a ``starter file''
 for IEEE conference papers produced under \LaTeX\ using
@@ -517,8 +519,205 @@ Subsubsection text here.
 
 
 
+\section{Trabalhos Relacionados}
 
-\section{Conclusion}
+% TODO: Refrasear texto
+O jogo bidimensional \textit{Jelly in the Sky}, recentemente disponibilizado para aquisição na plataforma de jogos para computador \textit{Steam}, utiliza uma estrutura baseada em \textit{shader} similar à arquitetura apresentada aqui. \cite{GPGPUWars} defendem um trabalho onde a GPU executa todo o processamento do jogo criado.
+
+% TODO: Refrasear texto
+ Contudo, aplicações em realidade virtual diferem de outras aplicações devido à necessidade de preencher o espaço tridimensional de forma a fornecer conteúdo para 3 graus de liberdade(3DoF - \textit{3 Degrees of Freedom}) possibilitados durante a construção deste trabalho. Por exemplo, a aplicação descrita em \cite{zund2015unfolding} utiliza visão computacional para geração de uma visão panorâmica de um jogo de console em 8-bits. Rodando em um Oculus Rift DK2, o jogador é posicionado no centro do mundo e à medida que movimenta seu personagem, o mundo se desdobra ao seu redor, extendendo a visão de jogo para as quatro paredes do ambiente virtual.
+
+% 3 - Controles de VR auxiliam na sensação de presença e por consequência na imersão
+% TODO: Refrasear texto
+Jogos VR são um grande potencializador de imersão, dada a sua capacidade de estimular a sensação de presença espacial e interatividade \cite{seibert2017control} através, por exemplo, dos controles VR, tal qual o modelo ET-YO32 da Samsung exibido na figura \ref{fig:vrcontroller}, que são classificados como de mapeamento natural tangível realístico e consoante a definição proposta por \cite{skalski2011mapping}, emulam de forma realista sua contrapartida no ambiente virtual, ou seja, movimenta-se a réplica do controle físico no espaço 3D da aplicação VR da mesma forma que se faz no mundo real.
+
+% 4 - Exemplos de filtragem de açoes dos controles (From ERIN17 paper. Refrasear)
+% TODO: Refrasear texto
+Certos trabalhos trazem a filtragem de sensores baseados no uso de acelerômetro, a exemplo: \cite{schlomer2008gesture} usa o modelo oculto de Markov para reconhecimento de gestos em um controle do \textit{Nintendo Wii}, a filtragem ocorre por meio de filtros simples para remover pontos que não são suficientemente expressivos. \cite{shiratori2008accelerometer}, por outro lado, utilizam múltiplos controles de \textit{Nintendo Wii} para gerar animações proceduralmente, o ruído é atenuado através do uso do filtro de Kalman.
+
+
+\section{MR. Snake}
+
+%% Definição das regras do jogo
+
+% TODO: Refrasear texto
+O \textit{MR. Snake} traz para a realidade virtual o clássico jogo 2D \textit{Snake}, mas diferentemente do original, o jogador assume controle sobre o posicionamento dos objetos coletáveis ao invés de controlar diretamente a serpente. Propomos então as seguintes regras: 
+
+% TODO: Refrasear texto
+A serpente busca contínua e automaticamente o objeto coletável e cresce em uma unidade à medida que alcança este objeto.
+
+% TODO: Refrasear texto
+Como no jogo original, a serpente deve movimentar-se de maneira circular pelo cenário, isto é, ao encontrar os limites do cenário de um lado, deve continuar do outro na mesma maneira. O jogador vence quando a \textit{snake} é derrotada, ou seja, quando ela atinge a si própria de alguma forma.
+
+% TODO: Refrasear texto
+Além disso, o comportamento de busca da serpente deve garantir que não haja movimentação em direção a seu próprio corpo, mas também que exista um fator de randomização durante o movimento, tendo em vista garantir pequena imprevisibilidade a este ato.
+
+
+\section{Arquitetura Baseada em Shader}
+
+
+\section{MR. Snake: Um agente inteligente}
+
+
+\section{Realidade Virtual}
+
+% 1 - O uso de uma esfera invertida para renderizar o conteúdo do jogo
+% Imersão -> Preenchimento/Renderização de conteúdo ao redor do usuário
+% TODO: Refrasear texto
+A ilusão em um mundo virtual e consequente sensação de imersão requerem material visual disponível em todos os ângulos possíveis, uma vez que o gearVR possibilita completa liberdade de rotação, ou seja, 3 graus de liberdade (3DoF - \textit{3 Degrees of Freedom}). Tendo em vista que a proposta deste artigo contempla um jogo essencialmente 2D, tal como o \textit{Snake} original, tem-se o desafio de exibir conteúdo bidimensional em um cenário 3D de forma que tudo aconteça ao redor do usuário.
+
+% TODO: Refrasear texto
+Uma esfera invertida, ou seja, uma esfera que tenha apenas seu lado interno renderizado, possibilita preencher completamente todo o campo de visão possível, além de ser a solução padrão adotada na exibição de imagens equiretangulares em 360 graus. A geração procedural de uma esfera pode seguir uma das duas abordagens abaixo:
+\begin{enumerate}
+  \begin{item} uma icosfera, i.e. uma esfera cujos vértices são distribuídos uniformemente; \end{item}
+  \begin{item} geração de vertíces baseada em coordenadas de longitude/latitude. \end{item}
+\end{enumerate}
+
+% TODO: Refrasear texto
+Para este trabalho, preferiu-se a segunda abordagem devido a possibilidade de usar a longitude/latitude como forma de mapear as coordenadas de UV, através da conversão abaixo:
+
+% TODO: Refrasear texto
+O formato de imagem equiretangular é uma captura ou produção de imagem feita para ser exibida no interior de uma esfera possibilitando preencher completamente o campo de visão do usuário, além de ser a solução muito utilizada na exibição de imagens equiretangulares em 360 graus. O mapeamento de UV da esfera é o padrão adotado para \textit{softwares} de modelagem na geração de uma esfera: geração de vertíces baseada em coordenadas de longitude/latitude.
+
+% \begin{figure}[!tbp]
+%   \centering
+%   \begin{minipage}[b]{0.40\textwidth}
+%     \includegraphics[width=1.4\textwidth]{../images/equirect_projection.jpg}
+%     \caption{Imagem 360 em formato equiretangular.}
+%     \label{fig:equirectimage}
+%   \end{minipage}
+%   \hfill
+%   \begin{minipage}[b]{0.44\textwidth}
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{../images/sphere.png}
+%     \caption{Mapeamento de UV de uma imagem equiretangular para uma esfera.}
+%     \label{fig:equisphere}
+%   \end{minipage}
+% \end{figure}
+
+% 2 - Mapeamento de UV em uma esfera invertida
+% Na figura \ref{fig:sphere_transversalsec} é exibida uma secção transversal da divisão de uma esfera em longitudes. 
+Na geração das posições dos vértices da esfera, se faz necessário definir uma quantidade de valores de longitude $N$, assim o tamanho angular $T$ para divisão longitudinal pode ser calculado pela equação \ref{longitudesize}.
+
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=.25\textwidth]{../images/longitudes.png}
+% \caption{Uma secção transversal da esfera dividida em 8 longitudes.}
+% \label{fig:sphere_transversalsec}
+% \end{figure}
+
+\begin{equation}
+T = \frac{2 \pi}{N}
+\label{longitudesize}
+\end{equation}
+
+O tamanho angular total de uma quantidade de $i$ de valores de longitude pode ser dada pela equação \ref{longitudealpha}.
+
+\begin{equation}
+\alpha_{i} = i * T
+\label{longitudealpha}
+\end{equation}
+
+% Considerando a figura \ref{fig:sphere_transversalsec}, percebe-se que 
+O seno e cosseno do ângulo T definem-se as posições X e Z dos pontos da esfera pertencentes a essa secção transversal da esfera. Dessa forma, supondo uma esfera de raio $R$, podemos escrever as equações \ref{x_d} e \ref{z_d}.
+
+\begin{equation}
+x_{i} = R * \sin(\alpha_{i})
+\label{x_d}
+\end{equation}
+
+\begin{equation}
+z_{i} = R * \cos(\alpha_{i})
+\label{z_d}
+\end{equation}
+
+Em um corte longitudinal, é possível perceber que o raio $R$ de uma secção transversal varia ao longo da altura da esfera. Determina-se então um valor $K$ como o tamanho angular de um valor de latitude da esfera, dado um valor $M$ de latitudes, tal como visto na equação \ref{equation5}.
+
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=.25\textwidth]{../images/latitudes.png}
+% \caption{Uma secção longitudinal da esfera dividida em 8 latitudes.}
+% \label{fig:sphere_longitudisec}
+% \end{figure}
+
+\begin{equation}
+K = \frac{\pi}{M}
+\label{equation5}
+\end{equation}
+
+O tamanho angular total de uma quantidade de $i$ de valores de latitude pode ser dado pela equação \ref{equation6}.
+
+\begin{equation}
+\alpha_{yi} = i * K
+\label{equation6}
+\end{equation}
+
+A posição Y dos pontos da esfera, considerando raio unitário, pode ser dada pela equação \ref{equation7}.
+\begin{equation}
+y_{i} = \cos(\alpha_{yi})
+\label{equation7}
+\end{equation}
+
+O raio $D_{yi}$ obtido em uma secção transversal na latitude $i$ é definido na equação \ref{equation8} como:
+\begin{equation}
+R_{yi} = \sin(\alpha_{yi})
+\label{equation8}
+\end{equation}
+
+Aplicando-se a equação \ref{equation8} nas equações \ref{x_d} e \ref{z_d} obtém-se as posições X e Z dos vértices da esfera em função de suas coordenadas de longitude e latitude.
+
+\begin{equation}
+x_{i} = \sin(\alpha_{yi}) * \sin(\alpha_i)
+\label{equation9}
+\end{equation}
+
+\begin{equation}
+z_{i} = \sin(\alpha_{yi}) * \cos(\alpha_i)
+\label{equation10}
+\end{equation}
+
+
+\subsection{Uso do Controle VR com Filtro de Kalman} \label{sec:gearvrcontroller}
+Devido à natureza do jogo desenvolvido, o jogador necessita controlar o posicionamento do objeto coletável e para tanto existem essencialmente duas formas de interação num dispositivo de realidade virtual: o HMD (\textit{head-mounted display}), ou seja, através do sensor lateral acoplado ao próprio dispositivo; e os controladores externos, como os controles ou \textit{joysticks}. Em sua condição de sensor, porém, estes controladores estão sujeitos à interferência ruidosa durante a virtualização do evento representado no mundo real pelo movimento do usuário. Com a finalidade de melhorar a captura do sinal e traduzir de maneira mais fiel as intenções do jogador, o filtro de Kalman será aplicado às leituras do \textit{joystick} por meio de um componente de visualização de ruídos e aplicação do filtro, conforme apontado na figura \ref{fig:diagramaArquitetura}.
+
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=.4\textwidth]{images/gear_controller.jpg}
+% \caption{Controle para Realidade Virtual da Samsung.}
+% \label{fig:vrcontroller}
+% \end{figure}
+
+Para a efetiva implementação do filtro de Kalman na leitura do controle de realidade virtual seguem-se os seguintes passos: inicialmente captura-se a orientação angular do \textit{joystick}, traça-se um raio da posição virtual atual do controle até uma esfera unitária e o ponto resultante da interseção é o foco do usuário, em outras palavras, o objetivo apontado pelo cursor, esta posição é onde aplica-se o filtro de Kalman, proveniente da implementação encontrada na aplicação de \cite{KalmanComponent}. O diagrama abaixo ilustra este processo. 
+
+% \begin{figure}[H]
+% \centering
+% \tikzstyle{rect} = [draw, rectangle, fill = white!20, text width=6em, text centered, minimum height = 4em]
+% \tikzstyle{line} = [draw, -latex']
+
+% \begin{tikzpicture} [node distance = 2cm, auto]
+% \node [rect, rounded corners] (step1) {Captura da orientação angular do controle};
+% \node [rect, rounded corners, right of = step1, node distance = 4cm] (step2) {Estimativa da posição do cursor};
+% \node [rect, rounded corners, right of = step2, node distance = 4cm] (step3) {Aplicação do filtro de Kalman};
+% %\node [rect, rounded corners, right of = step3, node distance = 4cm] (step4) {Renderização das posições ruidosas};
+
+% \path [line] (step1) -- (step2);
+% \path [line] (step2) -- (step3);
+
+\section{Realidade Aumentada}
+
+%% Geração de um cubo.
+
+% TODO: Refrasear texto
+O primeiro passo uso de \textit{Cubemap} é a geração de um cubo. Porém o cubo padrão gerado pela \textit{Unity} não possui vértices suficientes para um mapeamento de UV preciso. Para obter melhores resultados, utilizamos uma subdivisão de \textit{Mesh} em que cada triângulo é dividido em quatro. Iniciando de um cubo com 10 vértices e 12 triângulos, repetimos a operação de subdivisão quatro vezes e obtivemos um cubo de 4090 vértices e 4096 triângulos.
+
+%% Calculo de UV
+% TODO: Refrasear texto
+No momento da geração de cada vértice, pode-se calcular a sua respectiva coordenada de UV, utilizando o cálculo da equação \ref{eq:skybox_equirect}. Percebe-se que assim, a visão cubemap equivale a discretização da abordagem de mapeamento contínuo das coordenadas de UV em um \textit{Skybox}.
+
+\section{Resultados}
+
+
+\section{Conclusão}
 The conclusion goes here.
 
 
