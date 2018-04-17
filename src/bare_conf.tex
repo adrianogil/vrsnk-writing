@@ -21,7 +21,7 @@
 %% Legal Notice:
 %% This code is offered as-is without any warranty either expressed or
 %% implied; without even the implied warranty of MERCHANTABILITY or
-%% FITNESS FOR A PARTICULAR PURPOSE! 
+%% FITNESS FOR A PARTICULAR PURPOSE!
 %% User assumes all risk.
 %% In no event shall the IEEE or any contributor to this code be liable for
 %% any damages or losses, including, but not limited to, incidental,
@@ -60,9 +60,16 @@
 % \usepackage[brazil]{babel}
 % \usepackage[latin1]{inputenc}
 
+\usepackage{graphicx,url}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows, shapes.geometric}
+
 \usepackage[brazilian]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+
+\graphicspath{ {../images/} }
 
 % \usepackage{tikz}
 % \usetikzlibrary{shapes, arrows, shapes.geometric}
@@ -141,7 +148,7 @@
 % graphicx was written by David Carlisle and Sebastian Rahtz. It is
 % required if you want graphics, photos, etc. graphicx.sty is already
 % installed on most LaTeX systems. The latest version and documentation
-% can be obtained at: 
+% can be obtained at:
 % http://www.ctan.org/pkg/graphicx
 % Another good source of documentation is "Using Imported Graphics in
 % LaTeX2e" by Keith Reckdahl which can be found at:
@@ -325,7 +332,7 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{MR.Snake: Implementação baseada em Shaders de um Jogo de Realidade Mista}
+\title{VRSnake: um Jogo de Realidade Virtual em GPGPU}
 
 
 % author names and affiliations
@@ -352,10 +359,10 @@ Manaus -- AM -- Brazil}}
 
 % for over three affiliations, or if they all won't fit within the width
 % of the page, use this alternative format:
-% 
+%
 %\author{\IEEEauthorblockN{Michael Shell\IEEEauthorrefmark{1},
 %Homer Simpson\IEEEauthorrefmark{2},
-%James Kirk\IEEEauthorrefmark{3}, 
+%James Kirk\IEEEauthorrefmark{3},
 %Montgomery Scott\IEEEauthorrefmark{3} and
 %Eldon Tyrell\IEEEauthorrefmark{4}}
 %\IEEEauthorblockA{\IEEEauthorrefmark{1}School of Electrical and Computer Engineering\\
@@ -382,7 +389,7 @@ Manaus -- AM -- Brazil}}
 % As a general rule, do not put math, special symbols or citations
 % in the abstract
 \begin{abstract}
-The abstract goes here.
+Aplicações de realidade virtual são caracterizadas pela alta sensibilidade à atrasos na sincronização entre os movimentos do usuário e a respectiva renderização do mundo virtual. Uma forma de acelerar a execução da camada lógica é transportar sua implementação para GPU.  Este artigo propõe uma arquitetura de visualização baseada em um shader parametrizado pelo variavéis de estados e movimentações dos elementos de jogo. Como exemplo dessa abordagem, implementamos uma versão do clássico jogo Snake onde todos os elementos visuais são definidos e desenhados via shader em um único \textit{Mesh}. Ao mesmo tempo, abordar-se a implementação do filtro de Kalman como forma de aprimorar o reconhecimento de sinais do controle de realidade virtual \textit{Gear VR Controller}.
 \end{abstract}
 
 % no keywords
@@ -402,25 +409,20 @@ The abstract goes here.
 
 
 
-\section{Introdução}
-% no \IEEEPARstart
-This demo file is intended to serve as a ``starter file''
-for IEEE conference papers produced under \LaTeX\ using
-IEEEtran.cls version 1.8b and later.
-% You must have at least 2 lines in the paragraph with the drop letter
-% (should never be an issue)
-I wish you the best of success.
+\section{Introdução} \label{sec:introduction}
+% Contextualizar a Unity
+Para o desenvolvimento de aplicações VR, o motor e editor gráfico \textit{Unity} situa-se como peça de extrema relevância dadas a sua facilidade de aprendizado e simplicidade no processo de desenvolvimento, além da possibilidade de criação de jogos e aplicações para consoles, plataformas móveis e dispositivos de realidade virtual e realidade aumentada.
 
-\hfill mds
- 
-\hfill August 26, 2015
+Normalmente, estes jogos e aplicações desenvolvidos na \textit{Unity} são compostos por conjuntos de cenas, cada qual com seu próprio agrupamento de objetos e lógica associados. De maneira geral, a CPU (\textit{central processing unit}) é responsável por transmitir informações sobre elementos gráficos à GPU (\textit{graphics processing unit}) através do estágio de aplicação, onde os \textit{assets} gráficos como modelos 3D e texturas são carregados na VRAM (\textit{video RAM}), posteriormente durante o estágio de geometria, os diferentes objetos que devem ser renderizados bem como seus respectivos posicionamentos e demais informes visuais relevantes são tratados pela GPU e convertidos em imagem, no estágio de rasterização \cite{akenine2008real}.
 
-\subsection{Subsection Heading Here}
-Subsection text here.
+% Contextualizar a Realidade Virtual e Controladores
+Em outro âmbito, os controles ou \textit{joysticks} são uma das formas de interação com dispositivos de realidade virtual, no entanto, são passíveis de ruídos devido à presença de sensores baseados em magnetômetros, originando comportamentos indesejados como \textit{jittering} durante a leitura dos dados.
 
+% Resumo proposta
+Neste trabalho, propomos o desenvolvimento de um jogo cujas representações gráficas sejam inteiramente fundamentadas em código de GPU ao passo que as restrições lógicas concentrem-se na CPU, de maneira a atuar nos diferentes estágios da \textit{pipeline} gráfica acima apresentada. Em alusão à um clássico, o jogo Snake será recriado para os dispositivos de realidade virtual da Samsung em uma aplicação Unity, diferencia-se, porém, na medida que o jogador controla o objeto coletável, posicionando-o com o controlador tendo a finalidade de fazer a serpente falhar em seu objetivo. Tendo em vista solucionar o primeiro desafio acima exposto intenta-se a aplicação do filtro de Kalman durante a leitura do posicionamento do cursor através deste \textit{joystick}, a fim de melhorar o reconhecimento do sinal e atenuar a inconsistência apresentada.
 
-\subsubsection{Subsubsection Heading Here}
-Subsubsection text here.
+% * Estrutura do artigo
+Analisamos na seção \ref{sec:relatedworks} outros trabalhos que abordam sensores, uso de filtros e jogos de realidade virtual. Um esclarecimento sobre as regras do jogo desenvolvido pode ser encontrado na seção \ref{sec:vrsnake}. A arquitetura proposta é detalhada na seção \ref{sec:architecture}. Apresenta-se como um jogo de realidade virtual pode ser renderizado em uma esfera invertida na seção \ref{sec:invertedsphere}. Em \ref{sec:agent}, comprende-se a movimentação da \textit{snake} e sua arquitetura de renderização. A seção \ref{sec:gearvrcontroller} explana como ocorre a aplicação do filtro de Kalman no controle para VR. Resultados são discutidos na seção \ref{sec:results}. Por fim, pautam-se as conclusões e perspectivas de trabalhos futuros na seção \ref{sec:conclusion}.
 
 
 % An example of a floating figure using the graphicx package.
@@ -439,7 +441,7 @@ Subsubsection text here.
 %\begin{figure}[!t]
 %\centering
 %\includegraphics[width=2.5in]{myfigure}
-% where an .eps filename suffix will be assumed under latex, 
+% where an .eps filename suffix will be assumed under latex,
 % and a .pdf suffix will be assumed for pdflatex; or what has been declared
 % via \DeclareGraphicsExtensions.
 %\caption{Simulation results for the network.}
@@ -455,7 +457,7 @@ Subsubsection text here.
 % The subfigure \label commands are set within each subfloat command,
 % and the \label for the overall figure must come after \caption.
 % \hfil is used as a separator to get equal spacing.
-% Watch out that the combined width of all the subfigures on a 
+% Watch out that the combined width of all the subfigures on a
 % line do not exceed the text width or a line break will occur.
 %
 %\begin{figure*}[!t]
@@ -512,14 +514,14 @@ Subsubsection text here.
 % in-text middle ("here") positioning is typically not used, but it
 % is allowed and encouraged for Computer Society conferences (but
 % not Computer Society journals). Most IEEE journals/conferences use
-% top floats exclusively. 
+% top floats exclusively.
 % Note that, LaTeX2e, unlike IEEE journals/conferences, places
 % footnotes above bottom floats. This can be corrected via the
 % \fnbelowfloat command of the stfloats package.
 
 
 
-\section{Trabalhos Relacionados}
+\section{Trabalhos Relacionados} \label{sec:relatedworks}
 
 % TODO: Refrasear texto
 O jogo bidimensional \textit{Jelly in the Sky}, recentemente disponibilizado para aquisição na plataforma de jogos para computador \textit{Steam}, utiliza uma estrutura baseada em \textit{shader} similar à arquitetura apresentada aqui. \cite{GPGPUWars} defendem um trabalho onde a GPU executa todo o processamento do jogo criado.
@@ -536,12 +538,12 @@ Jogos VR são um grande potencializador de imersão, dada a sua capacidade de es
 Certos trabalhos trazem a filtragem de sensores baseados no uso de acelerômetro, a exemplo: \cite{schlomer2008gesture} usa o modelo oculto de Markov para reconhecimento de gestos em um controle do \textit{Nintendo Wii}, a filtragem ocorre por meio de filtros simples para remover pontos que não são suficientemente expressivos. \cite{shiratori2008accelerometer}, por outro lado, utilizam múltiplos controles de \textit{Nintendo Wii} para gerar animações proceduralmente, o ruído é atenuado através do uso do filtro de Kalman.
 
 
-\section{VRSnake}
+\section{VRSnake} \label{sec:vrsnake}
 
 %% Definição das regras do jogo
 
 % TODO: Refrasear texto
-O \textit{VRSnake} traz para a realidade virtual o clássico jogo 2D \textit{Snake}, mas diferentemente do original, o jogador assume controle sobre o posicionamento dos objetos coletáveis ao invés de controlar diretamente a serpente. Propomos então as seguintes regras: 
+O \textit{VRSnake} traz para a realidade virtual o clássico jogo 2D \textit{Snake}, mas diferentemente do original, o jogador assume controle sobre o posicionamento dos objetos coletáveis ao invés de controlar diretamente a serpente. Propomos então as seguintes regras:
 
 % TODO: Refrasear texto
 A serpente busca contínua e automaticamente o objeto coletável e cresce em uma unidade à medida que alcança este objeto.
@@ -553,11 +555,108 @@ Como no jogo original, a serpente deve movimentar-se de maneira circular pelo ce
 Além disso, o comportamento de busca da serpente deve garantir que não haja movimentação em direção a seu próprio corpo, mas também que exista um fator de randomização durante o movimento, tendo em vista garantir pequena imprevisibilidade a este ato.
 
 
-\section{Arquitetura Baseada em Shader}
+\section{Arquitetura de um Jogo GPGPU}
+
+Propomos uma arquitetura de duas camadas respectivamente responsáveis pelo gerenciamento lógico e visualização (ou renderização) da aplicação. A primeira fora desenvolvida em \textit{csharp}, portanto executada na unidade central de processamento (CPU, em inglês) e encarregada das tarefas inteligentes tais como a procura pelo objeto coletável e movimentação, além da aplicação do filtro de Kalman durante a leitura de dados do controle.
+
+A segunda camada envolve um \textit{shader}, código executado diretamente na unidade de processamento gráfico (GPU, em inglês), incumbido de renderizar todos os itens apresentados no dispositivo de saída, que incluem o plano de fundo, o objeto coletável circular bem como os quadriláteros que representam o personagem ou a \textit{snake}.
+
+O diagrama abaixo ilustra, de maneira geral, o funcionamento da arquitetura. Fundamentalmente, a camada lógica gerencia a colisão e movimentação da \textit{snake}; seleciona o caminho mais promissor acrescido de um fator randômico; além de efetivamente aplicar o filtro de Kalman às entradas do controle. A camada de visualização, por outro lado, é responsável pela renderização de todos os elementos dispostos no dispositivo de saída, isto é, a CPU não tem responsabilidade sobre estes objetos.
+
+\begin{figure}[H]
+\centering
+\tikzstyle{arrow} = [draw, -latex]
+\begin{tikzpicture} [x=1.2cm, y=1cm, node distance=0,outer sep=0,inner sep=0]
+    \draw (0, 0) rectangle (12,5);
+    \draw[dashed] (6,0) -- (6,5);
+
+    \draw (0,4.5) rectangle (6,5) node[pos=.5] {\small Camada Lógica (CSharp)};
+    \draw (6, 4.5) rectangle (12, 5) node[pos=.5] {\small Camada de Visualização (Shader)};
+
+    \draw (0.3, 3.7) rectangle (4, 4.2) node[pos=.5] (1A) {\small Gerenciamento de Colisão};
+    \draw (0.6, 2.9) rectangle (4.6, 3.4) node[pos=.5] (2A) {\small Movimentação da Serpente};
+    \draw (7, 2.9) rectangle (11, 3.4)node[pos=.5] (3A) {\small Renderização da Serpente};
+
+    \draw (0.3, 2) rectangle (4.3, 2.5) node[pos=.5] (4A) {\small Aplicação do filtro de Kalman};
+    \draw (0.4, 1.2) rectangle (5.8, 1.7) node[pos=.5] (5A) {\small Cálculo da Geometria do Plano de Fundo};
+    \draw (7, 1.2) rectangle (11.7, 1.7) node[pos=.5] (6A) {\small Renderização do Plano de Fundo};
+
+    \draw (0.3, 0.2) rectangle (5.9, 0.7) node[pos=.5] (7A) {\small Inteligência de Movimentação da Serpente};
+
+    \path [arrow] (1A) -- (2A);
+    \path [arrow] (2A) -- (3A);
+
+    \path [arrow] (4A) -- (5A);
+    \path [arrow] (5A) -- (6A);
+\end{tikzpicture}
+\caption{Diagrama de arquitetura da aplicação}
+\label{fig:diagramaArquitetura}
+\end{figure}
 
 
 \section{VRSnake: Um agente inteligente}
 
+A inteligência de movimentação da \textit{snake} é, por sua vez, composta por uma função utilitária de avaliação de estados que analisa cada possível ação em determinado momento. Em essência, a serpente sempre está buscando alcançar o coletável, por isso avalia o curso de menor distância no eixos X e Y e desde que não exista a possibilidade de atingir a si própria, assume este caminho e repete o processo. A função abaixo ilustra esse procedimento:
+
+\begin{equation}
+F(A) = R * (D + O)
+\label{equation11}
+\end{equation}
+
+Onde R é um fator de randomização; D representa a distância de \textit{Manhattan} entre a posição atual e o objeto coletável; e O é um valor atribuído à existência ou não de obstáculos neste trajeto.
+
+Para cada direção plausível apresentada na figura \ref{fig:snakeHeadPositions} abaixo, a função retorna um valor de utilidade que é ulteriormente comparado para determinar o caminho de maior probabilidade de sucesso.
+
+A lógica de movimentação consiste em gerenciar o posicionamento da cabeça e corpo da serpente.  Em outras palavras, a cabeça norteia todo o movimentar da \textit{snake}, pois nela são traçados os vetores responsáveis por orientar a serpente na decisão do menor caminho entre sua atual posição e o objeto coletável. É relevante explicitar que estes vetores de direcionamento são volúveis tendo em vista as diferentes posições adotáveis, conforme a figura \ref{fig:snakeHeadPositions} abaixo, onde a seta em vermelho indica a atual orientação da serpente e as demais indicam possíveis direções de movimento.
+
+O corpo da serpente, por sua vez, move-se através de um buffer deslizante: cada parte do corpo assume a posição mais recente da parte imediatamente anterior, isso significa que a cabeça move-se e as demais partes seguem posteriormente.
+
+\begin{figure}[H]
+\centering
+\tikzstyle{arrow} = [draw, -latex]
+
+\begin{tikzpicture} [x=1.2cm, y=1cm, node distance=0,outer sep=0,inner sep=0]
+  \draw (0, 0) rectangle (1, 1) node[pos=.5] {\small Head};
+  \draw (3, 0) rectangle (4, 1) node[pos=.5] {\small Head};
+  \draw (6, 0) rectangle (7, 1) node[pos=.5] {\small Head};
+  \draw (9, 0) rectangle (10, 1) node[pos=.5] {\small Head};
+
+  \path [arrow, red] (0.5, 1) -- (0.5, 1.5);
+  \path [arrow] (1, 0.5) -- (1.5, 0.5);
+  \path [arrow] (0, 0.5) -- (-0.5, 0.5);
+
+  \path [arrow, red] (3.5, 0) -- (3.5, -0.5);
+  \path [arrow] (4, 0.5) -- (4.5, 0.5);
+  \path [arrow] (3, 0.5) -- (2.5, 0.5);
+
+  \path [arrow] (6.5, 1) -- (6.5, 1.5);
+  \path [arrow, red] (7, 0.5) -- (7.5, 0.5);
+  \path [arrow] (6.5, 0) -- (6.5, -0.5);
+
+    \path [arrow] (9.5, 1) -- (9.5, 1.5);
+  \path [arrow, red] (9, 0.5) -- (8.5, 0.5);
+  \path [arrow] (9.5, 0) -- (9.5, -0.5);
+
+\end{tikzpicture}
+\caption{Possíveis movimentos da serpente, as setas coloridas indicam a direção atual}
+\label{fig:snakeHeadPositions}
+\end{figure}
+
+Considerando ainda a restrição de deslocamento na qual a serpente pode-se mover unicamente nas direções apontadas pela figura \ref{fig:snakeHeadPositions}, o cálculo por meio da distância de Manhattan se mostrou menos custoso, uma vez que sua equação representada abaixo não envolve operações quadráticas as quais, no escopo desta aplicação, podem ser chamadas inúmeras vezes por segundo.
+
+\begin{equation}
+EuclidianDistance = \sqrt{(x_{1} - x_{2})^2 + (y_{1} - y_{2})^2}
+\label{equation:euclidian}
+\end{equation}
+
+\begin{equation}
+ManhattanDistance = \left|x_{1} - x_{2}\right| + \left|y_{1} - y_{2}\right|
+\label{equation:manhattan}
+\end{equation}
+
+No que concerne a segunda camada, o \textit{shader} de renderização analisa durante a execução do jogo cada pixel para determinar a que elemento este pertence: o objeto coletável, a serpente ou o plano de fundo. Para determinar esta relação de atribuição, alguns cálculos básicos são necessários: um pixel é colorido com a cor do objeto coletável se sua distância até o centro do objeto (um pixel) for menor que um raio determinado, semelhantemente mantem-se um vetor de pontos equidistantes entre si, onde cada posição representa um quadrilátero que faz parte do corpo da \textit{snake}, o pixel em questão recebe a cor da serpente caso esteja contido na área delineada por estes quadriláteros, dados seus tamanhos de lado e centro, no entanto, uma vez que não atenda a nenhum caso anterior, o pixel simplesmente recebe a cor do plano de fundo.
+
+Para que a serpente mova-se de forma circular deve-se compreender o mapeamento UV (projeção de uma imagem 2D em uma superfície 3D) da superfície do objeto, neste caso, uma esfera. Basta verificar as extremidades para a presença da \textit{snake} e redesenhá-la no lado apropriado.
 
 \section{Realidade Virtual}
 
@@ -596,7 +695,7 @@ O formato de imagem equiretangular é uma captura ou produção de imagem feita 
 % \end{figure}
 
 % 2 - Mapeamento de UV em uma esfera invertida
-% Na figura \ref{fig:sphere_transversalsec} é exibida uma secção transversal da divisão de uma esfera em longitudes. 
+% Na figura \ref{fig:sphere_transversalsec} é exibida uma secção transversal da divisão de uma esfera em longitudes.
 Na geração das posições dos vértices da esfera, se faz necessário definir uma quantidade de valores de longitude $N$, assim o tamanho angular $T$ para divisão longitudinal pode ser calculado pela equação \ref{longitudesize}.
 
 % \begin{figure}[ht]
@@ -618,7 +717,7 @@ O tamanho angular total de uma quantidade de $i$ de valores de longitude pode se
 \label{longitudealpha}
 \end{equation}
 
-% Considerando a figura \ref{fig:sphere_transversalsec}, percebe-se que 
+% Considerando a figura \ref{fig:sphere_transversalsec}, percebe-se que
 O seno e cosseno do ângulo T definem-se as posições X e Z dos pontos da esfera pertencentes a essa secção transversal da esfera. Dessa forma, supondo uma esfera de raio $R$, podemos escrever as equações \ref{x_d} e \ref{z_d}.
 
 \begin{equation}
@@ -680,14 +779,14 @@ z_{i} = \sin(\alpha_{yi}) * \cos(\alpha_i)
 \subsection{Uso do Controle VR com Filtro de Kalman} \label{sec:gearvrcontroller}
 Devido à natureza do jogo desenvolvido, o jogador necessita controlar o posicionamento do objeto coletável e para tanto existem essencialmente duas formas de interação num dispositivo de realidade virtual: o HMD (\textit{head-mounted display}), ou seja, através do sensor lateral acoplado ao próprio dispositivo; e os controladores externos, como os controles ou \textit{joysticks}. Em sua condição de sensor, porém, estes controladores estão sujeitos à interferência ruidosa durante a virtualização do evento representado no mundo real pelo movimento do usuário. Com a finalidade de melhorar a captura do sinal e traduzir de maneira mais fiel as intenções do jogador, o filtro de Kalman será aplicado às leituras do \textit{joystick} por meio de um componente de visualização de ruídos e aplicação do filtro, conforme apontado na figura \ref{fig:diagramaArquitetura}.
 
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=.4\textwidth]{images/gear_controller.jpg}
-% \caption{Controle para Realidade Virtual da Samsung.}
-% \label{fig:vrcontroller}
-% \end{figure}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.4\textwidth]{../images/gear_controller.jpg}
+\caption{Controle para Realidade Virtual da Samsung.}
+\label{fig:vrcontroller}
+\end{figure}
 
-Para a efetiva implementação do filtro de Kalman na leitura do controle de realidade virtual seguem-se os seguintes passos: inicialmente captura-se a orientação angular do \textit{joystick}, traça-se um raio da posição virtual atual do controle até uma esfera unitária e o ponto resultante da interseção é o foco do usuário, em outras palavras, o objetivo apontado pelo cursor, esta posição é onde aplica-se o filtro de Kalman, proveniente da implementação encontrada na aplicação de \cite{KalmanComponent}. O diagrama abaixo ilustra este processo. 
+Para a efetiva implementação do filtro de Kalman na leitura do controle de realidade virtual seguem-se os seguintes passos: inicialmente captura-se a orientação angular do \textit{joystick}, traça-se um raio da posição virtual atual do controle até uma esfera unitária e o ponto resultante da interseção é o foco do usuário, em outras palavras, o objetivo apontado pelo cursor, esta posição é onde aplica-se o filtro de Kalman, proveniente da implementação encontrada na aplicação de \cite{KalmanComponent}. O diagrama abaixo ilustra este processo.
 
 % \begin{figure}[H]
 % \centering
@@ -702,24 +801,29 @@ Para a efetiva implementação do filtro de Kalman na leitura do controle de rea
 
 % \path [line] (step1) -- (step2);
 % \path [line] (step2) -- (step3);
-
-\section{Realidade Aumentada}
+% \end{figure}
 
 %% Geração de um cubo.
 
-% TODO: Refrasear texto
-O primeiro passo uso de \textit{Cubemap} é a geração de um cubo. Porém o cubo padrão gerado pela \textit{Unity} não possui vértices suficientes para um mapeamento de UV preciso. Para obter melhores resultados, utilizamos uma subdivisão de \textit{Mesh} em que cada triângulo é dividido em quatro. Iniciando de um cubo com 10 vértices e 12 triângulos, repetimos a operação de subdivisão quatro vezes e obtivemos um cubo de 4090 vértices e 4096 triângulos.
+\section{Resultados} \label{sec:results}
+Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvolvimento \textit{Unity}. Gerou-se uma aplicação \textit{android} testada no \textit{Samsung Galaxy S8} através do \textit{GearVR} com o controle de modelo ET-YO32, conforme apresentado na figura \ref{fig:vrcontroller}. A figura \ref{fig:VRPerformanceChart} abaixo ilustra a taxa de quadros no \textit{GearVR} através da ferramenta de avaliação de performance da \textit{Oculus}, o \textit{OVR Metrics Tool}:
 
-%% Calculo de UV
-% TODO: Refrasear texto
-No momento da geração de cada vértice, pode-se calcular a sua respectiva coordenada de UV, utilizando o cálculo da equação \ref{eq:skybox_equirect}. Percebe-se que assim, a visão cubemap equivale a discretização da abordagem de mapeamento contínuo das coordenadas de UV em um \textit{Skybox}.
+\begin{figure}[H] \label{fig:VRPerformanceChart}
+\centering
+\includegraphics[scale=0.5]{VRPerformance}
+\caption{Quadros-por-segundo conforme o OVR Metrics Tool executado durante o funcionamento da aplicação }
+\end{figure}
 
-\section{Resultados}
+A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-second}, quadros-por-segundo), com mínima de 16 \textit{fps} e máxima de 60 \textit{fps}. Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{fps} e isto se deve principalmente ao \textit{garbage collector} e à implementação do filtro de Kalman que, apesar de minimizar as inconsistências de leitura, ocasionou pequenos atrasos de processamento.
 
+\section{Conclusão}\label{sec:conclusion}
+% Resumo do artigo
+Apresentou-se a implementação de um jogo criado segundo a arquitetura de renderização baseada em \textit{shaders} que distribui passos usualmente restritos à camada de aplicação para as demais camadas da \textit{pipeline} gráfica.
 
-\section{Conclusão}
-The conclusion goes here.
+A fim de melhorar a experiência de uso do jogo com o controle, aplicou-se o filtro de Kalman com a intenção de aperfeiçoar a instabilidade presente nas leituras de movimento.
 
+% Trabalhos Futuros
+Em trabalhos futuros, três passos são percebidos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para a camada de visualização, na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número representativamente maior de serpentes. Em segundo lugar, aplicar aprendizagem de máquina nesta camada, objetivando-se um comportamento de busca e desvio de obstáculos (como outras serpentes e seu próprio corpo) mais inteligente, por conseguinte, desafiador. Por último, otimizar e melhorar a performance, objetivando os 60 \textit{fps}.
 
 
 
@@ -758,13 +862,10 @@ The authors would like to thank...
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\begin{thebibliography}{1}
+\bibliographystyle{IEEEtran}
 
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-
-\end{thebibliography}
+% \bibliographystyle{ieeetran}
+\bibliography{bare_conf}
 
 
 

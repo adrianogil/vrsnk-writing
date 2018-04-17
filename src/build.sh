@@ -1,7 +1,9 @@
 rm *.aux *.log
-pdflatex bare_conf.tex
-pdflatex bare_conf.tex
-# bibtex sbc-template
-# pdflatex sbc-template.tex
-# bibtex sbc-template
-# pdflatex sbc-template.tex
+
+tex_file=bare_conf
+
+pdflatex $tex_file.tex
+bibtex $tex_file
+pdflatex $tex_file.tex
+bibtex $tex_file
+pdflatex $tex_file.tex
