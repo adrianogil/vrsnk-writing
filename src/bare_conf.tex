@@ -538,24 +538,26 @@ Jogos VR são um grande potencializador de imersão, dada a sua capacidade de es
 Certos trabalhos trazem a filtragem de sensores baseados no uso de acelerômetro, a exemplo: \cite{schlomer2008gesture} usa o modelo oculto de Markov para reconhecimento de gestos em um controle do \textit{Nintendo Wii}, a filtragem ocorre por meio de filtros simples para remover pontos que não são suficientemente expressivos. \cite{shiratori2008accelerometer}, por outro lado, utilizam múltiplos controles de \textit{Nintendo Wii} para gerar animações proceduralmente, o ruído é atenuado através do uso do filtro de Kalman.
 
 
-\section{VRSnake} \label{sec:vrsnake}
-
+%Reescrevendo
+\section{VRSnake: Design do Jogo} \label{sec:vrsnake}
 %% Definição das regras do jogo
 
-% TODO: Refrasear texto
-O \textit{VRSnake} traz para a realidade virtual o clássico jogo 2D \textit{Snake}, mas diferentemente do original, o jogador assume controle sobre o posicionamento dos objetos coletáveis ao invés de controlar diretamente a serpente. Propomos então as seguintes regras:
+O \textit{VRSnake} é a versão em realidade virtual do clássico jogo 2D \textit{Snake} que faz uso da unidade gráfica de processamento para calcular e renderizar um número expressivamente maior de oponentes enquanto jogos \textit{CPU-bound} processam uma quantidade menor. 
 
-% TODO: Refrasear texto
-A serpente busca contínua e automaticamente o objeto coletável e cresce em uma unidade à medida que alcança este objeto.
+Originalmente controlava-se a serpente na busca pelos coletáveis espalhados pelo cenário, o \textit{VRSnake} permite ao jogador controlar os objetos coletáveis tornando seu principal objetivo derrotar as diversas serpentes que estão espalhadas pelo cenário. Propomos então as regras como seguem:
 
-% TODO: Refrasear texto
-Como no jogo original, a serpente deve movimentar-se de maneira circular pelo cenário, isto é, ao encontrar os limites do cenário de um lado, deve continuar do outro na mesma maneira. O jogador vence quando a \textit{snake} é derrotada, ou seja, quando ela atinge a si própria de alguma forma.
-
-% TODO: Refrasear texto
-Além disso, o comportamento de busca da serpente deve garantir que não haja movimentação em direção a seu próprio corpo, mas também que exista um fator de randomização durante o movimento, tendo em vista garantir pequena imprevisibilidade a este ato.
+As serpentes buscam continuamente o objeto coletável colocado pelo jogador à medida que buscam o caminho que as mantenham vivas por mais tempo, isto é, as serpentes desviam de si mesmas e das demais serpentes quando possível, considerando um fator de randomização no processo de movimentação.
 
 
+%Reescrevendo
 \section{Arquitetura de um Jogo GPGPU}
+Jogos são aplicações interativas que executam três classes de ações: coleta, processamento e exibição de dados. %Arranjar referencia sobre software (algo mais abrangente) 
+A coleta de dados foca em recolher dados dos dispositivos de entrada sejam eles teclado, mouse, toque ou \textit{joysticks}. O processamento abrange o reconhecimento dos dados coletados e sua devida tradução para o mundo do jogo, mas também garante o cumprimento das regras e gerenciamento do estado geral da aplicação. A exibição é o passo final, pois retorna ao jogador as consequências de seus atos de maneira sensorial. Desta forma, o \textit{VRSnake} é um jogo de realidade virtual que concentra as ações das classes de processamento e exibição na unidade gráfica de processamento (GPU - \textit{Graphics Processing Unit}). 
+
+Esta arquitetura foi implementada utilizando o motor gráfico \textit{Unity} através do HLSL (\textit{High Level Shading Language}) para os \textit{shaders} e CSharp como linguagem de programação de CPU (\textit{Central Processing Unit}).
+
+%A arquitetura do \textit{VRSnake} é baseada em dois níveis. O primeiro nível é de responsabilidade da CPU e coleta os dados de entrada, o segundo nível envolve a GPU e o processamen
+
 
 Propomos uma arquitetura de duas camadas respectivamente responsáveis pelo gerenciamento lógico e visualização (ou renderização) da aplicação. A primeira fora desenvolvida em \textit{csharp}, portanto executada na unidade central de processamento (CPU, em inglês) e encarregada das tarefas inteligentes tais como a procura pelo objeto coletável e movimentação, além da aplicação do filtro de Kalman durante a leitura de dados do controle.
 
