@@ -329,13 +329,17 @@ Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvo
 A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-second}, quadros-por-segundo), com mínima de 16 \textit{fps} e máxima de 60 \textit{fps}. Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{fps} e isto se deve principalmente ao \textit{garbage collector} e à implementação do filtro de Kalman que, apesar de minimizar as inconsistências de leitura, ocasionou pequenos atrasos de processamento.
 
 \section{Conclusão}\label{sec:conclusion}
-% Resumo do artigo
-Apresentou-se a implementação de um jogo criado segundo a arquitetura de renderização baseada em \textit{shaders} que distribui passos usualmente restritos à camada de aplicação para as demais camadas da \textit{pipeline} gráfica.
 
-A fim de melhorar a experiência de uso do jogo com o controle, aplicou-se o filtro de Kalman com a intenção de aperfeiçoar a instabilidade presente nas leituras de movimento.
+% Resumo do artigo - Arquitetura
+Apresentou-se a implementação de um jogo criado segundo a arquitetura de renderização baseada em \textit{shaders} que distribui passos usualmente restritos à camada de aplicação para as demais camadas da \textit{pipeline} gráfica. Assim, uma implementação baseada em \textit{Fragment Shader} em um único \textit{Mesh} foi utilizada para a renderização de todos os elementos do jogo.
+
+% Resumo do artigo - Kalman
+A fim de melhorar a experiência de uso do jogo com o controle, aplicou-se o filtro de Kalman com a intenção de aperfeiçoar a precisão das leituras da rotação do controle. Testes iniciais indicam que a implementação do filtro de Kalman tornou o movimento do curso mais suave e trouxe uma maior sensação de controle por parte do usuário.
 
 % Trabalhos Futuros
-Em trabalhos futuros, três passos são percebidos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para a camada de visualização, na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número representativamente maior de serpentes. Em segundo lugar, aplicar aprendizagem de máquina nesta camada, objetivando-se um comportamento de busca e desvio de obstáculos (como outras serpentes e seu próprio corpo) mais inteligente, por conseguinte, desafiador. Por último, otimizar e melhorar a performance, objetivando os 60 \textit{fps}.
+% - Camada lógica para a GPU
+% - Realizar testes comparativos com diferentes métodos de filtragem para avaliar vantagens e desvantagens de cada método
+Em trabalhos futuros, três passos são percebidos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para serem executados na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número maior de serpentes, acrescentando um maior fator lúdico. Em segundo lugar, realizar testes comparativos com diferentes métodos de filtragem do sinal do controle VR para avaliar vantagens e desvantagens de cada método. Por último, otimizar e melhorar o desempenho da aplicação, encontrando pontos de gargalos, de forma a possibilitar atingir um melhor desempenho em termos de \textit{fps}.
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
