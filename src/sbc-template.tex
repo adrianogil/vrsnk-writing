@@ -47,15 +47,13 @@ Normalmente, estes jogos e aplicações desenvolvidos na \textit{Unity} são compos
 Em outro âmbito, os controles ou \textit{joysticks} são uma das formas de interação com dispositivos de realidade virtual, no entanto, são passíveis de ruídos devido à presença de sensores baseados em magnetômetros, originando comportamentos indesejados como \textit{jittering} durante a leitura dos dados.
 
 % Resumo proposta
-Neste trabalho, propomos o desenvolvimento de um jogo cujas representações gráficas sejam inteiramente fundamentadas em código de GPU ao passo que as restrições lógicas concentrem-se na CPU, de maneira a atuar nos diferentes estágios da pipeline gráfica acima apresentada. Em alusão à um clássico, o jogo Snake será recriado para os dispositivos de realidade virtual da Samsung em uma aplicação Unity, no entanto, diferencia-se do original à medida que o jogador posiciona o objeto coletável através do controlador tendo a finalidade de fazer a serpente persegui-lo. Neste aspecto, objetivando solucionar o primeiro desafio apresentado aplica-se o Filtro de Kalman durante a leitura do posicionamento do cursor deste \textit{joystick} a fim de melhorar o reconhecimento do sinal e atenuar a inconsistência apresentada. 
+Neste trabalho, propomos o desenvolvimento de um jogo cujas representações gráficas sejam inteiramente fundamentadas em código de GPU ao passo que as restrições lógicas concentrem-se na CPU, de maneira a atuar nos diferentes estágios da pipeline gráfica. Em alusão à um clássico, o jogo Snake será recriado para os dispositivos de realidade virtual da Samsung em uma aplicação Unity, no entanto, diferencia-se do original à medida que o jogador posiciona o objeto coletável através do controlador tendo a finalidade de fazer a serpente persegui-lo. Neste aspecto, aplicamos o Filtro de Kalman durante a leitura do posicionamento do cursor deste \textit{joystick} a fim de melhorar o reconhecimento do sinal e atenuar a inconsistência apresentada.
 
 % * Estrutura do artigo
 Analisamos na seção \ref{sec:relatedworks} outros trabalhos que abordam sensores, uso de filtros e jogos de realidade virtual. Um esclarecimento sobre as regras do jogo desenvolvido pode ser encontrado na seção \ref{sec:vrsnake}. A arquitetura proposta é detalhada na seção \ref{sec:architecture}. Apresenta-se como um jogo de realidade virtual pode ser renderizado em uma esfera invertida na seção \ref{sec:invertedsphere}. Em \ref{sec:agent}, comprende-se a movimentação da \textit{snake} e sua arquitetura de renderização. A seção \ref{sec:gearvrcontroller} explana como ocorre a aplicação do filtro de Kalman no controle para VR. Resultados são discutidos na seção \ref{sec:results}. Por fim, pautam-se as conclusões e perspectivas de trabalhos futuros na seção \ref{sec:conclusion}.
 
 \section{Trabalhos Relacionados} \label{sec:relatedworks}
-O jogo bidimensional Jelly in the Sky, recentemente disponibilizado para aquisição na plataforma de jogos para computador Steam, utiliza uma estrutura baseada em shader similar à arquitetura apresentada aqui. \cite{joselli_clua_2009} defendem um trabalho onde a GPU executa todo o processamento do jogo criado.
-
-Contudo, aplicações em realidade virtual diferem de outras aplicações devido à necessidade de preencher o espaço tridimensional de forma a fornecer conteúdo para os 3 graus de liberdade (3DoF - 3 Degrees of Freedom) permitidos tecnologicamente durante a construção deste trabalho. Por exemplo, a aplicação descrita em \cite{zund2015unfolding} utiliza visão computacional para geração de uma visão panorâmica de um jogo de console em 8-bits. Rodando em um Oculus Rift DK2, o jogador é posicionado no centro do mundo e à medida que movimenta seu personagem, o mundo se desdobra ao seu redor, extendendo a visão de jogo para as quatro paredes do ambiente virtual.
+Aplicações em realidade virtual diferem de outras aplicações devido à necessidade de preencher o espaço tridimensional de forma a fornecer conteúdo para os 3 graus de liberdade (3DoF - 3 Degrees of Freedom) permitidos tecnologicamente durante a construção deste trabalho. Por exemplo, a aplicação descrita em \cite{zund2015unfolding} utiliza visão computacional para geração de uma visão panorâmica de um jogo de console em 8-bits. Rodando em um Oculus Rift DK2, o jogador é posicionado no centro do mundo e à medida que movimenta seu personagem, o mundo se desdobra ao seu redor, extendendo a visão de jogo para as quatro paredes do ambiente virtual.
 
 % 3 - Controles de VR auxiliam na sensação de presença e por consequência na imersão
 Jogos VR são um grande potencializador de imersão, dada a sua capacidade de estimular a sensação de presença espacial e interatividade \cite{seibert2017control} através, por exemplo, dos controles VR, tal qual o modelo ET-YO32 da Samsung exibido na figura \ref{fig:vrcontroller}, que são classificados como de mapeamento natural tangível realístico e consoante a definição proposta por \cite{skalski2011mapping}, emulam de forma realista sua contrapartida no ambiente virtual, ou seja, movimenta-se a réplica do controle físico no espaço 3D da aplicação VR da mesma forma que se faz no mundo real.
@@ -63,15 +61,20 @@ Jogos VR são um grande potencializador de imersão, dada a sua capacidade de esti
 % 4 - Exemplos de filtragem de açoes dos controles (From ERIN17 paper. Refrasear)
 Certos trabalhos trazem a filtragem de sensores baseados no uso de acelerômetro, a exemplo: \cite{schlomer2008gesture} usa o modelo oculto de Markov para reconhecimento de gestos em um controle do \textit{Nintendo Wii}, a filtragem ocorre por meio de filtros simples para remover pontos que não são suficientemente expressivos. \cite{shiratori2008accelerometer}, por outro lado, utiliza múltiplos controles de \textit{Nintendo Wii} para gerar animações proceduralmente, o ruído é atenuado através do uso do filtro de Kalman.
 
+% GPGPU games
+O jogo bidimensional Jelly in the Sky, recentemente disponibilizado para aquisição na plataforma de jogos para computador Steam, utiliza uma estrutura baseada em shader onde tanto os elementos visuais quanto a lógica de jogo são processados na GPU. No artigo \cite{joselli_clua_2009} é defendido um trabalho onde a GPU executa todo o processamento do jogo criado.
+
 \section{VRSnake} \label{sec:vrsnake}
 % Definição das regras do jogo
-O \textit{VRSnake} traz para a realidade virtual o clássico jogo 2D \textit{Snake}, mas diferentemente do original, o jogador assume controle sobre o posicionamento dos objetos coletáveis ao invés de controlar diretamente a serpente. Propomos então as seguintes regras:
+Neste artigo descrevemos o \textit{VRSnake}, um jogo de realidade virtual que apresenta uma modificação das regras do clássico jogo 2D \textit{Snake}:
 
-A serpente busca contínua e automaticamente o objeto coletável e cresce em uma unidade à medida que alcança este objeto.
-
-Como no jogo original, a serpente deve movimentar-se de maneira circular pelo cenário, isto é, ao encontrar os limites do cenário de um lado, deve continuar do outro na mesma maneira. O jogador vence quando a \textit{snake} é derrotada, ou seja, quando ela atinge a si própria de alguma forma.
-
-Além disso, o comportamento de busca da serpente deve garantir que não haja movimentação em direção a seu próprio corpo, mas também a existência de um fator de randomização durante o movimento, tendo em vista garantir pequena imprevisibilidade a este ato.
+\begin{enumerate}
+  \item o jogador assume controle sobre o posicionamento dos objetos coletáveis ao invés de controlar diretamente a serpente
+  \item A serpente busca contínua e automaticamente o objeto coletável e cresce em uma unidade à medida que alcança este objeto.
+  \item Como no jogo original, a serpente deve movimentar-se de maneira circular pelo cenário, isto é, ao encontrar os limites do cenário de um lado, deve continuar do outro na mesma maneira.
+  \item O jogador vence quando a \textit{snake} é derrotada, ou seja, quando ela atinge a si própria de alguma forma.
+  \item Para garantir a diversão do jogo, o comportamento de busca da serpente deve garantir que não haja movimentação em direção a seu próprio corpo, além de utilizar de algum fator de aleatoriedade durante o movimento.
+\end{enumerate}
 
 \begin{figure}[H] \label{fig:VRSnakePicture}
 \centering
@@ -128,7 +131,7 @@ Uma esfera invertida, ou seja, uma esfera que tenha apenas seu lado interno rend
 Para este trabalho, preferiu-se a segunda abordagem devido a possibilidade de usar a longitude/latitude como forma de mapear as coordenadas de UV, através da conversão abaixo:
 
 \begin{equation}
-R^2 \leftarrow R^3 : (\alpha, \theta) \rightarrow (x, y, z)
+R^2 \rightarrow R^3 : (\alpha, \theta) \rightarrow (x, y, z)
 \label{equationUV}
 \end{equation}
 
@@ -270,7 +273,7 @@ O corpo da serpente, por sua vez, move-se através de um \textit{buffer} deslizan
 \label{fig:snakeHeadPositions}
 \end{figure}
 
-A distância entre dois pontos em um espaço vetorial é dada pela magnitude da diferença de um vetor pelo outro, equação também conhecida como distância euclidiana, entretanto, considerando a restrição de deslocamento na qual a serpente pode-se mover unicamente nas direções apontadas pela Figura \ref{fig:snakeHeadPositions}, a distância euclidiana, mostrada na equação \ref{equation:euclidian}, não é vantajosa, pois envolve operações quadráticas as quais podem ser chamadas inúmeras vezes por segundo devido ao escopo desta aplicação, desta maneira o cálculo por meio da distância de Manhattan, equação \ref{equation:manhattan}, se mostra menos custoso. 
+A distância entre dois pontos em um espaço vetorial é dada pela magnitude da diferença de um vetor pelo outro, equação também conhecida como distância euclidiana, entretanto, considerando a restrição de deslocamento na qual a serpente pode-se mover unicamente nas direções apontadas pela Figura \ref{fig:snakeHeadPositions}, a distância euclidiana, mostrada na equação \ref{equation:euclidian}, não é vantajosa, pois envolve operações quadráticas as quais podem ser chamadas inúmeras vezes por segundo devido ao escopo desta aplicação, desta maneira o cálculo por meio da distância de Manhattan, equação \ref{equation:manhattan}, se mostra menos custoso.
 
 \begin{equation}
 EuclidianDistance = \sqrt{(x_{1} - x_{2})^2 + (y_{1} - y_{2})^2}
@@ -326,7 +329,7 @@ Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvo
 \caption{Quadros-por-segundo conforme o OVR Metrics Tool executado durante o funcionamento da aplicação }
 \end{figure}
 
-A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-second}, quadros-por-segundo), com mínima de 16 \textit{fps} e máxima de 60 \textit{fps}, números adequados para um jogo, consoante \cite{joselli_montenegro_2009}.  Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{fps} e isto se deve principalmente ao \textit{garbage collector} e à implementação do filtro de Kalman que, apesar de minimizar as inconsistências de leitura, ocasiona pequenos atrasos de processamento. 
+A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-second}, quadros-por-segundo), com mínima de 16 \textit{fps} e máxima de 60 \textit{fps}, números adequados para um jogo, consoante \cite{joselli_montenegro_2009}.  Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{fps} e isto se deve principalmente ao \textit{garbage collector} e à implementação do filtro de Kalman que, apesar de minimizar as inconsistências de leitura, ocasiona pequenos atrasos de processamento.
 
 Provou-se também que é possível a execução de um jogo de realidade virtual com a renderização de seus elementos gráficos diretamente na unidade gráfica de processamento, através dos \textit{shaders}. Isto possibilita considerar o emprego desta arquitetura parcialmente ou completamente, viabilizando o uso da unidade central de processamento em outras atividades.
 
