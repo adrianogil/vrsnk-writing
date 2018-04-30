@@ -53,7 +53,7 @@ Neste trabalho, propomos o desenvolvimento de um jogo cujas representações gráfi
 Analisamos na seção \ref{sec:relatedworks} outros trabalhos que abordam sensores, uso de filtros e jogos de realidade virtual. Um esclarecimento sobre as regras do jogo desenvolvido pode ser encontrado na seção \ref{sec:vrsnake}. A arquitetura proposta é detalhada na seção \ref{sec:architecture}. Apresenta-se como um jogo de realidade virtual pode ser renderizado em uma esfera invertida na seção \ref{sec:invertedsphere}. Em \ref{sec:agent}, comprende-se a movimentação da \textit{snake} e sua arquitetura de renderização. A seção \ref{sec:gearvrcontroller} explana como ocorre a aplicação do filtro de Kalman no controle para VR. Resultados são discutidos na seção \ref{sec:results}. Por fim, pautam-se as conclusões e perspectivas de trabalhos futuros na seção \ref{sec:conclusion}.
 
 \section{Trabalhos Relacionados} \label{sec:relatedworks}
-O jogo bidimensional Jelly in the Sky, recentemente disponibilizado para aquisição na plataforma de jogos para computador Steam, utiliza uma estrutura baseada em shader similar à arquitetura apresentada aqui. %referencia artigo aqui defendem um trabalho onde a GPU executa todo o processamento do jogo criado.
+O jogo bidimensional Jelly in the Sky, recentemente disponibilizado para aquisição na plataforma de jogos para computador Steam, utiliza uma estrutura baseada em shader similar à arquitetura apresentada aqui. \cite{joselli_clua_2009} defendem um trabalho onde a GPU executa todo o processamento do jogo criado.
 
 Contudo, aplicações em realidade virtual diferem de outras aplicações devido à necessidade de preencher o espaço tridimensional de forma a fornecer conteúdo para os 3 graus de liberdade (3DoF - 3 Degrees of Freedom) permitidos tecnologicamente durante a construção deste trabalho. Por exemplo, a aplicação descrita em \cite{zund2015unfolding} utiliza visão computacional para geração de uma visão panorâmica de um jogo de console em 8-bits. Rodando em um Oculus Rift DK2, o jogador é posicionado no centro do mundo e à medida que movimenta seu personagem, o mundo se desdobra ao seu redor, extendendo a visão de jogo para as quatro paredes do ambiente virtual.
 
@@ -318,7 +318,7 @@ Para a efetiva implementação do Filtro de Kalman na leitura do controle de reali
 \end{figure}
 
 \section{Resultados} \label{sec:results}
-Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvolvimento \textit{Unity}. Gerou-se uma aplicação \textit{android} testada no \textit{Samsung Galaxy S8} através do \textit{GearVR} com o controle de modelo ET-YO32, conforme apresentado na figura \ref{fig:vrcontroller}. A figura \ref{fig:VRPerformanceChart} abaixo ilustra a taxa de quadros no \textit{GearVR} através da ferramenta de avaliação de performance da \textit{Oculus}, o \textit{OVR Metrics Tool}:
+Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvolvimento \textit{Unity}. Gerou-se uma aplicação \textit{android} testada no \textit{Samsung Galaxy S8} através do \textit{GearVR} com o controle de modelo ET-YO32, conforme apresentado na figura \ref{fig:vrcontroller}. Trabalhos de temática similar, como visto em \cite{joselli_clua_2009}, utilizam das taxas de quadros-por-segundo para mensurar a performance do jogo, haja vista que a quantidade de elementos renderizados durante a execução afeta diretamente esta métrica. A figura \ref{fig:VRPerformanceChart} abaixo ilustra a taxa de quadros no \textit{GearVR} coletados durante a execução da aplicação através da ferramenta de avaliação de performance da \textit{Oculus}, o \textit{OVR Metrics Tool}:
 
 \begin{figure}[H] \label{fig:VRPerformanceChart}
 \centering
@@ -326,7 +326,9 @@ Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvo
 \caption{Quadros-por-segundo conforme o OVR Metrics Tool executado durante o funcionamento da aplicação }
 \end{figure}
 
-A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-second}, quadros-por-segundo), com mínima de 16 \textit{fps} e máxima de 60 \textit{fps}. Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{fps} e isto se deve principalmente ao \textit{garbage collector} e à implementação do filtro de Kalman que, apesar de minimizar as inconsistências de leitura, ocasionou pequenos atrasos de processamento.
+A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-second}, quadros-por-segundo), com mínima de 16 \textit{fps} e máxima de 60 \textit{fps}, números adequados para um jogo, consoante \cite{joselli_montenegro_2009}.  Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{fps} e isto se deve principalmente ao \textit{garbage collector} e à implementação do filtro de Kalman que, apesar de minimizar as inconsistências de leitura, ocasiona pequenos atrasos de processamento. 
+
+Provou-se também que é possível a execução de um jogo de realidade virtual com a renderização de seus elementos gráficos diretamente na unidade gráfica de processamento, através dos \textit{shaders}. Isto possibilita considerar o emprego desta arquitetura parcialmente ou completamente, viabilizando o uso da unidade central de processamento em outras atividades.
 
 \section{Conclusão}\label{sec:conclusion}
 
@@ -339,7 +341,7 @@ A fim de melhorar a experiência de uso do jogo com o controle, aplicou-se o filt
 % Trabalhos Futuros
 % - Camada lógica para a GPU
 % - Realizar testes comparativos com diferentes métodos de filtragem para avaliar vantagens e desvantagens de cada método
-Em trabalhos futuros, três passos são percebidos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para serem executados na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número maior de serpentes, acrescentando um maior fator lúdico. Em segundo lugar, realizar testes comparativos com diferentes métodos de filtragem do sinal do controle VR para avaliar vantagens e desvantagens de cada método. Por último, otimizar e melhorar o desempenho da aplicação, encontrando pontos de gargalos, de forma a possibilitar atingir um melhor desempenho em termos de \textit{fps}.
+Em trabalhos futuros, três passos são percebidos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para serem executados na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número maior de serpentes, acrescentando um maior fator lúdico. Em segundo lugar, realizar testes comparativos com diferentes métodos de filtragem do sinal do controle VR para avaliar vantagens e desvantagens de cada método. Por último, otimizar e melhorar o desempenho da aplicação, encontrando pontos de gargalo, de forma a possibilitar um melhor desempenho em termos de \textit{fps}.
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
