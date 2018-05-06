@@ -538,16 +538,15 @@ Jogos VR são um grande potencializador de imersão, dada a sua capacidade de es
 Certos trabalhos trazem a filtragem de sensores baseados no uso de acelerômetro, a exemplo: \cite{schlomer2008gesture} usa o modelo oculto de Markov para reconhecimento de gestos em um controle do \textit{Nintendo Wii}, a filtragem ocorre por meio de filtros simples para remover pontos que não são suficientemente expressivos. \cite{shiratori2008accelerometer}, por outro lado, utilizam múltiplos controles de \textit{Nintendo Wii} para gerar animações proceduralmente, o ruído é atenuado através do uso do filtro de Kalman.
 
 
-%Reescrevendo
+%Reescrito
 \section{VRSnake: Design do Jogo} \label{sec:vrsnake}
-%% Definição das regras do jogo
+O \textit{VRSnake} é a versão em realidade virtual do clássico jogo 2D \textit{Snake}, que faz uso da unidade gráfica de processamento para calcular e renderizar um número expressivamente maior de elementos em tela quando comparado à sua contrapartida em CPU. 
 
-O \textit{VRSnake} é a versão em realidade virtual do clássico jogo 2D \textit{Snake} que faz uso da unidade gráfica de processamento para calcular e renderizar um número expressivamente maior de oponentes enquanto jogos \textit{CPU-bound} processam uma quantidade menor. 
+* Aqui entram os comparativos graficos da CPU e GPU*
 
-Originalmente controlava-se a serpente na busca pelos coletáveis espalhados pelo cenário, o \textit{VRSnake} permite ao jogador controlar os objetos coletáveis tornando seu principal objetivo derrotar as diversas serpentes que estão espalhadas pelo cenário. Propomos então as regras como seguem:
+No jogo original controlava-se a serpente na busca pelos coletáveis distribuídos pelo cenário, o \textit{VRSnake} permite ao jogador controlar o posicionamento destes objetos coletáveis, desta forma seu principal objetivo é derrotar as diversas serpentes que estão espalhadas no universo virtual. Propomos então as regras como seguem:
 
-As serpentes buscam continuamente o objeto coletável colocado pelo jogador à medida que buscam o caminho que as mantenham vivas por mais tempo, isto é, as serpentes desviam de si mesmas e das demais serpentes quando possível, considerando um fator de randomização no processo de movimentação.
-
+As serpentes buscam ininterruptamente o objeto coletável posicionado pelo jogador e seguem até o objeto pelo percurso que as manterão vivas por mais tempo, isto é, as serpentes desviam de si mesmas e das demais serpentes quando possível. Se este desvio não acontece, uma das serpentes é eliminada. Em outro aspecto, caso o objeto coletável seja capturado com sucesso, a \textit{snake} cresce em uma unidade de medida. O jogador vence a partida quando resta unicamente uma serpente.
 
 %Reescrevendo
 \section{Arquitetura de um Jogo GPGPU}
