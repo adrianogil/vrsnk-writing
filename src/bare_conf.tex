@@ -58,7 +58,7 @@ Aplicações de realidade virtual são caracterizadas pela alta sensibilidade à
 O motor e editor gráfico \textit{Unity} é uma ferramenta comum para o desenvolvimento de software em realidade virtual e aumentada. Usualmente, uma aplicação \textit{unity} é constituída por cenas providas de um sistema lógico próprio que, uma vez agrupadas, formam todos os elementos pertinentes ao universo do jogo. Neste aspecto, a \textit{pipeline} gráfica rotineiramente utilizada pelas apliações e jogos \textit{unity} contempla, em linhas gerais, os seguintes passos:  a CPU (\textit{central processing unit}) transmite informações sobre os elementos gráficos à GPU (\textit{graphics processing unit}) através do estágio de aplicação, onde os \textit{assets} gráficos como modelos 3D e suas texturas são carregados na VRAM (\textit{video random access memory}), posteriormente durante o estágio de geometria, os objetos que devem ser renderizados bem como seus respectivos posicionamentos e demais informes visuais relevantes são tratados pela GPU e, em última instância, convertidos em imagem no estágio de rasterização \cite{akenine2008real}.
 
 % Proposta
-Este trabalho propõe o desenvolvimento de um jogo de realidade virtual através de uma arquitetura onde ambas as camadas lógica e de renderização gráfica sejam fundamentadas em código de GPU, o \textit{shader}. Em alusão à um clássico, o jogo \textit{snake} será recriado para os dispositivos de realidade virtual Samsung em uma aplicação \textit{unity}, diferencia-se do original na medida que o jogador controla, através do \textit{joystick}, o posicionamento do objeto coletável ao invés da serpente
+Este trabalho propõe o desenvolvimento de um jogo de realidade virtual através de uma arquitetura onde ambas as camadas lógica e de renderização gráfica sejam fundamentadas em código de GPU, o \textit{shader}. Em alusão à um clássico, o jogo \textit{snake} será recriado para os dispositivos de realidade virtual Samsung em uma aplicação \textit{unity}, diferencia-se do original na medida que o jogador controla, através do \textit{joystick}, o posicionamento do objeto coletável ao invés da serpente.
 
 % Estrutura do artigo
 Analisamos na seção \ref{sec:relatedworks} outros trabalhos que abordam jogos de realidade virtual. Um esclarecimento sobre as regras do jogo desenvolvido pode ser encontrado na seção \ref{sec:vrsnake}. A arquitetura proposta é detalhada na seção \ref{sec:architecture}. Apresenta-se como um jogo de realidade virtual pode ser renderizado em uma esfera invertida na seção \ref{sec:invertedsphere}. Em \ref{sec:agent}, comprende-se a movimentação da \textit{snake} e sua arquitetura de renderização. Resultados são discutidos na seção \ref{sec:results}. Por fim, pautam-se as conclusões e perspectivas de trabalhos futuros na seção \ref{sec:conclusion}.
@@ -66,33 +66,26 @@ Analisamos na seção \ref{sec:relatedworks} outros trabalhos que abordam jogos 
 % Reescreve explorando o GPUWars e estabelecer diferença entre este trabalho e o outro
 \section{Trabalhos Relacionados} \label{sec:relatedworks}
 
-% TODO: Refrasear 
-O jogo bidimensional \textit{Jelly in the Sky}, dispnível para aquisição na plataforma de jogos \textit{Steam}, utiliza uma estrutura baseada em \textit{shader} similar à arquitetura apresentada aqui. \cite{GPGPUWars} defendem um trabalho onde a GPU executa todo o processamento do jogo criado.
+\cite{GPGPUWars} mostram um jogo bidimensional de tiro com visão \textit{top-down} (de cima para baixo) que utiliza a GPU como principal fonte de processamento de todos os estados do jogo.
 
-% TODO: Refrasear texto
-Contudo, aplicações em realidade virtual diferem de outras aplicações devido à necessidade de preencher o espaço tridimensional de forma a fornecer conteúdo para 3 graus de liberdade(3DoF - \textit{3 Degrees of Freedom}) possibilitados durante a construção deste trabalho. A aplicação descrita em \cite{zund2015unfolding}, por exemplo, utiliza visão computacional para geração de uma visão panorâmica de um jogo de console em 8-bits. Rodando em um Oculus Rift DK2, o jogador é posicionado no centro do mundo e à medida que movimenta seu personagem, o mundo se desdobra ao seu redor, extendendo a visão de jogo para as quatro paredes do ambiente virtual.
+Contudo, aplicações em realidade virtual, tal qual a deste artigo, diferem das demais aplicações devido à necessidade de preencher o espaço tridimensional de forma a fornecer conteúdo para os 3 graus de liberdade (3DoF - \textit{3 Degrees of Freedom}) atualmente possíveis. A aplicação descrita em \cite{zund2015unfolding}, por exemplo, utiliza visão computacional para geração de uma visão panorâmica de um jogo de console em 8-bits. Rodando em um Oculus Rift DK2, o jogador é posicionado no centro do mundo e à medida que movimenta seu personagem, o mundo se desdobra ao seu redor, extendendo a visão de jogo para as quatro paredes do ambiente virtual.
 
 % Reescrito
 \section{VRSnake: Design do Jogo} \label{sec:vrsnake}
-O \textit{VRSnake} é a versão em realidade virtual do clássico jogo 2D \textit{Snake}, que faz uso da unidade gráfica de processamento para calcular e renderizar um número expressivamente maior de elementos em tela quando comparado à sua contrapartida em CPU. 
-
-* Aqui entram os comparativos graficos da CPU e GPU*
-
-No jogo original controlava-se a serpente na busca pelos coletáveis distribuídos pelo cenário, o \textit{VRSnake} permite ao jogador controlar o posicionamento destes objetos coletáveis, desta forma seu principal objetivo é derrotar as diversas serpentes que estão espalhadas no universo virtual. Propomos então as regras como seguem:
+O \textit{VRSnake} é a versão em realidade virtual do clássico jogo 2D \textit{Snake}. No jogo original controlava-se a serpente na busca pelos coletáveis distribuídos pelo cenário, o \textit{VRSnake} permite ao jogador controlar o posicionamento destes objetos coletáveis, desta forma seu principal objetivo é derrotar as diversas serpentes, determinadas proceduralmente, que estão espalhadas no universo virtual. Propomos então as regras como seguem:
 
 As serpentes buscam ininterruptamente o objeto coletável posicionado pelo jogador e seguem até o objeto pelo percurso que as manterão vivas por mais tempo, isto é, as serpentes desviam de si mesmas e das demais serpentes quando possível. Se este desvio não acontece, uma das serpentes é eliminada. Em outro aspecto, caso o objeto coletável seja capturado com sucesso, a \textit{snake} cresce em uma unidade de medida. O jogador vence a partida quando resta unicamente uma serpente.
 
 %Reescrevendo
 \section{Arquitetura de um Jogo GPGPU}
 Jogos são aplicações interativas que executam três classes de ações: coleta, processamento e exibição de dados. %Arranjar referencia sobre software (algo mais abrangente) 
-A coleta de dados foca em recolher dados dos dispositivos de entrada sejam eles teclado, mouse, toque ou \textit{joysticks}. O processamento abrange o reconhecimento dos dados coletados e sua devida tradução para o mundo do jogo, mas também garante o cumprimento das regras e gerenciamento do estado geral da aplicação. A exibição é o passo final, pois retorna ao jogador as consequências de seus atos de maneira sensorial. Desta forma, o \textit{VRSnake} é um jogo de realidade virtual que concentra as ações das classes de processamento e exibição na unidade gráfica de processamento (GPU - \textit{Graphics Processing Unit}). 
+A coleta de dados foca em recolher dados dos dispositivos de entrada sejam eles teclado, mouse, toque ou \textit{joysticks}. O processamento abrange o reconhecimento dos dados coletados e sua devida tradução para o mundo do jogo, mas também garante o cumprimento das regras e gerenciamento do estado geral da aplicação. A exibição é o passo final, pois retorna ao jogador as consequências de seus atos de maneira sensorial. Desta forma, o \textit{VRSnake} é um jogo de realidade virtual que concentra as ações das classes de processamento e exibição na unidade gráfica de processamento (GPU - \textit{Graphics Processing Unit}), ao passo que a unidade central de processamento (CPU - \textit{Central Processing Unit}) é encarregada da entrada de dados.
 
 Esta arquitetura foi implementada utilizando o motor gráfico \textit{Unity} através do HLSL (\textit{High Level Shading Language}) para os \textit{shaders} e CSharp como linguagem de programação de CPU (\textit{Central Processing Unit}).
 
+De maneira mais abrangente, o jogador posiciona o objeto coletável através do \textit{joystick}, esta informação é coletada através da CPU e repassada à GPU. Esta última está responsável por guiar as serpentes até este objetivo, isto engloba decidir o melhor caminho, um que evite obstáculos, mas também envolve renderizar todos os objetivos vistos em cena.
 
-\section{VRSnake: Um agente inteligente}
-
-A inteligência de movimentação da \textit{snake} é, por sua vez, composta por uma função utilitária de avaliação de estados que analisa cada possível ação em determinado momento. Em essência, a serpente sempre está buscando alcançar o coletável, por isso avalia o curso de menor distância no eixos X e Y e desde que não exista a possibilidade de atingir a si própria, assume este caminho e repete o processo. A função abaixo ilustra esse procedimento:
+Mais especificamente, a inteligência de movimentação da \textit{snake} é composta por uma função utilitária de avaliação de estados que analisa cada possibilidade. Em essência, a serpente sempre está buscando alcançar o coletável, por isso avalia o curso de menor distância no eixos X e Y e desde que não exista impedimentos, assume este caminho e repete o processo, conforme ilustra a função abaixo:
 
 \begin{equation}
 F(A) = R * (D + O)
@@ -101,105 +94,21 @@ F(A) = R * (D + O)
 
 Onde R é um fator de randomização; D representa a distância de \textit{Manhattan} entre a posição atual e o objeto coletável; e O é um valor atribuído à existência ou não de obstáculos neste trajeto.
 
-Para cada direção plausível apresentada na figura \ref{fig:snakeHeadPositions} abaixo, a função retorna um valor de utilidade que é ulteriormente comparado para determinar o caminho de maior probabilidade de sucesso.
-
-A lógica de movimentação consiste em gerenciar o posicionamento da cabeça e corpo da serpente.  Em outras palavras, a cabeça norteia todo o movimentar da \textit{snake}, pois nela são traçados os vetores responsáveis por orientar a serpente na decisão do menor caminho entre sua atual posição e o objeto coletável. É relevante explicitar que estes vetores de direcionamento são volúveis tendo em vista as diferentes posições adotáveis, conforme a figura \ref{fig:snakeHeadPositions} abaixo, onde a seta em vermelho indica a atual orientação da serpente e as demais indicam possíveis direções de movimento.
-
-O corpo da serpente, por sua vez, move-se através de um buffer deslizante: cada parte do corpo assume a posição mais recente da parte imediatamente anterior, isso significa que a cabeça move-se e as demais partes seguem posteriormente.
-
-\begin{figure}[H]
-\centering
-\tikzstyle{arrow} = [draw, -latex]
-
-\begin{tikzpicture} [x=1.2cm, y=1cm, node distance=0,outer sep=0,inner sep=0]
-  \draw (0, 0) rectangle (1, 1) node[pos=.5] {\small Head};
-  \draw (3, 0) rectangle (4, 1) node[pos=.5] {\small Head};
-  \draw (6, 0) rectangle (7, 1) node[pos=.5] {\small Head};
-  \draw (9, 0) rectangle (10, 1) node[pos=.5] {\small Head};
-
-  \path [arrow, red] (0.5, 1) -- (0.5, 1.5);
-  \path [arrow] (1, 0.5) -- (1.5, 0.5);
-  \path [arrow] (0, 0.5) -- (-0.5, 0.5);
-
-  \path [arrow, red] (3.5, 0) -- (3.5, -0.5);
-  \path [arrow] (4, 0.5) -- (4.5, 0.5);
-  \path [arrow] (3, 0.5) -- (2.5, 0.5);
-
-  \path [arrow] (6.5, 1) -- (6.5, 1.5);
-  \path [arrow, red] (7, 0.5) -- (7.5, 0.5);
-  \path [arrow] (6.5, 0) -- (6.5, -0.5);
-
-    \path [arrow] (9.5, 1) -- (9.5, 1.5);
-  \path [arrow, red] (9, 0.5) -- (8.5, 0.5);
-  \path [arrow] (9.5, 0) -- (9.5, -0.5);
-
-\end{tikzpicture}
-\caption{Possíveis movimentos da serpente, as setas coloridas indicam a direção atual}
-\label{fig:snakeHeadPositions}
-\end{figure}
-
-Considerando ainda a restrição de deslocamento na qual a serpente pode-se mover unicamente nas direções apontadas pela figura \ref{fig:snakeHeadPositions}, o cálculo por meio da distância de Manhattan se mostrou menos custoso, uma vez que sua equação representada abaixo não envolve operações quadráticas as quais, no escopo desta aplicação, podem ser chamadas inúmeras vezes por segundo.
-
-\begin{equation}
-EuclidianDistance = \sqrt{(x_{1} - x_{2})^2 + (y_{1} - y_{2})^2}
-\label{equation:euclidian}
-\end{equation}
-
-\begin{equation}
-ManhattanDistance = \left|x_{1} - x_{2}\right| + \left|y_{1} - y_{2}\right|
-\label{equation:manhattan}
-\end{equation}
-
-No que concerne a segunda camada, o \textit{shader} de renderização analisa durante a execução do jogo cada pixel para determinar a que elemento este pertence: o objeto coletável, a serpente ou o plano de fundo. Para determinar esta relação de atribuição, alguns cálculos básicos são necessários: um pixel é colorido com a cor do objeto coletável se sua distância até o centro do objeto (um pixel) for menor que um raio determinado, semelhantemente mantem-se um vetor de pontos equidistantes entre si, onde cada posição representa um quadrilátero que faz parte do corpo da \textit{snake}, o pixel em questão recebe a cor da serpente caso esteja contido na área delineada por estes quadriláteros, dados seus tamanhos de lado e centro, no entanto, uma vez que não atenda a nenhum caso anterior, o pixel simplesmente recebe a cor do plano de fundo.
-
 Para que a serpente mova-se de forma circular deve-se compreender o mapeamento UV (projeção de uma imagem 2D em uma superfície 3D) da superfície do objeto, neste caso, uma esfera. Basta verificar as extremidades para a presença da \textit{snake} e redesenhá-la no lado apropriado.
 
 \section{Realidade Virtual}
-
-% 1 - O uso de uma esfera invertida para renderizar o conteúdo do jogo
-% Imersão -> Preenchimento/Renderização de conteúdo ao redor do usuário
-% TODO: Refrasear texto
-A ilusão em um mundo virtual e consequente sensação de imersão requerem material visual disponível em todos os ângulos possíveis, uma vez que o gearVR possibilita completa liberdade de rotação, ou seja, 3 graus de liberdade (3DoF - \textit{3 Degrees of Freedom}). Tendo em vista que a proposta deste artigo contempla um jogo essencialmente 2D, tal como o \textit{Snake} original, tem-se o desafio de exibir conteúdo bidimensional em um cenário 3D de forma que tudo aconteça ao redor do usuário.
-
-% TODO: Refrasear texto
-Uma esfera invertida, ou seja, uma esfera que tenha apenas seu lado interno renderizado, possibilita preencher completamente todo o campo de visão possível, além de ser a solução padrão adotada na exibição de imagens equiretangulares em 360 graus. A geração procedural de uma esfera pode seguir uma das duas abordagens abaixo:
+Tendo em vista que a proposta deste artigo contempla um jogo essencialmente 2D, tal como o \textit{Snake} original, tem-se o desafio de exibir informação bidimensional em um cenário 3D de forma que tudo aconteça ao redor do usuário. Para tanto, recorreu-se à projeção cilíndrica equidistante. A solução padrão adotada na exibição de imagens equiretangulares em 360 graus é a esfera invertida, ou seja, uma esfera que tenha apenas seu lado interno renderizado, pois possibilita preencher completamente todo o campo de visão do usuário. A geração procedural de uma esfera pode seguir uma das duas abordagens abaixo:
 \begin{enumerate}
   \begin{item} uma icosfera, i.e. uma esfera cujos vértices são distribuídos uniformemente; \end{item}
   \begin{item} geração de vertíces baseada em coordenadas de longitude/latitude. \end{item}
 \end{enumerate}
 
 % TODO: Refrasear texto
-Para este trabalho, preferiu-se a segunda abordagem devido a possibilidade de usar a longitude/latitude como forma de mapear as coordenadas de UV, através da conversão abaixo:
-
-% TODO: Refrasear texto
-O formato de imagem equiretangular é uma captura ou produção de imagem feita para ser exibida no interior de uma esfera possibilitando preencher completamente o campo de visão do usuário, além de ser a solução muito utilizada na exibição de imagens equiretangulares em 360 graus. O mapeamento de UV da esfera é o padrão adotado para \textit{softwares} de modelagem na geração de uma esfera: geração de vertíces baseada em coordenadas de longitude/latitude.
-
-% \begin{figure}[!tbp]
-%   \centering
-%   \begin{minipage}[b]{0.40\textwidth}
-%     \includegraphics[width=1.4\textwidth]{../images/equirect_projection.jpg}
-%     \caption{Imagem 360 em formato equiretangular.}
-%     \label{fig:equirectimage}
-%   \end{minipage}
-%   \hfill
-%   \begin{minipage}[b]{0.44\textwidth}
-%     \centering
-%     \includegraphics[width=0.7\textwidth]{../images/sphere.png}
-%     \caption{Mapeamento de UV de uma imagem equiretangular para uma esfera.}
-%     \label{fig:equisphere}
-%   \end{minipage}
-% \end{figure}
+Para este trabalho, preferiu-se a segunda abordagem devido ao mapeamento de UV adotado ser o padrão para \textit{softwares} de modelagem na geração de esferas: vértices gerados a partir de coordenadas de longitude/latitude.
 
 % 2 - Mapeamento de UV em uma esfera invertida
 % Na figura \ref{fig:sphere_transversalsec} é exibida uma secção transversal da divisão de uma esfera em longitudes.
 Na geração das posições dos vértices da esfera, se faz necessário definir uma quantidade de valores de longitude $N$, assim o tamanho angular $T$ para divisão longitudinal pode ser calculado pela equação \ref{longitudesize}.
-
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=.25\textwidth]{../images/longitudes.png}
-% \caption{Uma secção transversal da esfera dividida em 8 longitudes.}
-% \label{fig:sphere_transversalsec}
-% \end{figure}
 
 \begin{equation}
 T = \frac{2 \pi}{N}
@@ -227,13 +136,6 @@ z_{i} = R * \cos(\alpha_{i})
 \end{equation}
 
 Em um corte longitudinal, é possível perceber que o raio $R$ de uma secção transversal varia ao longo da altura da esfera. Determina-se então um valor $K$ como o tamanho angular de um valor de latitude da esfera, dado um valor $M$ de latitudes, tal como visto na equação \ref{equation5}.
-
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=.25\textwidth]{../images/latitudes.png}
-% \caption{Uma secção longitudinal da esfera dividida em 8 latitudes.}
-% \label{fig:sphere_longitudisec}
-% \end{figure}
 
 \begin{equation}
 K = \frac{\pi}{M}
@@ -280,30 +182,15 @@ Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvo
 \caption{Quadros-por-segundo conforme o OVR Metrics Tool executado durante o funcionamento da aplicação }
 \end{figure}
 
-A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-second}, quadros-por-segundo), com mínima de 16 \textit{fps} e máxima de 60 \textit{fps}. Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{fps} e isto se deve principalmente ao \textit{garbage collector} e à implementação do filtro de Kalman que, apesar de minimizar as inconsistências de leitura, ocasionou pequenos atrasos de processamento.
+A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-second}, quadros-por-segundo), com mínima de 16 \textit{fps} e máxima de 60 \textit{fps}. Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{fps} e isto se deve principalmente ao \textit{garbage collector}.
 
 \section{Conclusão}\label{sec:conclusion}
 % Resumo do artigo
 Apresentou-se a implementação de um jogo criado segundo a arquitetura de renderização baseada em \textit{shaders} que distribui passos usualmente restritos à camada de aplicação para as demais camadas da \textit{pipeline} gráfica.
 
 % Trabalhos Futuros
-Em trabalhos futuros, três passos são percebidos como cruciais. Em primeiro lugar, migrar inteiramente os processos da camada lógica para a camada de visualização, na unidade gráfica de processamento, com o propósito de permitir o controle e exibição de um número representativamente maior de serpentes. Em segundo lugar, aplicar aprendizagem de máquina nesta camada, objetivando-se um comportamento de busca e desvio de obstáculos (como outras serpentes e seu próprio corpo) mais inteligente, por conseguinte, desafiador. Por último, otimizar e melhorar a performance, objetivando os 60 \textit{fps}.
+Para trabalhos futuros, há dois grandes marcos em vista: em primeiro lugar, aplicar aprendizagem de máquina ao comportamento de busca e desvio de obstáculos das serpentes afim de torná-las mais inteligentes. Em segundo lugar, otimizar e melhorar a performance, objetivando os 60 \textit{fps}. 
 
-
-% references section
-
-% can use a bibliography generated by BibTeX as a .bbl file
-% BibTeX documentation can be easily obtained at:
-% http://mirror.ctan.org/biblio/bibtex/contrib/doc/
-% The IEEEtran BibTeX style support page is at:
-% http://www.michaelshell.org/tex/ieeetran/bibtex/
-%\bibliographystyle{IEEEtran}
-% argument is your BibTeX string definitions and bibliography database(s)
-%\bibliography{IEEEabrv,../bib/paper}
-%
-% <OR> manually copy in the resultant .bbl file
-% set second argument of \begin to the number of references
-% (used to reserve space for the reference number labels box)
 \bibliographystyle{IEEEtran}
 
 % \bibliographystyle{ieeetran}
