@@ -45,7 +45,7 @@
 % As a general rule, do not put math, special symbols or citations
 % in the abstract
 \begin{abstract}
-Aplicações de realidade virtual são marcadas pela alta suscetibilidade à atrasos na sincronização entre os movimentos do usuário e a respectiva renderização do mundo virtual. Uma forma de acelerar a execução da camada lógica é transportar sua implementação para GPU. Esta última, portanto, torna-se responsável por renderizar os elementos visuais, mas também avaliar os estados da aplicação. Como exemplo dessa abordagem, implementamos uma versão do clássico jogo Snake onde todos os elementos visuais bem como a lógica de jogo são computados via \textit{shader} em um único \textit{mesh}.
+Uma forma de acelerar a execução da camada lógica de uma aplicação é transportar sua implementação para GPU. Esta última, portanto, torna-se responsável por renderizar os elementos visuais, mas também avaliar os estados da aplicação, assumindo um papel de propósito geral ou GPGPU (\textit{General Purpose Graphics Processing Unit}). Como exemplo dessa abordagem, implementamos uma versão do clássico jogo Snake em realidade virtual onde todos os elementos visuais bem como a lógica de jogo são computados via \textit{shader} em um único \textit{mesh}.
 \end{abstract}
 % no keywords
 
@@ -95,7 +95,9 @@ A coleta de dados foca em recolher dados dos dispositivos de entrada sejam eles 
 
 Esta arquitetura foi implementada utilizando o motor gráfico \textit{Unity} através do HLSL (\textit{High Level Shading Language}) para os \textit{shaders} e CSharp como linguagem de programação de CPU (\textit{Central Processing Unit}).
 
-De maneira mais abrangente, o jogador posiciona o objeto coletável através do \textit{joystick}, esta informação é coletada através da CPU e repassada à GPU. Esta última está responsável por guiar as serpentes até este objetivo através de uma função utilitária de avaliação de estados que analisa cada possibilidade. Em essência, a serpente sempre está buscando alcançar o coletável, por isso avalia o curso de menor distância no eixos X e Y de UV e desde que não exista impedimentos, assume este caminho e repete o processo, conforme ilustra a função abaixo:
+Uma textura é utilizada para representar os estados de jogo e armazenar o posicionamento das serpentes e do objeto coletável, isto permite manipular as coordenadas do espaço 3D ao redor da câmera usando apenas coordenadas UV. A textura então serve como entrada para o \textit{shader} processar, em GPU, a correta movimentação das serpentes e renderizar os elementos de jogo em um único \textit{mesh}.
+
+Mais especificamente, a GPU guia as serpentes até seu objetivo através de uma função utilitária de avaliação de estados que analisa cada possibilidade de movimentação dadas sua direção e orientação. Em essência, a serpente sempre está buscando alcançar o coletável, por isso avalia o curso de menor distância no eixos X e Y de UV e desde que não exista impedimentos, assume este caminho e repete o processo, conforme ilustra a função abaixo:
 
 \begin{equation}
 F(A) = R * (D + O)
@@ -104,7 +106,9 @@ F(A) = R * (D + O)
 
 Onde R é um fator de randomização; D representa a distância de \textit{Manhattan} entre a posição atual e o objeto coletável; e O é um valor atribuído à existência ou não de obstáculos neste trajeto.
 
+\begin{comment}
 A GPU processa e renderiza as informações de jogo, como o posicionamento das serpentes e objeto coletável, em um único \textit{mesh} ou textura, logo é possível usar o mapeamento UV desta textura para rastrear a colocação destes objetos em cena.  Isto facilita, por exemplo, a movimentação circular da serpente, pois é possível verificar as extremidades da superfície mapeada em coordenadas UV para saber se a serpente deve ser redesenhada.
+\end{comment}
 
 \section{Realidade Virtual} \label{sec:invertedsphere}
 Tendo em vista que a proposta deste artigo contempla um jogo essencialmente 2D, tal como o \textit{Snake} original, tem-se o desafio de exibir informação bidimensional em um cenário 3D de forma que tudo aconteça ao redor do usuário. Para tanto, recorreu-se à projeção cilíndrica equidistante. A solução padrão adotada na exibição de imagens equiretangulares em 360 graus é a esfera invertida, ou seja, uma esfera que tenha apenas seu lado interno renderizado, pois possibilita preencher completamente todo o campo de visão do usuário. A geração procedural de uma esfera pode seguir uma das duas abordagens abaixo:
