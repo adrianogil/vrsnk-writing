@@ -91,7 +91,7 @@ As serpentes buscam ininterruptamente o objeto coletável posicionado pelo jogad
 %Reescrevendo
 \section{Arquitetura de um Jogo GPGPU} \label{sec:architecture}
 Jogos são aplicações interativas que executam três classes de ações: coleta, processamento e exibição de dados. %Arranjar referencia sobre software (algo mais abrangente) 
-A coleta de dados foca em recolher dados dos dispositivos de entrada sejam eles teclado, mouse, toque ou \textit{joysticks}. O processamento abrange o reconhecimento dos dados coletados e sua devida tradução para o mundo do jogo, mas também garante o cumprimento das regras e gerenciamento do estado geral da aplicação. A exibição é o passo final, pois retorna ao jogador as consequências de seus atos de maneira sensorial. Desta forma, o \textit{VRSnake} é um jogo de realidade virtual que concentra as ações das classes de processamento e exibição na unidade gráfica de processamento (GPU - \textit{Graphics Processing Unit}), ao passo que a unidade central de processamento (CPU - \textit{Central Processing Unit}) é encarregada da entrada de dados.
+A coleta de dados foca em recolher dados dos dispositivos de entrada sejam eles teclado, mouse, toque ou \textit{joysticks}. O processamento abrange o reconhecimento dos dados coletados e sua devida tradução para o mundo do jogo, mas também garante o cumprimento das regras e gerenciamento do estado geral da aplicação. A exibição é o passo final, pois retorna ao jogador as consequências de seus atos de maneira sensorial. Desta forma, o \textit{VRSnake} é um jogo de realidade virtual que concentra as ações das classes de processamento e exibição na unidade gráfica de processamento (GPU - \textit{Graphics Processing Unit}) através de uma textura, ao passo que a unidade central de processamento (CPU - \textit{Central Processing Unit}) é encarregada da entrada de dados.
 
 Esta arquitetura foi implementada utilizando o motor gráfico \textit{Unity} através do HLSL (\textit{High Level Shading Language}) para os \textit{shaders} e CSharp como linguagem de programação de CPU (\textit{Central Processing Unit}).
 
@@ -104,7 +104,7 @@ F(A) = R * (D + O)
 
 Onde R é um fator de randomização; D representa a distância de \textit{Manhattan} entre a posição atual e o objeto coletável; e O é um valor atribuído à existência ou não de obstáculos neste trajeto.
 
-Para que a serpente mova-se de forma circular deve-se compreender o mapeamento UV (projeção de uma imagem 2D em uma superfície 3D) da superfície do objeto, neste caso, uma esfera. Basta verificar as extremidades para a presença da \textit{snake} e redesenhá-la no lado apropriado.
+A GPU processa e renderiza as informações de jogo, como o posicionamento das serpentes e objeto coletável, em um único \textit{mesh} ou textura, isto facilita, por exemplo, a movimentação circular da serpente, pois é possível verificar as extremidades de uma superfície mapeada em coordenadas UV, tal qual a esfera invertida em uso, para saber se a serpente deve ser redesenhada.
 
 \section{Realidade Virtual} \label{sec:invertedsphere}
 Tendo em vista que a proposta deste artigo contempla um jogo essencialmente 2D, tal como o \textit{Snake} original, tem-se o desafio de exibir informação bidimensional em um cenário 3D de forma que tudo aconteça ao redor do usuário. Para tanto, recorreu-se à projeção cilíndrica equidistante. A solução padrão adotada na exibição de imagens equiretangulares em 360 graus é a esfera invertida, ou seja, uma esfera que tenha apenas seu lado interno renderizado, pois possibilita preencher completamente todo o campo de visão do usuário. A geração procedural de uma esfera pode seguir uma das duas abordagens abaixo:
@@ -149,10 +149,10 @@ A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-s
 
 \section{Conclusão}\label{sec:conclusion}
 % Resumo do artigo
-Apresentamos a implementação de um jogo em realidade virtual que distribui passos usualmente restritos à CPU, tais como lógica de jogo e movimentação, para a GPU, através de \textit{shaders}. Houveram outras abordagens que adotaram o mesmo desafio, no entanto, foram restritas ao universo bidimensional. Mostramos, portanto, a viabilidade desta arquitetura para jogos de realidade virtual.
+Apresentamos a implementação de um jogo em realidade virtual que distribui passos usualmente restritos à CPU, tais como lógica de jogo e movimentação, para a GPGPU, através de \textit{shaders}. Houveram outras abordagens que adotaram o mesmo desafio, no entanto, foram restritas ao universo bidimensional. Mostramos, portanto, a viabilidade desta arquitetura para jogos de realidade virtual.
 
 % Trabalhos Futuros
-Para trabalhos futuros, há três grandes marcos em vista: em primeiro lugar, aplicar aprendizagem de máquina ao comportamento de busca e desvio de obstáculos das serpentes em GPU afim de torná-las mais inteligentes. Em segundo lugar, permitir uma experiência mais agradável e estável através dos 60 \textit{fps}. Por último, otimizar os processos de comunicação CPU-GPU.
+Para trabalhos futuros, há dois grandes marcos em vista: permitir uma experiência mais agradável e estável através dos 60 \textit{fps} e otimizar os processos de comunicação CPU-GPU.
 
 \bibliographystyle{IEEEtran}
 
