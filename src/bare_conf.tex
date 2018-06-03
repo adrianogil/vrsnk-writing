@@ -22,14 +22,17 @@
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-% \author{Adriano M. Gil\inst{1}, Eliamara Silva\inst{1}, Thiago S. Figueira\inst{1}}
-
+%\author{Adriano M. Gil\inst{1}, Eliamara Silva\inst{1}, Thiago S. Figueira\inst{1}}
 % \address{Samsung Instituto de Desenvolvimento para a Informática da Amazônia
 %   (SIDIA)\\
 %   Manaus -- AM -- Brazil
 %   \email{\{adriano.gil,eliamara.s,t.figueira\}@samsung.com}
 % }
+\author{\IEEEauthorblockN{BLIND REVIEW\IEEEauthorrefmark{1}}}
 
+%SIDIA,\\
+%Manaus -- AM -- Brazil}} 
+%Adriano M. Gil\IEEEauthorrefmark{1}}
 %\author{\IEEEauthorblockN{Thiago S. Figueira\IEEEauthorrefmark{1},
 %Adriano M. Gil\IEEEauthorrefmark{1}}
 %\IEEEauthorblockA{\IEEEauthorrefmark{1}Samsung Instituto de Desenvolvimento para a Informática da Amazônia\\
@@ -134,28 +137,26 @@ z_{i} = \sin(\alpha_{yi}) * \cos(\alpha_i)
 \end{equation}
 
 \section{Resultados} \label{sec:results}
-Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvolvimento \textit{Unity}. Gerou-se uma aplicação \textit{android} testada no \textit{Samsung Galaxy S8} através do \textit{GearVR} com o controle de modelo ET-YO32. A figura \ref{fig:VRPerformanceChart} abaixo ilustra a taxa de quadros, métrica utilizada em \cite{GPGPUWars} e \cite{GPGPUTechniques}, no \textit{GearVR} através da ferramenta de avaliação de performance da \textit{Oculus}, o \textit{OVR Metrics Tool}:
+Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvolvimento \textit{Unity}. Gerou-se uma aplicação \textit{android} testada no \textit{Samsung Galaxy S8} através do \textit{GearVR} com o controle de modelo ET-YO32. A imagem abaixo ilustra a taxa de quadros, métrica utilizada em \cite{GPGPUWars} e \cite{GPGPUTechniques}, no \textit{GearVR} através da ferramenta de avaliação de performance da \textit{Oculus}, o \textit{OVR Metrics Tool}:
 
-\begin{figure}[H] \label{fig:VRPerformanceChart}
+\begin{figure}[H] 
 \centering
 \includegraphics[scale=0.5]{VRPerformance}
-\caption{Quadros-por-segundo conforme o OVR Metrics Tool executado durante o funcionamento da aplicação }
+\caption{Quadros-por-segundo conforme o OVR Metrics Tool executado durante a execução da aplicação} \label{fig:VRPerformance}
 \end{figure}
 
-A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-second}, quadros-por-segundo), com mínima de 16 \textit{fps} e máxima de 60 \textit{fps}. Conforme representado pela figura \ref{fig:VRPerformanceChart}, a aplicação não mantém estavéis 60 \textit{fps}, acreditamos que isto se deve aos processos de comunicação entre CPU-GPU, mas também à possíbilidade de melhorias nos códigos escritos em \textit{shader}.
+A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-second}, quadros-por-segundo), com mínima de 16 \textit{fps} e máxima de 60 \textit{fps}. Conforme visto na figura \ref{fig:VRPerformance}, a aplicação não mantém estavéis 60 \textit{fps}, acreditamos que isto se deve aos processos de comunicação entre CPU-GPU, mas também à possíbilidade de melhorias nos códigos escritos em \textit{shader}.
 
 \section{Conclusão}\label{sec:conclusion}
 % Resumo do artigo
-Apresentou-se a implementação de um jogo criado segundo a arquitetura de renderização baseada em \textit{shaders} que distribui passos usualmente restritos à camada de aplicação para as demais camadas da \textit{pipeline} gráfica.
+Apresentamos a implementação de um jogo em realidade virtual que distribui passos usualmente restritos à CPU, tais como lógica de jogo e movimentação, para a GPU, através de \textit{shaders}. Houveram outras abordagens que adotaram o mesmo desafio, no entanto, foram restritas ao universo bidimensional. Mostramos, portanto, a viabilidade desta arquitetura para jogos de realidade virtual.
 
 % Trabalhos Futuros
-Para trabalhos futuros, há dois grandes marcos em vista: em primeiro lugar, aplicar aprendizagem de máquina ao comportamento de busca e desvio de obstáculos das serpentes afim de torná-las mais inteligentes. Em segundo lugar, otimizar e melhorar a performance, objetivando os 60 \textit{fps}. 
+Para trabalhos futuros, há três grandes marcos em vista: em primeiro lugar, aplicar aprendizagem de máquina ao comportamento de busca e desvio de obstáculos das serpentes em GPU afim de torná-las mais inteligentes. Em segundo lugar, permitir uma experiência mais agradável e estável através dos 60 \textit{fps}. Por último, otimizar os processos de comunicação CPU-GPU.
 
 \bibliographystyle{IEEEtran}
 
 \bibliography{bare_conf}
-
-% that's all folks
 \end{document}
 
 
