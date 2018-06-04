@@ -45,7 +45,7 @@
 % As a general rule, do not put math, special symbols or citations
 % in the abstract
 \begin{abstract}
-Uma forma de acelerar a execução da camada lógica de uma aplicação é transportar sua implementação para GPU. Esta última, portanto, torna-se responsável por renderizar os elementos visuais, mas também avaliar os estados da aplicação, assumindo um papel de propósito geral ou GPGPU (\textit{General Purpose Graphics Processing Unit}). Como exemplo dessa abordagem, implementamos uma versão do clássico jogo Snake em realidade virtual onde todos os elementos visuais bem como a lógica de jogo são computados via \textit{shader} em um único \textit{mesh}.
+Aplicações de realidade virtual são caracterizadas pela alta sensibilidade à atrasos na sincronização entre os movimentos do usuário e a respectiva renderização do mundo virtual. Uma forma de acelerar a execução da camada lógica de uma aplicação é transportar sua implementação para GPU. Esta última, portanto, torna-se responsável por renderizar os elementos visuais, mas também avaliar os estados da aplicação, assumindo um papel de propósito geral ou GPGPU (\textit{General Purpose Graphics Processing Unit}). Como exemplo dessa abordagem, implementamos uma versão do clássico jogo Snake em realidade virtual onde todos os elementos visuais bem como a lógica de jogo são computados via \textit{shader} em um único \textit{mesh}.
 \end{abstract}
 % no keywords
 
@@ -73,7 +73,7 @@ Analisamos na seção \ref{sec:relatedworks} trabalhos correlatos. Um esclarecim
 % Reescreve explorando o GPUWars e estabelecer diferença entre este trabalho e o outro
 \section{Trabalhos Relacionados} \label{sec:relatedworks}
 
-GPUWars \cite{GPGPUWars} é um jogo bidimensional de tiro com visão \textit{top-down} (de cima para baixo) que utiliza a GPU como responsável pelo processamento da inteliência artificial, física dos corpos e por determinar o estado do jogo. O jogo \textit{Jelly in the Sky}, disponibilizado como produto na plataforma de jogos digitais \textit{Steam}, é uma simulação fisicamente realista bidimensional em GPU.
+GPUWars \cite{GPGPUWars} é um jogo bidimensional de tiro com visão \textit{top-down} (de cima para baixo) que utiliza a GPU como responsável pelo processamento da inteligência artificial, física dos corpos e por determinar o estado do jogo. O jogo \textit{Jelly in the Sky}, disponibilizado como produto na plataforma de jogos digitais \textit{Steam}, é uma simulação fisicamente realista bidimensional em GPU.
 
 Alguns outros trabalhos, tal como visto em \cite{Joselli:2010:AGL:1658866.1658869}, fazem uso da GPU como processador auxiliar em cálculos matemáticos e físicos. 
 
