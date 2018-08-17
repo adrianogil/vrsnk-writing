@@ -31,12 +31,12 @@
 % \author{\IEEEauthorblockN{BLIND REVIEW\IEEEauthorrefmark{1}}}
 
 %SIDIA,\\
-%Manaus -- AM -- Brazil}} 
+%Manaus -- AM -- Brazil}}
 \author{\IEEEauthorblockN{Thiago S. Figueira\IEEEauthorrefmark{1},
 Adriano M. Gil\IEEEauthorrefmark{1}}
 \IEEEauthorblockA{\IEEEauthorrefmark{1}Samsung Instituto de Desenvolvimento para a Informática da Amazônia\\
 SIDIA,\\
-Manaus -- AM -- Brazil}} 
+Manaus -- AM -- Brazil}}
 
 
 \maketitle
@@ -56,12 +56,7 @@ Aplicações de realidade virtual são caracterizadas pela alta sensibilidade à
 % Reescrito
 \section{Introdução} \label{sec:introduction}
 
-% Unity e Pipeline Gráfica
-\begin{comment}
-O motor e editor gráfico \textit{Unity} é uma ferramenta comum para o desenvolvimento de software em realidade virtual e aumentada. Usualmente, uma aplicação \textit{unity} é constituída por cenas providas de um sistema lógico próprio que, uma vez agrupadas, formam todos os elementos pertinentes ao universo do jogo. Neste aspecto, a \textit{pipeline} gráfica rotineiramente utilizada pelas apliações e jogos \textit{unity} contempla, em linhas gerais, os seguintes passos:  a CPU (\textit{central processing unit}) transmite informações sobre os elementos gráficos à GPU (\textit{graphics processing unit}) através do estágio de aplicação, onde os \textit{assets} gráficos como modelos 3D e suas texturas são carregados na VRAM (\textit{video random access memory}), posteriormente durante o estágio de geometria, os objetos que devem ser renderizados bem como seus respectivos posicionamentos e demais informes visuais relevantes são tratados pela GPU e, em última instância, convertidos em imagem no estágio de rasterização \cite{akenine2008real}.
-\end{comment}
-
-A unidade gráfica de processamento (GPU, em inglês) possui unidades de processamento paralelas \cite{DBLP:journals/corr/abs-1202-4347} que podem ser usadas para diferentes finalidades além da renderização, por exemplo, para cálculos de física em jogos ou para algoritmos de aprendizagem de máquina. Desta forma, este poder computacional pode ser aproveitado em outras atividades, extendendo sua função básica de computação de imagens em jogos, por exemplo, para a manipulação de toda a lógica do jogo. 
+A unidade gráfica de processamento (GPU, em inglês) possui unidades de processamento paralelas \cite{DBLP:journals/corr/abs-1202-4347} que podem ser usadas para diferentes finalidades além da renderização, por exemplo, para cálculos de física em jogos ou para algoritmos de aprendizagem de máquina. Desta forma, este poder computacional pode ser aproveitado em outras atividades, extendendo sua função básica de computação de imagens em jogos, por exemplo, para a manipulação de toda a lógica do jogo.
 
 % Proposta
 Este trabalho propõe o desenvolvimento de um jogo de realidade virtual para a plataforma Gear VR através de uma arquitetura onde ambas lógica de funcionamento e renderização gráfica sejam fundamentadas em código de GPU, o \textit{shader}. Em alusão à um clássico, o jogo \textit{snake} será recriado para os dispositivos de realidade virtual Samsung em uma aplicação \textit{Unity3D}, diferencia-se do original na medida que o jogador controla, através do \textit{joystick}, o posicionamento do objeto coletável ao invés da serpente.
@@ -87,8 +82,8 @@ As serpentes buscam ininterruptamente o objeto coletável posicionado pelo jogad
 
 %Reescrevendo
 \section{Arquitetura de um Jogo GPGPU} \label{sec:architecture}
-% Jogos são aplicações interativas que executam três classes de ações: coleta, processamento e exibição de dados. 
-% A coleta de dados foca em recolher dados dos dispositivos de entrada sejam eles teclado, mouse, toque ou \textit{joysticks}. O processamento abrange o reconhecimento dos dados coletados e sua devida tradução para o mundo do jogo, mas também garante o cumprimento das regras e gerenciamento do estado geral da aplicação. A exibição é o passo final, pois retorna ao jogador as consequências de seus atos de maneira sensorial. 
+% Jogos são aplicações interativas que executam três classes de ações: coleta, processamento e exibição de dados.
+% A coleta de dados foca em recolher dados dos dispositivos de entrada sejam eles teclado, mouse, toque ou \textit{joysticks}. O processamento abrange o reconhecimento dos dados coletados e sua devida tradução para o mundo do jogo, mas também garante o cumprimento das regras e gerenciamento do estado geral da aplicação. A exibição é o passo final, pois retorna ao jogador as consequências de seus atos de maneira sensorial.
 O \textit{VRSnake} é um jogo de realidade virtual que concentra as ações das classes de processamento e exibição na unidade gráfica de processamento (GPU - \textit{Graphics Processing Unit}) através de uma textura, ao passo que a unidade central de processamento (CPU - \textit{Central Processing Unit}) é encarregada da entrada de dados. Esta arquitetura foi desenvolvida utilizando o motor gráfico \textit{Unity3D} e implementada através do HLSL (\textit{High Level Shading Language}) para os \textit{shaders} e CSharp como linguagem de programação de CPU (\textit{Central Processing Unit}).
 
 Uma textura é utilizada para representar os estados de jogo e armazenar o posicionamento das serpentes e do objeto coletável, isto permite manipular as coordenadas do espaço 3D ao redor da câmera usando apenas coordenadas UV. A textura então serve como entrada para o \textit{shader} processar, em GPU, a correta movimentação das serpentes e renderizar os elementos de jogo em um único \textit{mesh}.
@@ -139,7 +134,7 @@ z_{i} = \sin(\alpha_{yi}) * \cos(\alpha_i)
 \section{Resultados} \label{sec:results}
 Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvolvimento \textit{Unity3D}. Gerou-se uma aplicação \textit{Android} testada no \textit{Samsung Galaxy S8} através do \textit{Gear VR} com o controle de modelo ET-YO32. A imagem abaixo ilustra a taxa de quadros, métrica utilizada em \cite{GPGPUWars} e \cite{GPGPUTechniques}, no \textit{GearVR} através da ferramenta de avaliação de performance da \textit{Oculus}, o \textit{OVR Metrics Tool}:
 
-\begin{figure}[H] 
+\begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{VRPerformance}
 \caption{Quadros-por-segundo conforme o OVR Metrics Tool executado durante a execução da aplicação} \label{fig:VRPerformance}
@@ -149,7 +144,7 @@ A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-s
 
 \section{Conclusão}\label{sec:conclusion}
 % Resumo do artigo
-Apresentamos a implementação de um jogo em realidade virtual que distribui passos usualmente restritos à CPU, tais como lógica de jogo e movimentação, para a GPGPU, através de \textit{shaders}. Houveram outras abordagens que adotaram o mesmo desafio, no entanto, foram restritas ao universo bidimensional. Mostramos, portanto, a viabilidade desta arquitetura para jogos de realidade virtual ainda que para a renderização auxiliar a fim de aliviar os encargos da CPU. 
+Apresentamos a implementação de um jogo em realidade virtual que distribui passos usualmente restritos à CPU, tais como lógica de jogo e movimentação, para a GPGPU, através de \textit{shaders}. Houveram outras abordagens que adotaram o mesmo desafio, no entanto, foram restritas ao universo bidimensional. Mostramos, portanto, a viabilidade desta arquitetura para jogos de realidade virtual ainda que para a renderização auxiliar a fim de aliviar os encargos da CPU.
 
 % Trabalhos Futuros
 Para trabalhos futuros, há dois grandes marcos em vista: permitir uma experiência mais agradável e estável através dos 60 \textit{fps} e otimizar os processos de comunicação CPU-GPU.

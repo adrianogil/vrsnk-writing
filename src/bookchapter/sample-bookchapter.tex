@@ -3,192 +3,129 @@
 %
 % This is a public-domain file.
 %
-% Charset: ISO8859-1 (latin-1) ������
+% Charset: ISO8859-1 (latin-1) áéíóúç
 %
 \documentclass{SBCbookchapter}
-\usepackage[latin1]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[brazilian,english]{babel}
-\usepackage{graphicx}
+% \usepackage[latin1]{inputenc}
+% \usepackage[T1]{fontenc}
+% \usepackage[brazilian,english]{babel}
+% \usepackage{graphicx}
 
-\author{Luciana Porcher Nedel, Fl�vio Rech Wagner and Richard Leithold}
-\title{Instructions for Authors of SBC Book Chapters}
+\usepackage{graphicx,url}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows, shapes.geometric}
+\usepackage{verbatim}
+\usepackage[brazilian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\author{Thiago dos Santos Figueira e Adriano Mendes Gil}
+\title{VRSnake: um Jogo de Realidade Virtual em GPGPU}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-This meta-paper describes the style to be used in articles and short
-papers for SBC conferences. For papers in English, you should add just
-an abstract and for the papers in Portuguese, we also ask for an
-abstract in Portuguese (``resumo''). In both cases, abstracts should not
-have more than 10~lines and must be in the first page of the paper.
+ Virtual reality applications are very sensible to processing and rendering delay of the virtual environment. GPU has parallel processing capabilities that make attractive to improve execution time of logic layer. In addition to rendering role of GPU, we propose to implement a GPGPU (\textit{General Purpose Graphics Processing Unit}) approach to evaluate game logic on GPU. As an example of this approach, we implemented a version of classic game Snake where every visual elements are defined and drawn by shader in an unique Mesh.
 \end{abstract}
 
 \begin{resumo}
 \begin{otherlanguage}{brazilian}
-Este meta-artigo descreve o estilo a ser usado na confec��o de artigos
-e resumos de artigos para publica��o nos anais das confer�ncias
-organizadas pela SBC. � solicitada a escrita de resumo e abstract apenas
-para os artigos escritos em portugu�s. Artigos em ingl�s, dever�o
-possuir apenas abstract. Nos dois casos, o autor deve tomar cuidado para
-que o resumo (e o abstract) n�o ultrapassem 10~linhas cada, sendo que
-ambos devem estar na primeira p�gina do artigo.
+Aplicações de realidade virtual são muito sensíveis à atrasos no processamento e renderização do mundo virtual.
+Por sua vez a GPU, com sua capacidade de processamento paralelo, torna-se uma solução atraente para aliviar a execução da camada lógica. Dessa forma, a GPU torna-se responsável por não só renderizar os elementos visuais, mas também avaliar os estados da aplicação, assumindo um papel de propósito geral ou GPGPU (\textit{General Purpose Graphics Processing Unit}). Como exemplo dessa abordagem, implementamos uma versão do clássico jogo Snake em realidade virtual onde todos os elementos visuais bem como a lógica de jogo são computados via \textit{shader} em um único \textit{mesh}.
 \end{otherlanguage}
 \end{resumo}
 
-\section{General Information}
-All submitted paper to some SBC conference, including any supporting
-documents, should be written in English or in Portuguese. The format
-paper should be A4 with single column, 3.5~cm for upper margin, 2.5~cm
-for bottom margin and 3.0~cm for lateral margins, without headers or
-footers. The main font must be Times, 12~point nominal size, with
-6~points of space before each paragraph. Page numbers must be
-suppressed in the final version.
+% Reescrito
+\section{Introdução} \label{sec:introduction}
 
-Full papers must respect the page limits defined by the conference.
-Conferences that publish just abstracts ask for \textbf{one}-page
-texts.
+A unidade gráfica de processamento (GPU, em inglês) possui unidades de processamento paralelas \cite{DBLP:journals/corr/abs-1202-4347} que podem ser usadas para diferentes finalidades além da renderização, por exemplo, para cálculos de física em jogos ou para algoritmos de aprendizagem de máquina. Desta forma, este poder computacional pode ser aproveitado em outras atividades, extendendo sua função básica de computação de imagens em jogos, por exemplo, para a manipulação de toda a lógica do jogo.
 
-\section{First Page}
-The first page must display the paper title, the name and address of
-the authors, the abstract in English and ``resumo'' in Portuguese (for
-papers written in Portuguese). The title must be justified at the
-left, in 20~point boldface font. Author names must be justified in the
-same way, as shown in this example.
+% Proposta
+Este trabalho propõe o desenvolvimento de um jogo de realidade virtual para a plataforma Gear VR através de uma arquitetura onde ambas lógica de funcionamento e renderização gráfica sejam fundamentadas em código de GPU, o \textit{shader}. Em alusão à um clássico, o jogo \textit{snake} será recriado para os dispositivos de realidade virtual Samsung em uma aplicação \textit{Unity3D}, diferencia-se do original na medida que o jogador controla, através do \textit{joystick}, o posicionamento do objeto coletável ao invés da serpente.
 
-\section{CD-ROMs and Printed Proceedings}
-In some conferences, the papers are published on CD-ROM while only the
-abstract is published in the Proceedings. In this case, authors are
-invited to prepare two final versions of the paper. One, complete, to
-be published on the CD and the other, containing only the first page,
-with abstract and ``resumo'' (for papers in Portuguese).
+% Estrutura do artigo
+Analisamos na seção \ref{sec:relatedworks} trabalhos correlatos. Um esclarecimento sobre as regras do jogo desenvolvido pode ser encontrado na seção \ref{sec:vrsnake}. A arquitetura proposta é detalhada na seção \ref{sec:architecture}. Apresenta-se como um jogo de realidade virtual pode ser renderizado em uma esfera invertida na seção \ref{sec:invertedsphere}. Resultados são discutidos na seção \ref{sec:results}. Por fim, pautam-se as conclusões e perspectivas de trabalhos futuros na seção \ref{sec:conclusion}.
 
-\section{Sections and Paragraphs}
-Section titles must be in boldface, 13pt, flush left. There should be
-an extra 12~pt of space before each title. The first paragraph of each
-section should not be indented; the first lines of subsequent
-paragraphs should be indented by 1.27~cm.
+% Reescreve explorando o GPUWars e estabelecer diferença entre este trabalho e o outro
+\section{Trabalhos Relacionados} \label{sec:relatedworks}
 
-\subsection{Subsections}
-The subsection titles must be in boldface, 12pt, flush left.
+GPUWars \cite{GPGPUWars} é um jogo bidimensional de tiro com visão \textit{top-down} (de cima para baixo) que utiliza a GPU como responsável pelo processamento da inteligência artificial, física dos corpos e por determinar o estado do jogo. O jogo \textit{Jelly in the Sky}, disponibilizado como produto na plataforma de jogos digitais \textit{Steam}, é uma simulação fisicamente realista bidimensional em GPU.
 
-\section{Figures and Captions}
-\label{sec:captionmargins}
-Figures and tables captions should be centered if less than one line
-(Figure~\ref{figone}), otherwise justified and indented by 0.8cm on
-both margins, as shown in Figure~\ref{figtwo}. The font must be
-Helvetica, 10~point, boldface, with 6~points of space before and after
-each caption.
+Alguns outros trabalhos, tal como visto em \cite{Joselli:2010:AGL:1658866.1658869}, fazem uso da GPU como processador auxiliar em cálculos matemáticos e físicos. Contudo, aplicações em realidade virtual, tal qual a deste artigo, diferem destas demais aplicações devido à necessidade de preencher o espaço tridimensional de forma a fornecer conteúdo para os 3 graus de liberdade (3DoF - \textit{3 Degrees of Freedom}) possibilitados pelo Gear VR.
 
-\begin{figure}[h!]
-	\centerline{\includegraphics{fig1}}
-	\caption{A typical figure}
-	\label{figone}
+% Reescrito
+\section{VRSnake: Design do Jogo} \label{sec:vrsnake}
+O \textit{VRSnake} é a versão em realidade virtual do clássico jogo 2D \textit{Snake}. No jogo original controlava-se a serpente na busca pelos coletáveis distribuídos pelo cenário, o \textit{VRSnake} permite ao jogador controlar o posicionamento destes objetos coletáveis, desta forma seu principal objetivo é derrotar as diversas serpentes, determinadas proceduralmente, que estão espalhadas no universo virtual. As regras são essencialmente as mesmas, mas o jogador vence quando resta unicamente uma serpente.
+
+\begin{comment} Propomos então as regras como seguem:
+
+As serpentes buscam ininterruptamente o objeto coletável posicionado pelo jogador e seguem até o objeto pelo percurso que as manterão vivas por mais tempo, isto é, as serpentes desviam de si mesmas e das demais serpentes quando possível. Se este desvio não acontece, uma das serpentes é eliminada. Em outro aspecto, caso o objeto coletável seja capturado com sucesso, a \textit{snake} cresce em uma unidade de medida. O jogador vence a partida quando resta unicamente uma serpente.
+\end{comment}
+
+%Reescrevendo
+\section{Arquitetura de um Jogo GPGPU} \label{sec:architecture}
+% Jogos são aplicações interativas que executam três classes de ações: coleta, processamento e exibição de dados.
+% A coleta de dados foca em recolher dados dos dispositivos de entrada sejam eles teclado, mouse, toque ou \textit{joysticks}. O processamento abrange o reconhecimento dos dados coletados e sua devida tradução para o mundo do jogo, mas também garante o cumprimento das regras e gerenciamento do estado geral da aplicação. A exibição é o passo final, pois retorna ao jogador as consequências de seus atos de maneira sensorial.
+O \textit{VRSnake} é um jogo de realidade virtual que concentra as ações das classes de processamento e exibição na unidade gráfica de processamento (GPU - \textit{Graphics Processing Unit}) através de uma textura, ao passo que a unidade central de processamento (CPU - \textit{Central Processing Unit}) é encarregada da entrada de dados. Esta arquitetura foi desenvolvida utilizando o motor gráfico \textit{Unity3D} e implementada através do HLSL (\textit{High Level Shading Language}) para os \textit{shaders} e CSharp como linguagem de programação de CPU (\textit{Central Processing Unit}).
+
+Uma textura é utilizada para representar os estados de jogo e armazenar o posicionamento das serpentes e do objeto coletável, servindo como entrada para o \textit{shader} processar, em GPU, a correta movimentação das serpentes e renderizar os elementos de jogo em um único \textit{mesh}.
+
+O deslocamento das serpentes até seu objetivo é realizado através de uma função utilitária de avaliação de estados de movimentação dadas sua direção e orientação. Em essência, a serpente sempre está buscando alcançar o coletável, por isso avalia o curso de menor distância no eixos X e Y de UV conforme ilustra a equação \ref{eq_fardo}.
+
+\begin{equation}
+F(A) = R * (D + O)
+\label{eq_fardo}
+\end{equation}
+
+Onde R é um fator de randomização; D representa a distância de \textit{Manhattan} entre a posição atual e o objeto coletável; e O é um valor atribuído à existência ou não de obstáculos neste trajeto.
+
+\begin{comment}
+A GPU processa e renderiza as informações de jogo, como o posicionamento das serpentes e objeto coletável, em um único \textit{mesh} ou textura, logo é possível usar o mapeamento UV desta textura para rastrear a colocação destes objetos em cena.  Isto facilita, por exemplo, a movimentação circular da serpente, pois é possível verificar as extremidades da superfície mapeada em coordenadas UV para saber se a serpente deve ser redesenhada.
+\end{comment}
+
+\section{Realidade Virtual} \label{sec:invertedsphere}
+Tendo em vista que a proposta deste artigo contempla um jogo essencialmente 2D, tal como o \textit{Snake} original, tem-se o desafio de exibir informação bidimensional em um cenário 3D de forma que tudo aconteça ao redor do usuário. Para tanto, recorreu-se à projeção cilíndrica equidistante. A solução padrão adotada na exibição de imagens equiretangulares em 360 graus é a esfera invertida, ou seja, uma esfera que tenha apenas seu lado interno renderizado, pois possibilita preencher completamente todo o campo de visão do usuário.
+
+% TODO: Refrasear texto
+Para este trabalho, preferiu-se a abordagem de geração de vertíces baseada em coordenadas de longitude/latitude devido ao mapeamento de UV adotado ser o padrão para \textit{softwares} de modelagem na geração de esferas. Neste aspecto, as coordenadas X, Y e Z podem ser encontradas em função de suas coordenadas de longitude e latitude através das equações \ref{equation2}, \ref{equation3} e \ref{equation4}:
+
+% 2 - Mapeamento de UV em uma esfera invertida
+\begin{equation}
+y_{i} = \cos(\alpha_{yi})
+\label{equation2}
+\end{equation}
+
+\begin{equation}
+x_{i} = \sin(\alpha_{yi}) * \sin(\alpha_i)
+\label{equation3}
+\end{equation}
+
+\begin{equation}
+z_{i} = \sin(\alpha_{yi}) * \cos(\alpha_i)
+\label{equation4}
+\end{equation}
+
+\section{Resultados} \label{sec:results}
+Desenvolveu-se em realidade virtual o jogo \textit{Snake} no ambiente de desenvolvimento \textit{Unity3D}. Gerou-se uma aplicação \textit{Android} testada no \textit{Samsung Galaxy S8} através do \textit{Gear VR} com o controle de modelo ET-YO32. A imagem abaixo ilustra a taxa de quadros, métrica utilizada em \cite{GPGPUWars} e \cite{GPGPUTechniques}, no \textit{GearVR} através da ferramenta de avaliação de performance da \textit{Oculus}, o \textit{OVR Metrics Tool}:
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{../../images/VRPerformance}
+\caption{Quadros-por-segundo conforme o OVR Metrics Tool executado durante a execução da aplicação} \label{fig:VRPerformance}
 \end{figure}
 
-In tables, do not use colored or shaded backgrounds, and avoid thick,
-doubled, or unnecessary framing lines. When reporting empirical data,
-do not use more decimal digits than warranted by their precision and
-reproducibility. Table caption must be placed before the table (see
-Table~\ref{tabone}) and the font used must also be Helvetica,
-10~point, boldface, with 6~points of space before and after each
-caption.
+A aplicação apresentou taxa média de 43.96 \textit{fps} (\textit{frames-per-second}, quadros-por-segundo), com mínima de 16 \textit{fps} e máxima de 60 \textit{fps}. Conforme visto na figura \ref{fig:VRPerformance}, a aplicação não mantém estavéis 60 \textit{fps} recomendados pela \textit{Oculus} \cite{OculusVRGuidelines}, acreditamos que isto se deve aos processos de comunicação entre CPU-GPU, mas também à possíbilidade de melhorias nos códigos escritos em \textit{shader}.
 
-Figure and table references must be composed by the chapter number and
-a sequence number beginning in one (see the examples of
-Figure~\ref{figone}, Figure~\ref{figtwo} and Table~\ref{tabone}).
+\section{Conclusão}\label{sec:conclusion}
+% Resumo do artigo
+Apresentamos a implementação de um jogo em realidade virtual que distribui passos usualmente restritos à CPU, tais como lógica de jogo e movimentação, para a GPGPU, através de \textit{shaders}. Houveram outras abordagens que adotaram o mesmo desafio, no entanto, foram restritas ao universo bidimensional. Mostramos, portanto, a viabilidade desta arquitetura para jogos de realidade virtual ainda que para a renderização auxiliar a fim de aliviar os encargos da CPU.
 
-\begin{figure}[h!]
-	\centerline{\includegraphics{fig2}}
-	\caption{This figure is an example of a figure caption taking
-		more than one line and justified considering margins
-		mentioned in Section~\ref{sec:captionmargins}}
-	\label{figtwo}
-\end{figure}
+% Trabalhos Futuros
+Para trabalhos futuros, há dois grandes marcos em vista: permitir uma experiência mais agradável e estável através dos 60 \textit{fps} e otimizar os processos de comunicação CPU-GPU.
 
-\section{Images}
-All images and illustrations should be in black-and-white, or gray
-tones. The image resolution on paper should be about 600~dpi for
-black-and-white images, and 150-200~dpi for grayscale images.  Do not
-include images with excessive resolution, as they may take hours to
-print, without any visible difference in the result.
-
-\begin{table}[h!]
-	\caption{Variables to be considered on the evaluation of
-		interaction techniques.}
-	\label{tabone}
-	\begin{footnotesize}
-	\begin{tabular}{|p{40mm}|p{55mm}|p{42mm}|}
-	\hline
-	\hspace*{\fill}\textbf{Tarefa}\hspace*{\fill} &
-	\hspace*{\fill}\textbf{Vari�vel}\hspace*{\fill} & 
-	\hspace*{\fill}\textbf{M�trica utilizada}\hspace*{\fill}\\
-	\hline
-	Sele��o &
-	Dist�ncia do alvo &
-	Virtual cubits \\ \cline{2-3}
-	& Dire��o horizontal e vertical do alvo &
-	Graus do arco \\ \cline{2-3}
-	& Dist�ncia do objeto oculto &
-	Virtual cubits \\ \cline{2-3}
-	& Dire��o da oclus�o &
-	Esquerda/direita/cima/baixo \\
-	\hline
-	Posicionamento &
-	Dist�ncia inicial &
-	Virtual cubits \\ \cline{2-3}
-	& Dire��es iniciais horizontal e vertical &
-	Graus do arco \\ \cline{2-3}
-	& Dist�ncia final &
-	Virtual cubits \\ \cline{2-3}
-	& Dire��es finais horizontal e vertical &
-	Graus do arco \\ \cline{2-3}
-	& Precis�o vertical &
-	Porcentagem de sobreposi��o \\ \cline{2-3}
-	& Precis�o horizontal &
-	Porcentagem de sobreposi��o \\
-	\hline
-	Orienta��o &
-	Dist�ncia &
-	Virtual cubits \\ \cline{2-3}
-	& Dire��es horizontal e vertical &
-	Graus do arco \\ \cline{2-3}
-	& Orienta��o inicial (3 angulos) &
-	Graus do arco \\ \cline{2-3}
-	& Orienta��o final (3 angulos) &
-	Graus do arco \\ \cline{2-3}
-	& Exatid�o/precis�o &
-	Graus do arco \\
-	\hline
-	\end{tabular}
-	\end{footnotesize}
-\end{table}
-
-\section{References}
-Bibliographic references must be unambiguous and uniform.  We
-recommend giving the author names references in brackets,
-e.g.~[Knuth~1984], [Kernighan and Ritchie~1990]; or dates in
-parentheses, e.g.~Knuth (1984), Sederberg and Zundel (1989,1990).
-
-% you should really use BibTeX instead of this... :-)
-\begin{thebibliography}{99}
-\bibitem{bou91} Boulic, R. and Renault, O. (1991) ``3D Hierarchies for
-  Animation'', In: New Trends in Animation and Visualization, Edited
-  by Nadia Magnenat-Thalmann and Daniel Thalmann, John Wiley \& Sons
-  ltd., England.
-
-\bibitem{dye95} Dyer, S., Martin, J. and Zulauf, J. (1995) ``Motion
-  Capture White Paper'',
-  http://reality.sgi.com/employees/jam\_sb/mocap/MoCapWP\_v2.0.html,
-  December.
-
-\bibitem{hol95} Holton, M. and Alexander, S. (1995) ``Soft Cellular
-  Modeling: A Technique for the Simulation of Non-rigid Materials'',
-  Computer Graphics: Developments in Virtual Environments, R. A.
-  Earnshaw and J. A. Vince, England, Academic Press Ltd., p.~449-460.
-
-\bibitem{knu84} Knuth, D. E., The TeXbook, Addison Wesley, 1984.
-\end{thebibliography}
+\bibliographystyle{sbc}
+\bibliography{sample-bookchapter}
 
 \end{document}
