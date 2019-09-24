@@ -1,0 +1,296 @@
+\documentclass[12pt]{article}
+
+\usepackage{sbc-template}
+
+\usepackage{graphicx,url}
+\usepackage{float}
+\usepackage{verbatim}
+\usepackage[english]{babel}
+
+\sloppy
+
+\title{Equirectangular Image Quality Assessment Tool Integrated into the Unity Editor}
+
+\author{Adriano M. Gil\inst{1}, Thiago S. Figueira\inst{1}}
+
+\address{SIDIA Instituto de Ci\^encia e Tecnologia
+  (SIDIA)\\
+  Manaus -- AM -- Brazil
+  \email{\{adriano.gil,t.figueira\}@sidia.com}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    Equirectangular images are captures in 360 degrees of user surroundings. Virtual reality applications provide immersive experience when using this type of media. However, in order to develop a 360 viewer it is necessary to choose among diferent media formats, resolution configurations and texture-to-objects mappings. This work proposes to develop a tool integrated into \textit{Unity} editor to automatize the quality assessment of different settings of 360 image visualization. Using objetive metrics, we compare the UV mapping of a procedural sphere, a \textit{Skybox} rendering and a \textit{Cubemap}.
+\end{abstract}
+
+360 degrees pictures capture the surroundings of the user thus simulating the entire information available from a single point. 360 cameras such as the Samsung Gear 360 capture panoramic photos and store it in a suitable format for 360 visualization. Amongst the several possible formats for 360 degrees pictures, the equirectangular one is widely adopted. Virtual reality applications provide an immersive experience when using 360 media and give users the feeling of being inside the 360 picture as the virtual world simulates the one captured in the picture.
+
+Virtual reality (VR) devices render the virtual world with a different image for each eye in order to emulate depth and as a result increase the feeling of presence within the context of the application. The technology behind VR headsets' displays has evolved, but it still faces the challenge of offering a high density of pixels per field of view (FoV) degree. According to \cite{va1965visual}, the human eye has an estimated resolution of 60 pixels per degree which means that an average 100-degrees device should render its content at 6k resolution to provide the most realistic spacial emulation.
+
+A 360 image viewer usually renders its contents in a sphere to mimic the natural placement of visual elements as they would be perceived by the user in the real world. A large amount of pixels is required to keep the quality of the pictures though. The research for the best possible visual quality means picking one in a given set of different exhibition formats each one with different distortion degrees along the existing 360 degrees. In order to decide the appropriate format and resolution for a 360 image it is necessary to take into consideration the device in which this picture will be displayed hence the necessity of a tool that is able to simulate devices and compare image settings so it provides the most suitable choice.
+
+There are two approaches for image quality assessment: Subjective  and Objective metrics. The first one employs human observers to evaluate and score a sequence of pictures and the second one makes automatic evaluations using mathematical models. In the context of tools, \textit{Unity Editor} is a game development engine for computers, mobile, console, virtual and augmented reality. It is both used by small development groups as well as big corporations such as Microsoft and Disney, it is also the most used development tool for virtual reality.
+
+In this paper, we developed an equirectangular image quality assessment tool which employs objective metrics integrated into the Unity Editor. To make assessments as close to real case scenarios, our tool is capable of simulating visualization with field of view and resolution values provided by the user. The image \ref{fig:tool} below presents the Unity Editor interface we built.
+
+\section{Related Work}
+VR applications differ from other applications due to their innate concern to provide content to all possible VR viewpoints. According to \cite{fuchs2017virtual}, VR headsets have the ability to isolate the spectator both visually and acoustically from the real world.
+
+\cite{zakharchenko2016quality} specifies that spherical panoramic content may be presented in different projection types: equirectangular (ERP), rectilinear, doughnut, cube map and multiview. According to \cite{dunn2017resolution}, the format of the 360 image has high impact on resolution and uniformity. Equirectangular images, for instance, have high resolution on the poles and high uniformity on the equator line whilst on a cubemap, there is high density on the edges and high uniformity in each face`s diagonal.
+
+\cite{wang2006modern} categorize image quality assessment as subjective or objective. Objective metrics are defined as full-Reference (FN), No-Reference (NR) and Reduced-Reference (RR).
+
+The most reliable strategy to evaluate image quality is through subjective metrics. In this case, human observers assess a set of pictures and score it in a scale from 1 (worst) to 5 (best), this technique is called MOS (Mean Opinion Score) and it calculates the average score given a set of scores for each sample.
+
+Even though subjective tests are precise, they are inconvenient and expensive. Especially when a virtual reality environment is being evaluated because it is, by definition, more immersive. Thus, a complimentary objective metric would be useful and less expensive.
+
+Prior work on 360 image quality assessment can be found on literature: \cite{md2015full} and \cite{zakharchenko2016quality}. Despite our focus on image quality assessment of 360 spherical panoramic images, our proposal only assesses screenshots obtained from texture projections inside Unity3D. Therefore, our final target are 2D images as the result of such projections.
+
+\section{Projecting 360 Images to UV Mapping}
+360 images comprehend the entire field-of-view of the user. Considering the equirectangular format, some mapping implementations are listed below:
+
+\begin{enumerate}
+  \begin{item}Utilize a sphere \textit{Mesh} to render the 360 image inside it\end{item}
+  \begin{item} Utilize a \textit{Skybox} to render the 360 image on the background\end{item}
+  \begin{item} Map the 360 image to UV positions of a cubic \textit{Mesh} \end{item}
+\end{enumerate}
+
+Each mapping possibility has its own advantages and disadvantages in terms of resolution offered by angular direction and general distortion of the 360 image.
+
+\section{Mapping Equirectangular Images to a Sphere}
+We adopted the standard UV mapping technique for spheres which is based on the latitude/longitude approach.
+
+Given N longitude values, the angular size $T$ can be obtained by the equation \ref{longitudesize}:
+
+\begin{equation}
+T = \frac{2 \pi}{N}
+\label{longitudesize}
+\end{equation}
+
+The overall angular size of an $I$ quantity of longitude values can be obtained by the equation \ref{longitudealpha}:
+
+\begin{equation}
+\alpha_{i} = i * T
+\label{longitudealpha}
+\end{equation}
+
+The sine and cosine of the angle T define the X and Z positions of the sphere points which belong to the cross section of the sphere. In such manner, assuming a sphere of radius $R$, we can write equations \ref{x_d} and \ref{z_d}.
+
+\begin{equation}
+x_{i} = R * \sin(\alpha_{i})
+\label{x_d}
+\end{equation}
+
+\begin{equation}
+z_{i} = R * \cos(\alpha_{i})
+\label{z_d}
+\end{equation}
+
+In a longitudinal cut, it is possible to perceive that the R-ray of a cross-section varies along the height of the sphere. $K$ is the angular size of a sphere latitude given $M$ latitude values as seen on equation \ref{equation5}:
+
+\begin{equation}
+K = \frac{\pi}{M}
+\label{equation5}
+\end{equation}
+
+The total amount of an $i$ quantity of latitude values can be obtained by equation \ref{equation6}:
+
+\begin{equation}
+\alpha_{yi} = i * K
+\label{equation6}
+\end{equation}
+
+The Y position for each sphere point, considering unit radius, can be obtained by equation \ref{equation7}:
+
+\begin{equation}
+y_{i} = \cos(\alpha_{yi})
+\label{equation7}
+\end{equation}
+
+The radius $D_{yi}$ obtained in a cross section at latitude $i$ is defined in equation \ref{equation8} as:
+
+\begin{equation}
+R_{yi} = \sin(\alpha_{yi})
+\label{equation8}
+\end{equation}
+
+Applying equation \ref{equation8} in equations \ref{x_d} and \ref{z_d} we get  positions X and Z of the vertices of the sphere according to their longitude and latitude coordinates.
+
+\begin{equation}
+x_{i} = \sin(\alpha_{yi}) * \sin(\alpha_i)
+\label{equation9}
+\end{equation}
+
+\begin{equation}
+z_{i} = \sin(\alpha_{yi}) * \cos(\alpha_i)
+\label{equation10}
+\end{equation}
+
+\section{Mapping Equirectangular Images to a Skybox}
+A skybox is rendered when no 3D element is rasterized by the virtual camera. In the rasterization process, it is necessary to identify a UV coordinate for each pixel (or fragment) rendered on screen. Skybox shaders usually utilize 3D textures to store the six faces of a cube through a graphical function called $tex3D$.
+
+Mapping an equirectangular image to a skybox involves finding the UV vector value given a normalized direction. Considering the vector $(x, y, z)$ as the normalized direction, equation \ref{eq:uv_mapping_skybox} can be used on a vertex shader.
+
+\begin{equation}
+uv = (\arctan(\frac{x}{y})), \arccos(y))
+\label{eq:uv_mapping_skybox}
+\end{equation}
+
+Thus, when mapping to a sphere UV coordinates are projected into 3D space and when mapping to a skybox the opposite happens: normalized 3d space positions continuously seek equivalent UV coordinates.
+
+\section{Mapping Equirectangular Images to a Cubemap}
+The first step to use a Cubemap is to generate a cube. The standard cube generated by Unity, however, does not have enough vertices for precise UV mapping. It happens as UV mapping is a sine/cosine function whereas rasterization inside of a triangle obtains UV values through linear interpolation of its vertices, thus causing distortions.
+
+For better results, we divided each triangle into four parts. From a cube of 10 vertices and 12 triangles, we obtained a 4090 vertices/4096 triangles cube.
+
+As we generate each new vertex, it is possible to calculate its respective UV coordinate using equation \ref{eq:uv_mapping_skybox}. Noticeably, the cubemap view is equivalent to the discretization of the continuous UV mapping approach in a skybox, i.e., it is calculated per vertex instead of being applied on pixel basis.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{images/tool.png}
+        \caption{Our tool as seen directly on the Unity Editor}
+        \label{fig:tool}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[b]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{yed/tool_arch_en.png}
+        \caption{The architecture of our implementation.}
+        \label{fig:toolarch}
+    \end{minipage}
+\end{figure}
+
+
+The architecture of our implementation involves a C\# configuration layer in \textit{unity} and a \textit{python} layer for calculating the objective metrics for each of the Unity-generated images. Cross-tiered communication takes place through the creation of new processes within the Unity editor. Figure \ref{fig:toolarch} shows how the components are connected in our architecture.
+
+For a friendlier use, an editor interface has been developed in the form of a custom \textit{unity inspector}, that is, a custom view of our component in C\#. In this component you can define the angle of the field of view, define width and height as well as directions of the screenshots to be generated, define the comparison metrics to be used, and define whether graphs or a report will be generated at the end of the process.
+
+The \textit{python} layer is responsible for evaluating the pairs of images generated by \textit{unity}. Using the \textit{scikit}, \textit{numpy}, and \textit{matplotlib} libraries, the images are evaluated and the result of each metric is saved in a report at the end, summarizing all results.
+
+With regards to the metrics, the goal of the objective assessment is to develop a quantitative measure that can determine the quality of any given image. It is difficult, though, to find a single, objective, easy-to-calculate measurement that matches the visual inspection and is suitable for a variety of application requirements. As to address this problem, we are using three different metrics described below.
+
+MSE or "Mean Square Error". The equation \ref{eq:mse} as follows:
+
+\begin{equation}
+MSE=\frac{1}{MN}\sum_{m=0}^{M-1}{\sum_{n=0}^{N-1}{e(m,n)^2}}
+\label{eq:mse}
+\end{equation}
+
+SSIM is described by \cite{wang2004image} and can be calculated by the equation \ref{eq:ssim}.
+
+\begin{equation}
+SSIM(x,y)=\frac{(2*\mu_x*\mu_y+C_1)*(2*\sigma_{xy}+C_2)}{(\mu^2_x+\mu^2_y+C_1)*(\sigma^2_x+\sigma^2_y+C_2)}
+\label{eq:ssim}
+\end{equation}
+
+Peak Signal-to-noise ratio (PSNR) is the most used metric for image quality assessment, the equation \ref{eq:psnr} is shown below:
+
+\begin{equation}
+PSNR = 10*log_{10}{\frac{(2^n-1)^2}{MSE}}
+\label{eq:psnr}
+\end{equation}
+
+We used \textit{unity 2017.3.1 F} and \textit{python 2.7} to implement the proposed tool. The tool can be imported into any \textit{unity} project through a \textit{unitypackage}, a standard format from \textit{unity} to distribute resources and tools. To perform the quality assessment the button "Generate screenshots" is pressed and the value for each metric is calculated using the first image format as the default to evaluate the others. In figure \ref{fig:tool}, the reference image is the screenshot of the \textit{skybox}, which are compared with those obtained with the \textit{cubemap} and the spherical mapping. The results are summarized in the generated report, as demonstrated by the table below.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.3\textwidth}
+    \includegraphics[width=1\textwidth]{../images/screenshots/Screenshot_0_Equi2Cube.jpg}
+    \caption{Cubemap - direction 0}
+    \label{fig:cubemap_direction_0}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[width=1\textwidth]{../images/screenshots/Screenshot_0_Skybox.jpg}
+    \caption{Skybox - direction 0}
+    \label{fig:skybox_direction_0}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[width=1\textwidth]{../images/screenshots/Screenshot_0_Sphere.jpg}
+    \caption{Sphere - direction 0}
+    \label{fig:sphere_direction_0}
+  \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+  \begin{minipage}[b]{0.3\textwidth}
+    \includegraphics[width=1\textwidth]{../images/screenshots/Screenshot_2_Equi2Cube.jpg}
+    \caption{Cubemap - direction 1}
+    \label{fig:cubemap_direction_1}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[width=1\textwidth]{../images/screenshots/Screenshot_2_Skybox.jpg}
+    \caption{Skybox - direction 1}
+    \label{fig:skybox_direction_1}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[width=1\textwidth]{../images/screenshots/Screenshot_2_Sphere.jpg}
+    \caption{Sphere - direction 1}
+    \label{fig:sphere_direction_1}
+  \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.3\textwidth}
+    \includegraphics[width=1\textwidth]{../images/screenshots/Screenshot_5_Equi2Cube.jpg}
+    \caption{Cubemap - direction 2}
+    \label{fig:cubemap_direction_2}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[width=1\textwidth]{../images/screenshots/Screenshot_5_Skybox.jpg}
+    \caption{Skybox - direction 2}
+    \label{fig:skybox_direction_2}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[width=1\textwidth]{../images/screenshots/Screenshot_5_Sphere.jpg}
+    \caption{Sphere - direction 2}
+    \label{fig:sphere_direction_2}
+  \end{minipage}
+\end{figure}
+
+Based on the obtained results, we found that the \textit{cubemap} pictures had better evaluation despite having an interpolation error. Such mapping error can be corrected by a \textit{fragment shader} and it is visible in pictures \ref{fig:cubemap_direction_0} and \ref{fig:cubemap_direction_1}.
+
+\begin{tabular}{l*{3}{c}r}
+Metrics               & MSE & SSIM & PSNR \\
+\hline
+Direction 0 - Cubemap & 176,22 & 0,93 & 25,67 \\
+Direction 1 - Cubemap & 125,63 & 0,93 & 27,14 \\
+Direction 2 - Cubemap & 13,83 & 0,97 & 36,72 \\
+Direction 0 - Sphere  & 88,56 & 0,88 & 28,66 \\
+Direction 1 - Sphere  & 242,47 & 0,76 & 24,28 \\
+Direction 2 - Sphere  & 96,26 & 0,86 & 28,30
+\label{tab:metrics_results}
+\end{tabular}
+
+The SSIM metric analyzes structural distortions as well as luminance and contrast differences between a reference image and the processed image. According to this metric, the cubemap had the best results in all three directions.
+
+Directions 2 and 5 had the best results according to PSNR and MSE. Direction 0 did not present good results and that is due to the mapping degradation which can be easily perceived subjectively. After quick subjective analysis, it would be understandable to conclude that sphere - direction 2 has better image quality when compared to the cubemap, but after a deeper investigation it is observable how the sphere has distortions all over its image while the cubemap has distortions in specific areas affected by the mapping degradation.
+
+\section{Conclusions}
+We proposed the development of an equirectangular image quality assessment tool which uses objective metrics such as MSE, SSIM and PSNR in order to facilitate choosing among different image resolutions and mapping solutions.
+
+Our tool is integrated into the Unity Editor as Unity is the most used development engine for virtual reality applications. Different parameters were used to compare the quality of 360 images generated by three UV mapping techniques:  latitude/longitude in a inverted sphere; skybox; and cubemap.
+
+One of the disadvantages of our tool is that the user needs to know the metrics to be able to make the best parameters choice. For future work, we plan to use the current metrics to achieve a single and final evaluation value that should indicate the best result in an automated manner. Another improvement point identified is that the accuracy of the end result should be greater if the visualization is obtained directly from rendering on the mobile devices where VR applications can be executed. Thus, we also plan an embedded component in the application that allows you to reap results while running the application on the mobile device.
+
+\bibliographystyle{sbc}
+\bibliography{hci-abstract}
+
+\end{document}
