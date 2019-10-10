@@ -61,7 +61,27 @@ An inverted sphere, that is, a sphere that has only its inner side rendered, mak
   \begin{item} Generation of vertices based on longitude/latitude coordinates. \end{item}
 \end{enumerate}
 
-For this work, the second approach was adopted due to the possibility of using longitude/latitude as a way to map the UV coordinates.
+For this work, the second approach was adopted due to the possibility of using longitude/latitude as a way to map the UV coordinates through the equation below:
+
+\begin{equation}
+R^2 \leftarrow R^3 : (\lambda, \theta) \rightarrow (x, y, z)
+\label{equation1}
+\end{equation}
+
+\section{Snake movement agent} \label{sec:agent}
+
+The movement of the \textit{snake} is composed of a state evaluation function that analyzes each possible action at any given time. In essence, the serpent is always seeking  the collectible, so it evaluates the shortest distance course on the X and Y axes in the UV space and, provided that there is no possibility of hitting itself, takes this path and repeats the process. The function below illustrates this procedure:
+
+\begin{equation}
+F(A) = R * (D + O)
+\label{equation11}
+\end{equation}
+
+Where \textit{R} is a randomization factor; \textit{D} represents the \textit{Manhattan} distance between the current position and the collectable object; And \textit{O} is a value attributed to the existence or not of obstacles in this path.
+
+The movement logic manages the positioning of the head and body of the serpent.  In other words, the head guides all the movements of the \textit{snake}. Three vectors are  responsible for guiding the serpent in the decision of the smallest path between its current position and the collectible object. It is relevant to clarify that these targeting vectors are changed given the different positions the snake can adopt
+
+The body of the serpent, in its turn, moves through a sliding \textit{buffer}: each part of the body assumes the most recent position of the immediately preceding part, this means that the head moves and the other parts follow afterwards.
 
 \section{Conclusions}
 
