@@ -34,7 +34,7 @@
 \section{Introduction} 
 Virtual reality (VR) brings the promise of a revolution in the way entertainment is consumed in modern times. The user is placed at the center of the action and perceives content from every direction. Games, for their part,  transport players to a world envisioned by game developers and designers. As the technology for other form factors such as PC and console advances, VR players want life-like graphics and improved responsiveness. 
 
-Regarding VR games development, Unity is the most used engine, and even though it is optimized, we believe there is an opportunity in exploring graphics cards for additional performance. Games developed in Unity follow a graphical pipeline where, generally speaking, the CPU (central processing unit) is responsible for transmitting graphics information to the GPU (graphics processing unit) through the Application stage, where the VRAM (video random access memory) loads graphics assets such as 3D models and textures. Afterward, during the Geometry stage, different objects and their information (positioning, for example) are handled by the GPU. The final stage, Rasterization, is where those objects become images.
+Regarding VR games development, Unity is the most used engine, and even though it is optimized, we believe there is an opportunity in exploring graphics cards for additional performance. 
 
 \section{Related Work}
 The two-dimensional game \textit{GPGPUWars} \cite{GPGPUWars} has its code structure based on \textit{shaders}, it is similar to the architecture presented here where the GPU performs all the processing of the game. However, applications in virtual reality differ from other applications since there is the need to fill the three-dimensional space to provide content for 3 degrees of freedom (3DoF-\textit{3 Degrees of Freedom}). For example, the application described in \cite{zund2015unfolding} uses computational vision to generate a panoramic view of an 8-bit console game. Running on a \textit{Oculus Rift DK2}, the virtual reality device from \textit{Facebook}, the player is positioned in the center of the world and as he moves his character, the world is revealed around him, extending the game view to the four walls of the virtual environment.
@@ -46,7 +46,9 @@ The snake continuously and automatically seeks the collectible object and grows 
 
 \section{Shader-based visualization architecture}
  \label{sec:architecture}
-There are two approaches to the game architecture: in the first one, we use two layers of the graphics pipeline, and in the second one, we use a single layer. In the first approach, one layer is responsible for handling the logic of the game while the other is accountable for managing the rendering.  The logical layer controls intelligent tasks such as the search for the collectible objects and movement, furthermore, it is executed in the Central Processing Unit (CPU) in CSharp. The visualization layer involves a shader, a piece of code that runs directly in the Graphics Processing Unit (GPU), which is responsible for rendering all items displayed on the output device, which includes the collectible objects as well as the snake.
+Games developed in Unity follow a graphical pipeline where, generally speaking, the CPU (central processing unit) is responsible for transmitting graphics information to the GPU (graphics processing unit) through the Application stage, where the VRAM (video random access memory) loads graphics assets such as 3D models and textures. Afterward, during the Geometry stage, different objects and their information (positioning, for example) are handled by the GPU. The final stage, Rasterization, is where those objects become images.
+
+There are two approaches we propose to the game architecture: in the first one, we use two layers of the graphics pipeline, and in the second one, we use a single layer. In the first approach, one layer is responsible for handling the logic of the game while the other is accountable for managing the rendering.  The logical layer controls intelligent tasks such as the search for the collectible objects and movement, furthermore, it is executed in the Central Processing Unit (CPU) in CSharp. The visualization layer involves a shader, a piece of code that runs directly in the Graphics Processing Unit (GPU), which is responsible for rendering all items displayed on the output device, which includes the collectible objects as well as the snake.
 
 In other words, the logical layer manages the collision and movement of the snake as well as selects the most promising path given a randomization factor; The visualization layer, on the other hand, is responsible for rendering all the elements arranged in the output device, that is, the CPU has no influence over these objects.
 
@@ -79,12 +81,10 @@ F(A) = R * (D + O)
 
 Where \textit{R} is a randomization factor; \textit{D} represents the \textit{Manhattan} distance between the current position and the collectable object; And \textit{O} is a value attributed to the existence or not of obstacles in this path.
 
-The movement logic manages the positioning of the head and body of the serpent.  In other words, the head guides all the movements of the \textit{snake}. Three vectors are  responsible for guiding the serpent in the decision of the smallest path between its current position and the collectible object. It is relevant to clarify that these targeting vectors are changed given the different positions the snake can adopt
-
-The body of the serpent, in its turn, moves through a sliding \textit{buffer}: each part of the body assumes the most recent position of the immediately preceding part, this means that the head moves and the other parts follow afterwards.
+The movement logic manages the positioning of the head and body of the serpent.  In other words, the head guides all the movements of the snake. Three vectors are  responsible for guiding the serpent in the decision of the smallest path between its current position and the collectible object. It is relevant to clarify that these targeting vectors are changed given the different positions the snake can adopt
 
 \section{Conclusions}
-
+We believe it is possible to explore the GPU for additional performance of virtual reality games in mobile devices. For the full paper, we intend to implement the game using the defined architecture and compare results using frames-per-second as the evaluation metric. We also see an opportunity for a full GPU implementation (the second layer) and implementation using ray-marching in a 3D environment.
 
 \bibliographystyle{sbc}
 \bibliography{hci-abstract}
