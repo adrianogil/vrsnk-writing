@@ -82,8 +82,8 @@ The two-dimensional game \textit{GPGPUWars} \cite{joselli2009gpuwars} has its co
 \textit{VRSnake} brings to virtual reality the classic 2D game \textit{Snake}, but unlike the original, the player controls the positioning of the collectible objects rather than directly controlling the snake. We propose the following rules:
 
 \begin{enumerate}
-\item The snake continuously and automatically seeks the collectible object and grows in a unit as it reaches this object.
-\item The player can positionate the collectible object
+\item The snake continuously and automatically seeks the collectible object and grows in a unit as it reaches this object;
+\item The player sets the collectible object position;
 \item The player wins when the \textit{snake} is defeated, that is, when it hits itself in some way.
 
 \end{enumerate}
@@ -91,6 +91,15 @@ The two-dimensional game \textit{GPGPUWars} \cite{joselli2009gpuwars} has its co
 \section{Game architectures}
 
 % TODO: What is a game architecture?
+Games are a software product, in such manner, the architecture of a game is comparable to that of a software. Most games have the following components:
+
+\begin{itemize}
+  \item Graphics Engine
+  \item Sound Engine
+  \item Rendering & Vision-Input Engine
+  \item I/O Devices
+\end{itemize}
+
 % TODO: Objectives of a game architecture?
 
 \subsection{Game Loop architecture}
