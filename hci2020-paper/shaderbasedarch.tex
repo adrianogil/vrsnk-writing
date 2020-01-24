@@ -5,8 +5,6 @@
 \documentclass[runningheads]{llncs}
 %
 \usepackage{graphicx}
-\usepackage{caption}
-\usepackage{subcaption}
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
 %
@@ -67,24 +65,30 @@ In this work, we propose an implementation of the classic game Snake using a sha
 
 \section{Related Work}
 
+The literature is scarce about approaches using GPU development for Virtual Reality though there are some initiatives in mobile and computer environments.
+
 % TODO: Refs for VR Games, highlight performance/architecture concepts
 
 % TODO: Refs for Games running only on GPU
-The two-dimensional game \textit{GPGPUWars} \cite{joselli2009gpuwars} has its code structure based on \textit{shaders}, it is similar to the architecture presented here where the GPU performs all the processing of the game. However, applications in virtual reality differ from other applications because there is the need to fill the three-dimensional space to provide content for 3 degrees of freedom (3DoF-\textit{3 Degrees of Freedom}). For example, the application described in \cite{zund2015unfolding} uses computational vision to generate a panoramic view of an 8-bit console game.
+The two-dimensional game \textit{GPGPUWars} \cite{joselli2009gpuwars} has its code structure based on \textit{shaders}, similar to the architecture presented here where the GPU performs all the processing of the game. The mobile game MobileWars is a massive 2D shooter with top-down perspective \cite{MobileWars} which uses the GPU to process the game logic and the CPU for the data acquisition step. However, applications in virtual reality differ from other applications because there is the need to fill the three-dimensional space to provide content for 3 degrees of freedom (3DoF-\textit{3 Degrees of Freedom}). For example, the application described in \cite{zund2015unfolding} uses computational vision to generate a panoramic view of an 8-bit console game.
 
 % TODO: Refs for Games architectures
+Some works explore different game architectures: AlienQuiz Invaders \cite{Loop2012}, for example, is an augmented reality game that implements cloud services to improve overall game quality. \cite{MobileWars}, \cite{joselli2009gpuwars}, \cite{GameArchitecture2009} explore the GPU for performance in mobile and PC environments.
+
 
 % TODO: Refs for GPU-based architectures
 
 
-\section{VRSnake} \label{sec:vrsnake}
+\section{The game - VRSnake} \label{sec:vrsnake}
 % TODO: Describe rules of the game
-\textit{VRSnake} brings to virtual reality the classic 2D game \textit{Snake}, but unlike the original, the player controls the positioning of the collectible objects rather than directly controlling the snake. We propose the following rules:
+VRSnake is the virtual reality version of the classic 2D game Snake.
+In the original game, the player moves the snake to collect the elements that appear randomly during gameplay. In its virtual reality adaptation, VRSnake, the player decides where to position the collectable items rather than directly controlling the snake. In other words, the player stands in the center of the game world surrounded by the inverted sphere where the snake moves. 
+For this new game-play design, we defined the following rules:
 
 \begin{enumerate}
-\item The snake continuously and automatically seeks the collectible object and grows in a unit as it reaches this object;
 \item The player sets the collectible object position;
-\item The player wins when the \textit{snake} is defeated, that is, when it hits itself in some way.
+\item The snake continuously and automatically seeks the collectable object placed by the player and grows in a unit when it reaches this object;
+\item The victory condition is making the snake hit itself during the pursuit for the object.
 \end{enumerate}
 
 \section{Game Loops}
@@ -99,34 +103,47 @@ Due to its interactive nature, these steps should be performed as fast as possib
 Modern mainstream game consoles and PC sets allow parallel computing to be performed. In order to harness this extra computing power, it is necessary to move tasks from the single threaded game loop and place the ones that can run in parallel in different processors. 
 
 \begin{figure}
-\begin{subfigure}{0.5\textwidth}
-    \includegraphics[width=\linewidth, height=5cm]{src/hci2020-images/CoupledGameLoop.png}
-    \caption{Coupled Model}
-    \label{fig:coupledModel}
-\end{subfigure}
-\begin{subfigure}{0.5\textwidth}
-    \includegraphics[width=\linewidth, height=5cm]{src/hci2020-images/UncoupledGameLoop.png}
-    \caption{Multi-thread Uncoupled Model}
-    \label{fig:uncoupledModel}
-\end{subfigure}
-\caption{Game loops models according to \cite{GameArchitecture2009}}
+    \centering
+    \begin{minipage}{.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth,height=5cm]{src/hci2020-images/CoupledGameLoop.png}
+        \caption{Coupled Model}
+        \label{fig:coupledModel}
+    \end{minipage}%
+    \begin{minipage}{.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth,height=5cm]{src/hci2020-images/UncoupledGameLoop.png}
+        \caption{Multi-thread Uncoupled Model}
+        \label{fig:uncoupledModel}
+    \end{minipage}
 \end{figure}
 
 
 \section{Game architectures}
-
 % TODO: What is a game architecture?
 Games are a  software product, therefore the  architecture of a game is comparable to that of software and defines how the game is built. Usually, it is not apparent to the player, except for performance \cite{croft_2004}.
 
+According to \cite{mcshaffry_2009}, it is possible to classify any sub-system in a game in one of the three categories: the application layer, the logic layer, and the game view layer. The first layer deals with the operating system and hardware. The second layer manages the game state and how it changes over time. The game view layer presents the current game state with the graphics and sound outputs.
+
 \begin{figure}[!h]
-\centering
-\includegraphics[scale=1.5,width=\textwidth]{src/hci2020-images/Game_Architecture_Raul_Portales.jpg}
-\caption{Simplified architecture of game engine according to \cite{portales}}
+    \centering
+    \includegraphics[scale=1.1]{src/GameArchitecture.png}
+    \caption{High-level game architecture according to \cite{mcshaffry_2009}}
 \end{figure}
 
-The game engine is responsible for the Update Thread, the Draw Thread and the Game Objects. The Game Objects are the items the player may or may not interact with during gameplay. The Update Thread  is responsible for updating game objects as far as it can whereas the Draw Thread updates all elements visually on the output device \cite{portales}.
+Game engines provide \textit{"software that is extensible and can be used as the foundation for many different games without major modification"} \cite{gregory_2019}, and as much, they encapsulate the general game architecture (see figure \ref{fig:Simplified_game_engine}).
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=1.5]{src/hci2020-images/Game_Architecture_Raul_Portales.jpg}
+    \caption{Game engine architecture according to \cite{portales}}
+    \label{fig:Simplified_game_engine}
+\end{figure}
+
+The game engine is responsible for the Update Thread, the Draw Thread and the Game Objects. Each correspond to a general step defined in the general game architecture. The Game Objects are the items the player may or may not interact with during game-play. The Update Thread  is responsible for updating game objects as far as it can whereas the Draw Thread updates all elements visually on the output device \cite{portales}.
 
 % TODO: Objectives of a game architecture?
+Game architectures can be updated to better reflect the needs of the game. A well-defined architecture enables better performance and overall results with the final game. In fact, most game engines (as well as the architectures behind it) are crafted for specific platforms and, in some cases, for particular games \cite{gregory_2019}. 
 
 \subsection{Shader-based architecture}
  \label{subsec:shader-architecture}
