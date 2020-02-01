@@ -131,7 +131,7 @@ According to \cite{mcshaffry_2009}, it is possible to classify any sub-system in
     \caption{High-level game architecture according to \cite{mcshaffry_2009}}
 \end{figure}
 
-Game engines provide \textit{"software that is extensible and can be used as the foundation for many different games without major modification"} \cite{gregory_2019}, and as much, they encapsulate the general game architecture (see figure \ref{fig:Simplified_game_engine}).
+Game engines provide \textit{"software that is extensible and can be used as the foundation for many different games without major modification"} \cite{gregory_2019}, and as such, they encapsulate the general game architecture (see figure \ref{fig:Simplified_game_engine}).
 
 \begin{figure}[!h]
     \centering
@@ -145,28 +145,23 @@ The game engine is responsible for the Update Thread, the Draw Thread and the Ga
 % TODO: Objectives of a game architecture?
 Game architectures can be updated to better reflect the needs of the game. A well-defined architecture enables better performance and overall results with the final game. In fact, most game engines (as well as the architectures behind it) are crafted for specific platforms and, in some cases, for particular games \cite{gregory_2019}. 
 
-\subsection{Shader-based architecture}
- \label{subsec:shader-architecture}
-
-% TODO: A general overview of a shader-based architecture
-% TODO: What quality attributes/advantages we are seeking
-
-We propose a game architecture based on two layers: one layer is responsible for handling the logic of the game while the other is accountable for managing the rendering.  The logical layer controls intelligent tasks such as the search for the collectible objects and movement, furthermore, it is executed in the Central Processing Unit (CPU) in CSharp. The visualization layer involves a shader, a piece of code that runs directly in the Graphics Processing Unit (GPU), which is responsible for rendering all Game Objects on the output device, which includes the collectible objects as well as the snake.
-
-In other words, the logical layer manages the collision and movement of the snake as well as selects the most promising path given a randomization factor; The visualization layer, on the other hand, is responsible for rendering all the elements arranged in the output device, that is, the CPU has no influence over these objects.
 
 \subsection{Proposed Architecture}
-
 % Our proposal - Two layers
-% Render layer
+We propose a game architecture based on two layers: 
 % Logic layer
+one layer handles the game logic whereas the other manages rendering.  The logical layer is CPU-bound and has tasks such as the search for the collectible objects and snake movement. 
+% Render layer
+The visualization layer involves a shader, a piece of code that runs in the Graphics Processing Unit (GPU), renders all Game Objects on the output device, which includes the collectible objects as well as the snake.
+
+In other words, the logical layer manages the collision and movement of the snake and selects the most promising path given a randomization factor; The visualization layer renders all the elements arranged in the output device, the CPU does not influence these objects.
 
 \section{Render layer}
 
 \subsection{Virtual reality in a inverted sphere}
-The illusion in a virtual world and the consequent immersion sensation that comes with it requires visual material available from all possible angles as the \textit{gearVR} allows complete freedom of rotation, i.e. 3 degrees of Freedom (3DoF-\textit{3 degrees of Freedom}). Given that our proposal contemplates a 2D game, there is the challenge of displaying two-dimensional content in a 3D scenario so that everything happens around the user.
+The illusion in a virtual world and the immersion sense that comes with it require visual material available from all angles. Given that our proposal contemplates a 2D game, the challenge is displaying two-dimensional content in a 3D scenario so that everything happens around the user.
 
-An inverted sphere, that is, a sphere that has only its inner side rendered, makes it possible to completely fill the entire field of view, it also is the standard solution adopted to display equirectangular images in 360 degrees. The procedural generation of a sphere can follow one of the two approaches below:
+An inverted sphere, a sphere that has only its inner side rendered, makes it possible to fill the entire field of view, it also is the endorsed solution to display equirectangular images in 360 degrees. The procedural generation of a sphere can follow one of the two approaches below:
 
 \begin{enumerate}
   \begin{item} An icosphere, i.e., a sphere which vertices are evenly distributed;
@@ -181,17 +176,77 @@ R^2 \leftarrow R^3 : (\lambda, \theta) \rightarrow (x, y, z)
 \label{equation1}
 \end{equation}
 
-\subsection{Simple 2D Snakes}
+% 2 - Mapeamento de UV em uma esfera invertida
+To calculate the positions of the sphere vertices, given $N_{latitude}$ latitude values  and $N_{longitude}$ longitude values, the value $R_{longitude}$ is defined as the angular longitude size of a cross-section of the sphere, as seen in the equation \ref{equation1}.
 
-\subsection{Raymarching Cube-based 3D Snakes}
+\begin{equation}
+R_{longitude} = \frac{2 \pi}{N_{longitude}}
+\label{equation1}
+\end{equation}
+
+The total angular size of an amount of $i$ of longitude values can be given by the equation \ref{equation2}.
+
+\begin{equation}
+\alpha_{i} = i * R_{longitude}
+\label{equation2}
+\end{equation}
+
+Equations \ref{equation3} and \ref{equation4} define the X and Z positions of sphere points belonging to a cross section of the sphere that has radius $D$.
+
+\begin{equation}
+x_{i} = D * \sin(\alpha_{i})
+\label{equation3}
+\end{equation}
+
+\begin{equation}
+z_{i} = D * \cos(\alpha_{i})
+\label{equation4}
+\end{equation}
+
+In a longitudinal cut, it is possible to notice that the radius $D$ of the cross section is variable along the height of the sphere. It is then determined a value $R$ as the angular size of a latitude value of the sphere, as seen in the equation \ref{equation5}.
+
+\begin{equation}
+R_{latitude} = \frac{\pi}{ N_{latitude}}
+\label{equation5}
+\end{equation}
+
+The total angular size of an amount of $i$ of latitude values can be given by the equation \ref{equation6}.
+
+\begin{equation}
+\alpha_{latitude} = i * R_{latitude}
+\label{equation6}
+\end{equation}
+
+The Y position of the sphere points, considering unit radius, can be given by the equation \ref{equation7}.
+\begin{equation}
+y_{i} = \cos(\alpha_{latitude})
+\label{equation7}
+\end{equation}
+
+The radius $D_{yi}$ obtained in a cross section at latitude $i$ is defined in the equation \ref{equation8} as:
+\begin{equation}
+D_{yi} = 2 * \sin(\alpha_{yi})
+\label{equation8}
+\end{equation}
+
+By applying the equation \ref{equation8} in the equations \ref{equation3} and ref{equation4} the X and Z positions of the sphere vertices are obtained according to their longitude and latitude coordinates.
+
+\begin{equation}
+x_{i} = 2 * \sin(\alpha_{latitude}) * \sin(\alpha_{longitude})
+\label{equation9}
+\end{equation}
+
+\begin{equation}
+z_{i} = 2 * \sin(\alpha_{latitude}) * \cos(\alpha_{longitude})
+\label{equation10}
+\end{equation}
 
 \section{Logic layer}
 
 \subsection{Managing Game Objects}
 
 \subsection{Snake movement agent} \label{sec:agent}
-
-The movement of the \textit{snake} is composed of a state evaluation function that analyzes each possible action at any given time. In essence, the serpent is always seeking  the collectible, so it evaluates the shortest distance course on the X and Y axes in the UV space and, provided that there is no possibility of hitting itself, takes this path and repeats the process. The function below illustrates this procedure:
+The movement of the snake is managed by a state evaluation function that analyzes each possible action at any given time. In essence, the serpent is always seeking  the collectible objects, so it evaluates the shortest distance course in the X and Y axes in UV space and, provided that there is no possibility of hitting itself, proceeds through this path and repeats the process. The function below illustrates this procedure:
 
 \begin{equation}
 F(A) = R * (D + O)
@@ -201,6 +256,16 @@ F(A) = R * (D + O)
 Where \textit{R} is a randomization factor; \textit{D} represents the \textit{Manhattan} distance between the current position and the collectable object; And \textit{O} is a value attributed to the existence or not of obstacles in this path.
 
 \section{Experiments and Results}
+The Snake game was developed for virtual reality in the Unity engine. Figure\ref{fig:VRPerformanceChart}  below illustrates the frame rate in the GearVR through the Oculus performance assessment tool, the \textit{OVR Metrics Tool}:
+
+\begin{figure}[h] 
+\centering
+\includegraphics[width=\textwidth]{src/hci2020-images/VRPerformance.png}s
+\caption{Frames-per-second recored by the OVR Metrics Tool}
+\label{fig:VRPerformanceChart}
+\end{figure}
+
+The application presented an average frame-rate of 43.96 fps (frames-per-second), with a minimum of 16 fps and maximum of 60 fps. As represented by the figure \ref{fig:VRPerformanceChart}, the application does not maintain 60 fps and this is mainly due to the garbage collector and the need for GPU code optimization.
 
 % TODO: Define metrics to evaluate architectures
 % TODO: Experiment with normal game
