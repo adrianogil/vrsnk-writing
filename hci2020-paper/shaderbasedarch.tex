@@ -60,10 +60,10 @@ In VR games development, the most used game engine is \textit{Unity} \cite{Unity
 In this work, we propose an implementation of the classic game Snake using a shader-based architecture. By using a logic based of parallel execution we achieved a very performatic virtual reality application in which every visual element is defined and rendered by the shader in a unique mesh.
 
 % TODO: Sections
+Related research is explored in section \ref{sec:related-works}. An explanation about the game is provided in \ref{sec:vrsnake}. Important concepts for this topic Game Loop and Game Architecture are explored in \ref{sec:game-loops} and \ref{sec:game-architecture}. The proposed architecture is explained in section \ref{sec:proposed-architecture}. At the end, results are in section \ref{sec:results}.
 
 
-
-\section{Related Work}
+\section{Related Work} \label{sec:related-works}
 
 The literature is scarce about approaches using GPU development for Virtual Reality though there are some initiatives in mobile and computer environments.
 
@@ -91,7 +91,7 @@ For this new game-play design, we defined the following rules:
 \item The victory condition is making the snake hit itself during the pursuit for the object.
 \end{enumerate}
 
-\section{Game Loops}
+\section{Game Loops} \label{sec:game-loops}
 % Example of default game loop architecture
 The game loop is the foundation which upon games are built. Games are considered real-time applications because their tasks rely on time constraints. According to \cite{GameArchitecture2009}, these tasks can be arranged into three steps: data acquisition, data processing and presentation. The first step is about collecting input data from the input devices (for VR devices, it is the Head-Mounted Display (HMD) and the joysticks); the second step is applying player input into the game as well as game rules and other simulation tasks; the last step is providing to the user the current game state through visual and audio updates. 
 
@@ -119,7 +119,7 @@ Modern mainstream game consoles and PC sets allow parallel computing to be perfo
 \end{figure}
 
 
-\section{Game architectures}
+\section{Game architectures} \label{sec:game-architecture}
 % TODO: What is a game architecture?
 Games are a  software product, therefore the  architecture of a game is comparable to that of software and defines how the game is built. Usually, it is not apparent to the player, except for performance \cite{croft_2004}.
 
@@ -146,7 +146,7 @@ The game engine is responsible for the Update Thread, the Draw Thread and the Ga
 Game architectures can be updated to better reflect the needs of the game. A well-defined architecture enables better performance and overall results with the final game. In fact, most game engines (as well as the architectures behind it) are crafted for specific platforms and, in some cases, for particular games \cite{gregory_2019}. 
 
 
-\subsection{Proposed Architecture}
+\subsection{Proposed Architecture} \label{sec:proposed-architecture}
 % Our proposal - Two layers
 We propose a game architecture based on two layers: 
 % Logic layer
@@ -256,7 +256,7 @@ F(A) = R * (D + O)
 
 Where \textit{R} is a randomization factor; \textit{D} represents the \textit{Manhattan} distance between the current position and the collectable object; And \textit{O} is a value attributed to the existence or not of obstacles in this path.
 
-\section{Experiments and Results}
+\section{Experiments and Results} \label{sec:results}
 The Snake game was developed for virtual reality in the Unity engine. Figure\ref{fig:VRPerformanceChart}  below illustrates the frame rate in the GearVR through the Oculus performance assessment tool, the \textit{OVR Metrics Tool} \cite{ovrmetrictool}:
 
 \begin{figure}[h] 
