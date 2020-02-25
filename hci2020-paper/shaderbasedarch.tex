@@ -161,8 +161,27 @@ Our implementation is based on pixel shaders since we want to guarantee support 
 
 The visualization layer deals with all the code necessary to make the visual elements visible to the user. In our proposed architecture, the visualization layer runs only inside shaders.
 
+\subsection{Rendering VR snakes}
+Shaders are scripts that carry the mathematical calculations and algorithms to compute the color of each pixel rendered on the output device. In VRSnake, the shader responsible to render the snake requires an external texture that defines the current game state. This texture as well as other game elements such as snake color and game background can be defined in the user inspector in Unity (see figure \ref{fig:snake_editor_unity}).
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=1]{src/hci2020-images/SnakeTextureMaterial.png}
+    \caption{Snake rendering shader in Unity Editor}
+    \label{fig:snake_editor_unity}
+\end{figure}
+
+The external texture is managed by the logic layer (c\# code), which updates the snake during the update loop of the game. The shader layer sweeps this texture and gathers the red parameter of the RGB color system. The shader reads those values and converts each pixel in screen information according to arbitrary value ranges as seen below:
+
+\begin{itemize}
+  \item Between 0 - 0.25 - Draws the head of the snake
+  \item Between 0.26 - 0.5 - Draws the body of the snake
+  \item Between 0.51 - 0.75 - Draws the collectible object
+  \item Between 0.76 - 1 - Draws the background
+\end{itemize}
+
 \subsection{Virtual reality in a inverted sphere}
-The illusion in a virtual world and the immersion sense that comes with it require visual material available from all angles. Given that our proposal contemplates a 2D game, the challenge is displaying two-dimensional content in a 3D scenario so that everything happens around the user.
+The immersion sense that comes with virtual worlds requires visual information available from all angles. Given that our proposition considers a 2D game, the challenge is displaying two-dimensional content in a 3D scenario with the user at the center.
 
 An inverted sphere, a sphere that has only its inner side rendered, makes it possible to fill the entire field of view, it also is the endorsed solution to display equirectangular images in 360 degrees. The procedural generation of a sphere can follow one of the two approaches below:
 
@@ -247,7 +266,6 @@ z_{i} = 2 * \sin(\alpha_{latitude}) * \cos(\alpha_{longitude})
 \section{Logic layer}
 
 \subsection{Managing Game Objects}
-
 
 \subsection{Snake movement agent} \label{sec:agent}
 The movement of the snake is managed by a state evaluation function that analyzes each possible action at any given time. In essence, the serpent is always seeking  the collectible objects, so it evaluates the shortest distance course in the X and Y axes in UV space and, provided that there is no possibility of hitting itself, proceeds through this path and repeats the process. The function below illustrates this procedure:
