@@ -263,9 +263,27 @@ z_{i} = 2 * \sin(\alpha_{latitude}) * \cos(\alpha_{longitude})
 \label{equation10}
 \end{equation}
 
+% Need to be reviewed
+Equations \ref{equation8}, \ref{equation9} and \ref{equation10} allow to define a vector $P_i$ with components $(x_i, y_i, z_i)$ for each uv position. By using all those equations we can find all the vertice positions of a procedural sphere.
+
+\subsection{Simple 2D Snakes}
+
+\subsection{Raymarching Cube-based 3D Snakes}
+
+% Explaining what is Raymarching
+Raymarching is an iterative approach for rendering a scene. Each iteraction, a ray moves through a line towards a fixed direction and only stops when reaches some object. So different from raytracing, it's not necessary to calculate the intersection point between a line and geometric model. Instead you should calculate only if the the current poin is inside of the geometric model.
+
+Using signed distance function (SDF) techniques \cite{hart1996sphere} is possible to find out the distance from current point position until the target geometry. By means of SDFs it's possible to accelerate the iterations of raymarching by jumping straight to right position of the intersected geometry.
+
+Our proposal can also be implemented as fake 3D objects rendered by pixel shaders in a plane mesh. We employed raymarching to render a cube-based 3D snakes inside a real cube.
+
 \section{Logic layer}
 
+The logic layer is responsible for handling user input and its consequence inside the game virtual word. For this sake, it's necessary a model of how the game works. For a VRSnake for example is necessary to model the snake, how it moves, how it interact with each game element.
+
 \subsection{Managing Game Objects}
+
+Our framework is based on managing objects data that are rendered by pixel shaders. Thus ion our proposal, we made use of textures to store logic data, that we named as logical textures. Each call of pixel shader should be able to localize the right position of the data inside the logical texture. One of the disadvantages of such method is more expensive to spread big changes.
 
 \subsection{Snake movement agent} \label{sec:agent}
 The movement of the snake is managed by a state evaluation function that analyzes each possible action at any given time. In essence, the serpent is always seeking  the collectible objects, so it evaluates the shortest distance course in the X and Y axes in UV space and, provided that there is no possibility of hitting itself, proceeds through this path and repeats the process. The function below illustrates this procedure:
