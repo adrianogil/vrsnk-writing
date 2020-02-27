@@ -158,29 +158,15 @@ In other words, the logical layer manages the collision and movement of the snak
 Our implementation is based on pixel shaders since we want to guarantee support for Android-based VR platform that don't have support for more specialized shader types, like computer shaders for instance.
 
 \section{Visualization layer}
+\label{sec:visualization-layer}
+The visualization layer has the code necessary to make visual elements visible to the user. In the proposed architecture, the visualization layer is based on shaders. The following subsections explain how snakes in VRSnake are drawn. Subsection \ref{subsec:rendering-snakes} explains the general method, whereas the others explore the specifics such as inverted spheres (subsection \ref{subsec:inverted-sphere}), 2d shader snakes (subsection \ref{subsec:2d-snakes}) and raymarched snakes (subsection \ref{subsec:raymarching-snakes}). 
 
-The visualization layer deals with all the code necessary to make the visual elements visible to the user. In our proposed architecture, the visualization layer runs only inside shaders.
-
-\subsection{Rendering VR snakes}
-Shaders are scripts that carry the mathematical calculations and algorithms to compute the color of each pixel rendered on the output device. In VRSnake, the shader responsible to render the snake requires an external texture that defines the current game state. This texture as well as other game elements such as snake color and game background can be defined in the user inspector in Unity (see figure \ref{fig:snake_editor_unity}).
-
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale=1]{src/hci2020-images/SnakeTextureMaterial.png}
-    \caption{Snake rendering shader in Unity Editor}
-    \label{fig:snake_editor_unity}
-\end{figure}
-
-The external texture is managed by the logic layer (c\# code), which updates the snake during the update loop of the game. The shader layer sweeps this texture and gathers the red parameter of the RGB color system. The shader reads those values and converts each pixel to screen information according to arbitrary value ranges as seen below:
-
-\begin{itemize}
-  \item Between 0 - 0.25 - Draws the head of the snake
-  \item Between 0.26 - 0.5 - Draws the body of the snake
-  \item Between 0.51 - 0.75 - Draws the collectible object
-  \item Between 0.76 - 1 - Draws the background
-\end{itemize}
+\subsection{Rendering VR snakes} 
+\label{subsec:rendering-snakes}
+Shaders are scripts that carry the mathematical calculations and algorithms to compute the color of each pixel rendered on the output device. For 2D and 3D snake rendering, the shader in the visualization layer requires an external texture that contains the logical information needed to draw the final image.  
 
 \subsection{Virtual reality in a inverted sphere}
+\label{subsec:inverted-sphere}
 The immersion sense that comes with virtual worlds requires visual information available from all angles. Given that our proposition considers a 2D game, the challenge is displaying two-dimensional content in a 3D scenario with the user at the center.
 
 An inverted sphere, a sphere that has only its inner side rendered, makes it possible to fill the entire field of view, it also is the endorsed solution to display equirectangular images in 360 degrees. The procedural generation of a sphere can follow one of the two approaches below:
@@ -267,9 +253,27 @@ z_{i} = 2 * \sin(\alpha_{latitude}) * \cos(\alpha_{longitude})
 Equations \ref{equation8}, \ref{equation9} and \ref{equation10} allow to define a vector $P_i$ with components $(x_i, y_i, z_i)$ for each uv position. By using all those equations we can find all the vertice positions of a procedural sphere.
 
 \subsection{Simple 2D Snakes}
+\label{subsec:2d-snakes}
+In VRSnake, the shader responsible to render the snake requires an external texture that defines the current game state. This texture as well as other game elements such as snake color and game background can be defined in the user inspector in Unity (see figure \ref{fig:snake_editor_unity}).
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=1]{src/hci2020-images/SnakeTextureMaterial.png}
+    \caption{Snake rendering shader in Unity Editor}
+    \label{fig:snake_editor_unity}
+\end{figure}
+
+The external texture is managed by the logic layer (c\# code), which updates the snake during the update loop of the game. The shader layer sweeps this texture and gathers the red parameter of the RGB color system. The shader reads those values and converts each pixel to screen information according to arbitrary value ranges as seen below:
+
+\begin{itemize}
+  \item Between 0 - 0.25 - Draws the head of the snake
+  \item Between 0.26 - 0.5 - Draws the body of the snake
+  \item Between 0.51 - 0.75 - Draws the collectible object
+  \item Between 0.76 - 1 - Draws the background
+\end{itemize}
 
 \subsection{Raymarching Cube-based 3D Snakes}
-
+\label{subsec:raymarching-snakes}
 % Explaining what is Raymarching
 Raymarching is an iterative approach for rendering a scene. Each iteraction, a ray moves through a line towards a fixed direction and only stops when reaches some object. So different from raytracing, it's not necessary to calculate the intersection point between a line and geometric model. Instead you should calculate only if the the current poin is inside of the geometric model.
 
