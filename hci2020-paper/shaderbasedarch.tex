@@ -159,11 +159,11 @@ Our implementation is based on pixel shaders since we want to guarantee support 
 
 \section{Visualization layer}
 \label{sec:visualization-layer}
-The visualization layer has the code necessary to make visual elements visible to the user. In the proposed architecture, the visualization layer is based on shaders. The following subsections explain how snakes in VRSnake are drawn. Subsection \ref{subsec:rendering-snakes} explains the general method, whereas the others explore the specifics such as inverted spheres (subsection \ref{subsec:inverted-sphere}), 2d shader snakes (subsection \ref{subsec:2d-snakes}) and raymarched snakes (subsection \ref{subsec:raymarching-snakes}). 
+The visualization layer has the code necessary to make visual elements visible to the user. In the proposed architecture, the visualization layer is based on shaders. The following subsections explain how snakes in VRSnake are drawn. Subsection \ref{subsec:rendering-snakes} explains the general method, whereas the others explore the specifics such as inverted spheres (subsection \ref{subsec:inverted-sphere}), 2d shader snakes (subsection \ref{subsec:2d-snakes}) and ray-marched snakes (subsection \ref{subsec:raymarching-snakes}).
 
-\subsection{Rendering VR snakes} 
+\subsection{Rendering VR snakes}
 \label{subsec:rendering-snakes}
-Shaders are scripts that carry the mathematical calculations and algorithms to compute the color of each pixel rendered on the output device. For 2D and 3D snake rendering, the shader in the visualization layer requires an external texture that contains the logical information needed to draw the final image.  
+Shaders are scripts that carry the mathematical calculations and algorithms to compute the color of each pixel rendered on the output device. For 2D and 3D snake rendering, the shader in the visualization layer requires an external texture that contains the logical information needed to draw the final image.
 
 \subsection{Virtual reality in a inverted sphere}
 \label{subsec:inverted-sphere}
@@ -304,7 +304,7 @@ The Snake game was developed for virtual reality in the Unity engine. Figure\ref
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{src/hci2020-images/VRPerformance.png}s
+\includegraphics[width=\textwidth]{src/hci2020-images/VRPerformance.png}
 \caption{Frames-per-second recored by the OVR Metrics Tool}
 \label{fig:VRPerformanceChart}
 \end{figure}
