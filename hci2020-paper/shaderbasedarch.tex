@@ -153,17 +153,33 @@ one layer handles the game logic whereas the other manages rendering.  The logic
 % Render layer
 The visualization layer involves a shader, a piece of code that runs in the Graphics Processing Unit (GPU), renders all Game Objects on the output device, which includes the collectible objects as well as the snake.
 
+\begin{figure}
+    \centering
+    \begin{minipage}[b][6cm][b]{.5\textwidth}
+        \centering
+        \includegraphics[height=3cm]{hci2020-paper/images/VRSnake_Proposed_Architecture.png}
+        \caption{Logic layer runs on CPU}
+        \label{fig:coupledModel}
+    \end{minipage}%
+    \begin{minipage}[b][6cm][b]{.5\textwidth}
+        \centering
+        \includegraphics[height=5cm]{hci2020-paper/images/VRSnake_Proposed_Architecture2.png}
+        \caption{Both logic and visualization layers runs on GPU}
+        \label{fig:uncoupledModel}
+    \end{minipage}
+\end{figure}
+
 In other words, the logical layer manages the collision and movement of the snake and selects the most promising path given a randomization factor; The visualization layer renders all the elements arranged in the output device, the CPU does not influence these objects.
 
 Our implementation is based on pixel shaders since we want to guarantee support for Android-based VR platform that don't have support for more specialized shader types, like computer shaders for instance.
 
 \section{Visualization layer}
 \label{sec:visualization-layer}
-The visualization layer has the code necessary to make visual elements visible to the user. In the proposed architecture, the visualization layer is based on shaders. The following subsections explain how snakes in VRSnake are drawn. Subsection \ref{subsec:rendering-snakes} explains the general method, whereas the others explore the specifics such as inverted spheres (subsection \ref{subsec:inverted-sphere}), 2d shader snakes (subsection \ref{subsec:2d-snakes}) and raymarched snakes (subsection \ref{subsec:raymarching-snakes}). 
+The visualization layer has the code necessary to make visual elements visible to the user. In the proposed architecture, the visualization layer is based on shaders. The following subsections explain how snakes in VRSnake are drawn. Subsection \ref{subsec:rendering-snakes} explains the general method, whereas the others explore the specifics such as inverted spheres (subsection \ref{subsec:inverted-sphere}), 2d shader snakes (subsection \ref{subsec:2d-snakes}) and ray-marched snakes (subsection \ref{subsec:raymarching-snakes}).
 
-\subsection{Rendering VR snakes} 
+\subsection{Rendering VR snakes}
 \label{subsec:rendering-snakes}
-Shaders are scripts that carry the mathematical calculations and algorithms to compute the color of each pixel rendered on the output device. For 2D and 3D snake rendering, the shader in the visualization layer requires an external texture that contains the logical information needed to draw the final image.  
+Shaders are scripts that carry the mathematical calculations and algorithms to compute the color of each pixel rendered on the output device. For 2D and 3D snake rendering, the shader in the visualization layer requires an external texture that contains the logical information needed to draw the final image.
 
 \subsection{Virtual reality in a inverted sphere}
 \label{subsec:inverted-sphere}
@@ -287,7 +303,14 @@ The logic layer is responsible for handling user input and its consequence insid
 
 \subsection{Managing Game Objects}
 
-Our framework is based on managing objects data that are rendered by pixel shaders. Thus ion our proposal, we made use of textures to store logic data, that we named as logical textures. Each call of pixel shader should be able to localize the right position of the data inside the logical texture. One of the disadvantages of such method is more expensive to spread big changes.
+Our framework is based on managing objects data that are rendered by pixel shaders. Thus in our proposal, we made use of textures to store logic data, that we named as logical textures. Each call of pixel shader should be able to localize the right position of the data inside the logical texture. One of the disadvantages of such method is more expensive to spread big changes.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{hci2020-paper/images/VRSnake_GameObjectData_Management.png}
+\caption{Our proposed data management approach for game elements}
+\label{fig:VR_GameObjectData_Management}
+\end{figure}
 
 \subsection{Snake movement agent} \label{sec:agent}
 The movement of the snake is managed by a state evaluation function that analyzes each possible action at any given time. In essence, the serpent is always seeking  the collectible objects, so it evaluates the shortest distance course in the X and Y axes in UV space and, provided that there is no possibility of hitting itself, proceeds through this path and repeats the process. The function below illustrates this procedure:
@@ -304,7 +327,7 @@ The Snake game was developed for virtual reality in the Unity engine. Figure\ref
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{src/hci2020-images/VRPerformance.png}s
+\includegraphics[width=\textwidth]{src/hci2020-images/VRPerformance.png}
 \caption{Frames-per-second recored by the OVR Metrics Tool}
 \label{fig:VRPerformanceChart}
 \end{figure}
