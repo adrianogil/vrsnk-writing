@@ -151,6 +151,23 @@ Game architectures can be updated to better reflect the needs of the game. A wel
 We propose a game architecture based on two layers:
 % Logic layer
 one layer handles the game logic whereas the other manages rendering.  The logical layer is CPU-bound and has tasks such as the search for the collectible objects and snake movement.
+
+\begin{figure}
+    \centering
+    \begin{minipage}[b][6cm][b]{.5\textwidth}
+        \centering
+        \includegraphics[height=3cm]{hci2020-paper/images/VRSnake_Proposed_Architecture.png}
+        \caption{Logic layer runs on CPU}
+        \label{fig:coupledModel}
+    \end{minipage}%
+    \begin{minipage}[b][6cm][b]{.5\textwidth}
+        \centering
+        \includegraphics[height=5cm]{hci2020-paper/images/VRSnake_Proposed_Architecture2.png}
+        \caption{Both logic and visualization layers runs on GPU}
+        \label{fig:uncoupledModel}
+    \end{minipage}
+\end{figure}
+
 % Render layer
 The visualization layer involves a shader, a piece of code that runs in the Graphics Processing Unit (GPU), renders all Game Objects on the output device, which includes the collectible objects as well as the snake.
 
