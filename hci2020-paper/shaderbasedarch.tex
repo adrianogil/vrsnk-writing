@@ -193,7 +193,13 @@ Our implementation is based on pixel shaders since we want to guarantee support 
 
 \section{Visualization layer}
 \label{sec:visualization-layer}
-The visualization layer has the code necessary to make visual elements visible to the user. In the proposed architecture, the visualization layer is based on shaders. The following subsections explain how snakes in VRSnake are drawn. Subsection \ref{subsec:rendering-snakes} explains the general method, whereas the others explore the specifics such as inverted spheres (subsection \ref{subsec:inverted-sphere}), 2d shader snakes (subsection \ref{subsec:2d-snakes}) and ray-marched snakes (subsection \ref{subsec:raymarching-snakes}).
+The visualization layer has the code necessary to make game elements visible to the user. In the proposed architecture, the visualization layer is based entirely on a pixel shader running in a single mesh.
+
+
+Given a logical texture, i.e. a texture representing the current game state, the centralized pixel shader must render the position of each game element: snakes and food. The role of the visualization layer is to represent the game element according to a style: 2D or 3D for instance. In this work, we implemented a 2d representation on a sphere and a raymarched visualization on a cube. However many others are possible, like using particles for example.
+
+
+The following subsections explain how snakes in VRSnake are drawn. Subsection \ref{subsec:rendering-snakes} explains the general method, whereas the others explore the specifics such as inverted spheres (subsection \ref{subsec:inverted-sphere}), 2d shader snakes (subsection \ref{subsec:2d-snakes}) and ray-marched snakes (subsection \ref{subsec:raymarching-snakes}).
 
 \subsection{Rendering VR snakes}
 \label{subsec:rendering-snakes}
@@ -341,7 +347,7 @@ F(A) = R * (D + O)
 Where \textit{R} is a randomization factor; \textit{D} represents the \textit{Manhattan} distance between the current position and the collectable object; And \textit{O} is a value attributed to the existence or not of obstacles in this path.
 
 \section{Experiments and Results} \label{sec:results}
-The Snake game was developed for virtual reality in the Unity engine. Figure\ref{fig:VRPerformanceChart}  below illustrates the frame rate in the GearVR through the Oculus performance assessment tool, the \textit{OVR Metrics Tool} \cite{ovrmetrictool}:
+The Snake game was developed for virtual reality in the Unity engine. Figure~\ref{fig:VRPerformanceChart}  below illustrates the frame rate in the GearVR through the Oculus performance assessment tool, the \textit{OVR Metrics Tool} \cite{ovrmetrictool}:
 
 \begin{figure}[h]
 \centering
@@ -350,7 +356,7 @@ The Snake game was developed for virtual reality in the Unity engine. Figure\ref
 \label{fig:VRPerformanceChart}
 \end{figure}
 
-The application presented an average frame-rate of 43.96 fps (frames-per-second), with a minimum of 16 fps and maximum of 60 fps. As represented by the figure \ref{fig:VRPerformanceChart}, the application does not maintain 60 fps and this is mainly due to the garbage collector and the need for GPU code optimization.
+The application presented an average frame-rate of 43.96 fps (frames-per-second), with a minimum of 16 fps and maximum of 60 fps. As represented by the figure~\ref{fig:VRPerformanceChart}, the application does not maintain 60 fps and this is mainly due to the garbage collector and the need for GPU code optimization.
 
 % TODO: Define metrics to evaluate architectures
 % TODO: Experiment with normal game
