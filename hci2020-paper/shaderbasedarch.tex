@@ -118,7 +118,6 @@ Modern mainstream game consoles and PC sets allow parallel computing to be perfo
     \end{minipage}
 \end{figure}
 
-
 \section{Game architectures} \label{sec:game-architecture}
 % TODO: What is a game architecture?
 Games are a  software product, therefore the  architecture of a game is comparable to that of software and defines how the game is built. Usually, it is not apparent to the player, except for performance \cite{croft_2004}.
@@ -152,7 +151,7 @@ We propose a game architecture based on two layers:
 % Logic layer
 one layer handles the game logic whereas the other manages rendering.  The logical layer is CPU-bound and has tasks such as the search for the collectible objects and snake movement.
 % Render layer
-The visualization layer involves a shader, a piece of code that runs in the Graphics Processing Unit (GPU), renders all Game Objects on the output device, which includes the collectible objects as well as the snake.
+The visualization layer involves a shader, a piece of code that runs in the Graphics Processing Unit (GPU), that renders all game objects on the output device, which includes the collectible objects as well as the snake.
 
 \begin{figure}
     \centering
@@ -292,19 +291,21 @@ The external texture is managed by the logic layer (c\# code), which updates the
 \subsection{Raymarching Cube-based 3D Snakes}
 \label{subsec:raymarching-snakes}
 % Explaining what is Raymarching
-Raymarching is an iterative approach for rendering a scene. Each iteraction, a ray moves through a line towards a fixed direction and only stops when reaches some object. So different from raytracing, it's not necessary to calculate the intersection point between a line and geometric model. Instead you should calculate only if the the current poin is inside of the geometric model.
+Raymarching is an iterative approach for rendering a scene. In each iteration, a ray moves through a line towards a fixed direction and only stops when it reaches an object. Differently from raytracing, it is not necessary to calculate the intersection point between a line and a geometric model. It should be calculated only if the the current point is in the geometric model.
 
-Using signed distance function (SDF) techniques \cite{hart1996sphere} is possible to find out the distance from current point position until the target geometry. By means of SDFs it's possible to accelerate the iterations of raymarching by jumping straight to right position of the intersected geometry.
+Using signed distance function (SDF) techniques \cite{hart1996sphere}, it is possible to find the distance from the current point position until the target geometry. By means of SDFs, it is possible to accelerate the iterations of raymarching by jumping straight to right position of the intersected geometry.
 
-Our proposal can also be implemented as fake 3D objects rendered by pixel shaders in a plane mesh. We employed raymarching to render a cube-based 3D snakes inside a real cube.
+Our proposal can also be implemented as fake 3D objects rendered by pixel shaders in a plane mesh. We employed raymarching to render cube-based 3D snakes inside a real cube.
 
 \section{Logic layer}
 
-The logic layer is responsible for handling user input and its consequence inside the game virtual word. For this sake, it's necessary a model of how the game works. For a VRSnake for example is necessary to model the snake, how it moves, how it interact with each game element.
+The logic layer is responsible for handling user input and its correspondent actions inside the game virtual word. Thus it is necessary to model how the game works. In VRSnake, the snake modeling includes how it moves and how it interacts with each game element.
+
+In VRSnake, the user input is based on an external joystick. As a sensor, however, these controllers are subject to noisy interference during the virtualization of the event represented in the real world by the user's movement. In order to improve the signal capture and translate the player's intentions more faithfully, the Kalman filter is applied to the readings of the joystick events.
 
 \subsection{Managing Game Objects}
 
-Our framework is based on managing objects data that are rendered by pixel shaders. Thus in our proposal, we made use of textures to store logic data, that we named as logical textures. Each call of pixel shader should be able to localize the right position of the data inside the logical texture. One of the disadvantages of such method is more expensive to spread big changes.
+Our framework is based on managing objects data that are rendered by pixel shaders. Thus  we made use of textures to store logic data, that we named as logical textures. Each call of pixel shader should localize the right position of the data inside the logical texture. One of the disadvantages of such method is more expensive to spread big changes.
 
 \begin{figure}[h]
 \centering
@@ -324,7 +325,7 @@ F(A) = R * (D + O)
 Where \textit{R} is a randomization factor; \textit{D} represents the \textit{Manhattan} distance between the current position and the collectable object; And \textit{O} is a value attributed to the existence or not of obstacles in this path.
 
 \section{Experiments and Results} \label{sec:results}
-The Snake game was developed for virtual reality in the Unity engine. Figure\ref{fig:VRPerformanceChart}  below illustrates the frame rate in the GearVR through the Oculus performance assessment tool, the \textit{OVR Metrics Tool} \cite{ovrmetrictool}:
+The Snake game was developed for virtual reality in the Unity engine. Figure \ref{fig:VRPerformanceChart}  illustrates the frame rate in the GearVR through the Oculus performance assessment tool, the \textit{OVR Metrics Tool} \cite{ovrmetrictool}:
 
 \begin{figure}[h]
 \centering
@@ -333,7 +334,7 @@ The Snake game was developed for virtual reality in the Unity engine. Figure\ref
 \label{fig:VRPerformanceChart}
 \end{figure}
 
-The application presented an average frame-rate of 43.96 fps (frames-per-second), with a minimum of 16 fps and maximum of 60 fps. As represented by the figure \ref{fig:VRPerformanceChart}, the application does not maintain 60 fps and this is mainly due to the garbage collector and the need for GPU code optimization.
+The application presented an average frame-rate of 43.96 fps (frames-per-second), with a minimum of 16 fps and maximum of 60 fps. As represented by the figure \ref{fig:VRPerformanceChart}, the application does not maintain 60 fps and this is most likely due to the kalman filter implementation in the data collection step of the game loop and the garbage collector.
 
 % TODO: Define metrics to evaluate architectures
 % TODO: Experiment with normal game
@@ -342,7 +343,7 @@ The application presented an average frame-rate of 43.96 fps (frames-per-second)
 % TODO: Experiment with shader-based game with Raymarching
 
 \section{Conclusions}
-We believe it is possible to explore the GPU for additional performance of virtual reality games in mobile devices. The architecture defined here can be explored as an additional tool for developers to complement the way the game looks and manage resources of VR applications. For future work, we see an opportunity for a full GPU implementation using ray-marching in a 3D environment.
+We believe it is possible to explore the GPU for additional performance of virtual reality games in mobile devices. The architecture defined here can be explored as an additional tool for developers to complement the way the game looks and manage resources of VR applications. For future work, we see an opportunity to bring the steps currently present in the logic layer to the visualization layer, further exploring the GPU. We also envision bringing machine learning techniques to the visualization layer to allow multiple snakes to share the same space thus increasing game difficulty. There is the possibility of further improving performance through optimizations to the kalman filter implementation as well.
 %
 % ---- Bibliography ----
 %
