@@ -153,6 +153,22 @@ one layer handles the game logic whereas the other manages rendering.  The logic
 % Render layer
 The visualization layer involves a shader, a piece of code that runs in the Graphics Processing Unit (GPU), renders all Game Objects on the output device, which includes the collectible objects as well as the snake.
 
+\begin{figure}
+    \centering
+    \begin{minipage}[b][6cm][b]{.5\textwidth}
+        \centering
+        \includegraphics[height=3cm]{hci2020-paper/images/VRSnake_Proposed_Architecture.png}
+        \caption{Logic layer runs on CPU}
+        \label{fig:coupledModel}
+    \end{minipage}%
+    \begin{minipage}[b][6cm][b]{.5\textwidth}
+        \centering
+        \includegraphics[height=5cm]{hci2020-paper/images/VRSnake_Proposed_Architecture2.png}
+        \caption{Both logic and visualization layers runs on GPU}
+        \label{fig:uncoupledModel}
+    \end{minipage}
+\end{figure}
+
 In other words, the logical layer manages the collision and movement of the snake and selects the most promising path given a randomization factor; The visualization layer renders all the elements arranged in the output device, the CPU does not influence these objects.
 
 Our implementation is based on pixel shaders since we want to guarantee support for Android-based VR platform that don't have support for more specialized shader types, like computer shaders for instance.
@@ -287,7 +303,14 @@ The logic layer is responsible for handling user input and its consequence insid
 
 \subsection{Managing Game Objects}
 
-Our framework is based on managing objects data that are rendered by pixel shaders. Thus ion our proposal, we made use of textures to store logic data, that we named as logical textures. Each call of pixel shader should be able to localize the right position of the data inside the logical texture. One of the disadvantages of such method is more expensive to spread big changes.
+Our framework is based on managing objects data that are rendered by pixel shaders. Thus in our proposal, we made use of textures to store logic data, that we named as logical textures. Each call of pixel shader should be able to localize the right position of the data inside the logical texture. One of the disadvantages of such method is more expensive to spread big changes.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{hci2020-paper/images/VRSnake_GameObjectData_Management.png}
+\caption{Our proposed data management approach for game elements}
+\label{fig:VR_GameObjectData_Management}
+\end{figure}
 
 \subsection{Snake movement agent} \label{sec:agent}
 The movement of the snake is managed by a state evaluation function that analyzes each possible action at any given time. In essence, the serpent is always seeking  the collectible objects, so it evaluates the shortest distance course in the X and Y axes in UV space and, provided that there is no possibility of hitting itself, proceeds through this path and repeats the process. The function below illustrates this procedure:
