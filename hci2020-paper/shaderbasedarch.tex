@@ -95,7 +95,7 @@ For this new game-play design, we defined the following rules:
 % Example of default game loop architecture
 The game loop is the foundation which upon games are built. Games are considered real-time applications because their tasks rely on time constraints. According to \cite{GameArchitecture2009}, these tasks can be arranged into three steps: data acquisition, data processing and presentation. The first step is about collecting input data from the input devices (for VR devices, it is the Head-Mounted Display (HMD) and the joysticks); the second step is applying player input into the game as well as game rules and other simulation tasks; the last step is providing to the user the current game state through visual and audio updates.
 
-There are two main groups of loop models proposed by \cite{valente_conci_feijo}: the coupled model (see figure \ref{fig:coupledModel}) and the uncoupled model (see figure \ref{fig:uncoupledModel}).
+There are two main groups of loop models proposed by \cite{valente_conci_feijo}: the coupled model and the uncoupled model.
 In the simplest approach, all steps are executed sequentially and it runs as fast as the machine is capable of. The uncoupled model separates rendering and update steps in different threads, but this may cause the same unpredictable scenario of the Coupled Model when executed in different machines. The Multi-thread Uncoupled Model feeds the update stage with a time parameter to adjust its execution with time and allow the game to behave in the same way in different machines.
 
 Due to its interactive nature, these steps should be performed as fast as possible in games or performance may jeopardize user experience. For VR applications, this constraint is even heavier as VR games should run at 60 frames per second \cite{pruett_2015} to avoid nausea and other negative user effects, this is why Virtual Reality software requires powerful CPU and GPU hardware \cite{gregory_2019}.
@@ -106,13 +106,13 @@ Modern mainstream game consoles and PC sets allow parallel computing to be perfo
     \centering
     \begin{minipage}{.5\textwidth}
         \centering
-        \includegraphics[width=\linewidth,height=5cm]{src/hci2020-images/CoupledGameLoop.png}
-        \caption{Coupled Model \cite{valente_conci_feijo}}
+        \includegraphics[height=5cm]{src/hci2020-images/CoupledLoopModel.jpg}
+        \caption{Coupled Model}
         \label{fig:coupledModel}
     \end{minipage}%
     \begin{minipage}{.5\textwidth}
         \centering
-        \includegraphics[width=\linewidth,height=5cm]{src/hci2020-images/UncoupledGameLoop.png}
+        \includegraphics[height=5cm]{src/hci2020-images/UncoupledLoopModel.jpg}
         \caption{Multi-thread Uncoupled Model \cite{valente_conci_feijo}}
         \label{fig:uncoupledModel}
     \end{minipage}
@@ -123,20 +123,21 @@ Modern mainstream game consoles and PC sets allow parallel computing to be perfo
 % TODO: What is a game architecture?
 Games are a  software product, therefore the  architecture of a game is comparable to that of software and defines how the game is built. Usually, it is not apparent to the player, except for performance \cite{croft_2004}.
 
-According to \cite{mcshaffry_2009}, it is possible to classify any sub-system in a game in one of the three categories: the application layer, the logic layer, and the game view layer. The first layer deals with the operating system and hardware. The second layer manages the game state and how it changes over time. The game view layer presents the current game state with the graphics and sound outputs.
+According to \cite{mcshaffry_2009}, it is possible to classify any sub-system in a game in one of the three categories (see figure \ref{fig:highArchitecture}): the application layer, the logic layer, and the game view layer. The first layer deals with the operating system and hardware. The second layer manages the game state and how it changes over time. The game view layer presents the current game state with the graphics and sound outputs.
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale=1.1]{src/GameArchitecture.png}
-    \caption{High-level game architecture according to \cite{mcshaffry_2009}}
+    \includegraphics[scale=0.5]{src/hci2020-images/GameArchitecture.jpg}
+    \caption{High-level game architecture}
+    \label{fig:highArchitecture}
 \end{figure}
 
 Game engines provide \textit{"software that is extensible and can be used as the foundation for many different games without major modification"} \cite{gregory_2019}, and as such, they encapsulate the general game architecture (see figure \ref{fig:Simplified_game_engine}).
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[scale=1.5]{src/hci2020-images/Game_Architecture_Raul_Portales.jpg}
-    \caption{Game engine architecture according to \cite{portales}}
+    \includegraphics[scale=0.5]{src/hci2020-images/GameEngineArchitecture.jpg}
+    \caption{Simplified view of a game engine architecture}
     \label{fig:Simplified_game_engine}
 \end{figure}
 
