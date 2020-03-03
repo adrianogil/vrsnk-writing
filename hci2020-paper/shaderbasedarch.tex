@@ -57,7 +57,7 @@ VR devices, on the other hand, have a limited form factor. Issues like the heat 
 In VR games development, the most used game engine is \textit{Unity} \cite{Unity} and even though it is optimized, we believe there is an opportunity in exploring graphics cards for additional performance.
 
 % TODO: Proposal
-In this work, we propose an implementation of the classic game Snake using a shader-based architecture. By using a logic based of parallel execution we achieved a very performatic virtual reality application in which every visual element is defined and rendered by the shader in a unique mesh.
+In this work, we propose an implementation of the classic game Snake using a shader-based architecture. By using a logic based of parallel execution we achieved a performatic virtual reality application in which every visual element is defined and rendered by the shader in a unique mesh.
 
 % TODO: Sections
 Related research is explored in section \ref{sec:related-works}. An explanation about the game is provided in \ref{sec:vrsnake}. Important concepts for this topic, Game Loop and Game Architecture are explored in \ref{sec:game-loops} and \ref{sec:game-architecture}. The proposed architecture is explained in section \ref{sec:proposed-architecture}. Section \ref{sec:logic-layer} describes how the game logic is managed. Section \ref{sec:visualization-layer} analyzes how shaders are used for rendering the game.  At the end, results are in section \ref{sec:results}.
@@ -214,10 +214,10 @@ Where \textit{R} is a randomization factor; \textit{D} represents the \textit{Ma
 The visualization layer has the code necessary to make game elements visible to the user. In the proposed architecture, the visualization layer is based entirely on a pixel shader running in a single mesh.
 
 
-Given a logical texture, i.e. a texture representing the current game state, the centralized pixel shader must render the position of each game element: snakes and food. The role of the visualization layer is to represent the game element according to a style: 2D or 3D for instance. In this work, we implemented a 2d representation on a sphere and a raymarched visualization on a cube. However many others are possible, like using particles for example.
+Given a logical texture, i.e. a texture representing the current game state, the centralized pixel shader must render the position of each game element: snakes and food. The role of the visualization layer is to represent the game element according to a style: 2D or 3D for instance. In this work, we implemented a 2D representation on a sphere and a raymarched visualization on a cube. However many others are possible, like using particles for example.
 
 
-The following subsections explain how snakes in VRSnake are drawn. Subsection \ref{subsec:rendering-snakes} explains the general method, whereas the others explore the specifics such as inverted spheres (subsection \ref{subsec:inverted-sphere}), 2d shader snakes (subsection \ref{subsec:2d-snakes}) and ray-marched snakes (subsection \ref{subsec:raymarching-snakes}).
+The following subsections explain how snakes in VRSnake are drawn. Subsection \ref{subsec:rendering-snakes} explains the general method, whereas the others explore the specifics such as inverted spheres (subsection \ref{subsec:inverted-sphere}), 2D shader snakes (subsection \ref{subsec:2d-snakes}) and ray-marched snakes (subsection \ref{subsec:raymarching-snakes}).
 
 \subsection{Rendering VR snakes}
 \label{subsec:rendering-snakes}
@@ -343,7 +343,7 @@ Our proposal can also be implemented as fake 3D objects rendered by pixel shader
 
 The Snake game was developed for virtual reality in the Unity engine. Figure \ref{fig:VRPerformanceChart}  illustrates the frame rate in the GearVR through the Oculus performance assessment tool, the \textit{OVR Metrics Tool} \cite{ovrmetrictool}:
 
-The GearVr is the virtual reality headset from Samsung which is designed to interact with smartphones. In partnership with Oculus, it is possible to download VR apps and games from the Oculus store.
+The GearVR is the virtual reality headset from Samsung which is designed to interact with smartphones. In partnership with Oculus, it is possible to download VR apps and games from the Oculus store.
 
 \begin{figure}[h]
 \centering
