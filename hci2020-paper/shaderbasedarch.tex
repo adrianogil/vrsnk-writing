@@ -152,22 +152,6 @@ We propose a game architecture based on two layers:
 % Logic layer
 one layer handles the game logic whereas the other manages rendering.  The logical layer is CPU-bound and has tasks such as the search for the collectible objects and snake movement.
 
-\begin{figure}
-    \centering
-    \begin{minipage}[b][6cm][b]{.5\textwidth}
-        \centering
-        \includegraphics[height=3cm]{hci2020-paper/images/VRSnake_Proposed_Architecture.png}
-        \caption{Logic layer runs on CPU}
-        \label{fig:coupledModel}
-    \end{minipage}%
-    \begin{minipage}[b][6cm][b]{.5\textwidth}
-        \centering
-        \includegraphics[height=5cm]{hci2020-paper/images/VRSnake_Proposed_Architecture2.png}
-        \caption{Both logic and visualization layers runs on GPU}
-        \label{fig:uncoupledModel}
-    \end{minipage}
-\end{figure}
-
 % Render layer
 The visualization layer involves a shader, a piece of code that runs in the Graphics Processing Unit (GPU), that renders all game objects on the output device, which includes the collectible objects as well as the snake.
 
@@ -177,19 +161,21 @@ The visualization layer involves a shader, a piece of code that runs in the Grap
         \centering
         \includegraphics[height=3cm]{hci2020-paper/images/VRSnake_Proposed_Architecture.png}
         \caption{Logic layer runs on CPU}
-        \label{fig:coupledModel}
+        \label{fig:logic_layer_cpu_diagram}
     \end{minipage}%
     \begin{minipage}[b][6cm][b]{.5\textwidth}
         \centering
         \includegraphics[height=5cm]{hci2020-paper/images/VRSnake_Proposed_Architecture2.png}
         \caption{Both logic and visualization layers runs on GPU}
-        \label{fig:uncoupledModel}
+        \label{fig:arch_gpu_diagram}
     \end{minipage}
 \end{figure}
 
 In other words, the logical layer manages the collision and movement of the snake and selects the most promising path given a randomization factor; The visualization layer renders all the elements arranged in the output device, the CPU does not influence these objects.
 
 Our implementation is based on pixel shaders since we want to guarantee support for Android-based VR platform that don't have support for more specialized shader types, like computer shaders for instance.
+
+Figures ~\ref{fig:logic_layer_cpu_diagram} and ~\ref{fig:arch_gpu_diagram} show diagrams of how our proposed architecture can be devised considering CPU and GPU-bounded scenarios. For mitigating heavy computation on the GPU, a logic layer on CPU is recommended, in the other hand the intensive usage of multiple elements on the logic layer can indicate the GPU as the best solution.
 
 \section{Logic layer}
 \label{sec:logic-layer}
@@ -356,6 +342,8 @@ Our proposal can also be implemented as fake 3D objects rendered by pixel shader
 \section{Experiments and Results} \label{sec:results}
 
 The Snake game was developed for virtual reality in the Unity engine. Figure \ref{fig:VRPerformanceChart}  illustrates the frame rate in the GearVR through the Oculus performance assessment tool, the \textit{OVR Metrics Tool} \cite{ovrmetrictool}:
+
+The GearVr is the virtual reality headset from Samsung which is designed to interact with smartphones. In partnership with Oculus, it is possible to download VR apps and games from the Oculus store.
 
 \begin{figure}[h]
 \centering
